@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Call of Cthulhu — Investigator Documentation</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@400;500;600&family=Source+Sans+3:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@400;500;600&family=Source+Sans+3:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&display=swap');
 
   :root {
     --bg:      #1a1714;
@@ -25,6 +25,96 @@
     --head:  'Oswald', sans-serif;
     --body:  'Source Sans 3', sans-serif;
   }
+
+  /* ══════════════════════════════════════════════════════
+     ERA THEMES
+     ══════════════════════════════════════════════════════ */
+
+  /* Modern — cold, clinical, digital */
+  body.era-modern {
+    --bg:         #0e1117;
+    --bg2:        #141820;
+    --bg3:        #1c2230;
+    --border:     #252d40;
+    --border2:    #303d55;
+    --teal:       #0a6080;
+    --teal-dim:   #052040;
+    --teal-bright:#2ab0dc;
+    --amber:      #b0c020;
+    --text:       #c8d8e8;
+    --text2:      #5878a0;
+    --text3:      #384860;
+  }
+  body.era-modern .coc-logo { letter-spacing: 6px; text-shadow: 0 0 30px rgba(42,176,220,0.35), 0 0 60px rgba(42,176,220,0.1); }
+  body.era-modern .coc-header::after { width: 50%; height: 1px; background: linear-gradient(to right, transparent, var(--teal-bright), transparent); }
+
+  /* 1920s — warm, opulent, Art Deco */
+  body.era-1920s {
+    --bg:         #18110a;
+    --bg2:        #221810;
+    --bg3:        #2c2014;
+    --border:     #4a3018;
+    --border2:    #604025;
+    --teal:       #906010;
+    --teal-dim:   #4a2c06;
+    --teal-bright:#d09020;
+    --amber:      #b82820;
+    --red:        #d03020;
+    --text:       #e0d0b0;
+    --text2:      #907860;
+    --text3:      #584838;
+    --head:       'Playfair Display', serif;
+  }
+  body.era-1920s::before { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(180,100,0,0.015) 2px, rgba(180,100,0,0.015) 4px); }
+  body.era-1920s .coc-header::before { content: '— ◆ ✦ ◆ —'; display: block; font-size: 11px; letter-spacing: 6px; color: var(--teal); margin-bottom: 12px; }
+  body.era-1920s .coc-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 38px; letter-spacing: 5px; text-shadow: none; }
+  body.era-1920s .coc-subtitle { letter-spacing: 6px; }
+  body.era-1920s .coc-header::after { width: 65%; height: 1px; background: var(--teal-bright); box-shadow: 0 4px 0 var(--teal); }
+
+  /* Victorian — dark, gothic, gaslit */
+  body.era-victorian {
+    --bg:         #0c1410;
+    --bg2:        #111c16;
+    --bg3:        #172418;
+    --border:     #2a3e28;
+    --border2:    #3a5235;
+    --teal:       #3a6030;
+    --teal-dim:   #1c2e18;
+    --teal-bright:#6ab048;
+    --amber:      #c8a020;
+    --text:       #d0c8a8;
+    --text2:      #807850;
+    --text3:      #504838;
+    --head:       'Cinzel', serif;
+  }
+  body.era-victorian::before { background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,60,20,0.025) 3px, rgba(0,60,20,0.025) 6px); }
+  body.era-victorian .coc-header::before { content: '✦'; display: block; font-size: 18px; color: var(--teal); margin-bottom: 10px; }
+  body.era-victorian .coc-logo { font-family: 'Cinzel', serif; font-size: 36px; letter-spacing: 5px; text-shadow: none; }
+  body.era-victorian .coc-subtitle { letter-spacing: 3px; font-style: italic; }
+  body.era-victorian .coc-header::after { width: 160px; height: 1px; background: var(--teal-bright); }
+
+  /* Sheet accent colors per era */
+  body.era-modern .sheet-top-bar { background: #1a4570 !important; }
+  body.era-modern .sheet-char-v { color: #1a6090 !important; }
+  body.era-modern .sheet-skill-name.occ-s { color: #1a6090 !important; }
+  body.era-modern .sheet-derived-v { color: #6a7800 !important; }
+  body.era-modern .sheet-luck-cell { border-color: #a0b018 !important; }
+
+  body.era-1920s .sheet-top-bar { background: #5a2e0c !important; color: #e0c078 !important; }
+  body.era-1920s .sheet-section-hdr { background: #f5eedd !important; }
+  body.era-1920s .sheet-char-v { color: #7a5010 !important; }
+  body.era-1920s .sheet-skill-name.occ-s { color: #7a5010 !important; }
+  body.era-1920s .sheet-derived-cell { background: #f8f0e0 !important; }
+  body.era-1920s .sheet-derived-v { color: #902018 !important; }
+  body.era-1920s .sheet-luck-cell { border-color: #c08010 !important; background: #fdf5e0 !important; }
+
+  body.era-victorian .sheet-top-bar { background: #1a3a18 !important; color: #a0c888 !important; }
+  body.era-victorian .sheet-section-hdr { background: #e8ece5 !important; }
+  body.era-victorian .sheet-char-v { color: #2a5a28 !important; }
+  body.era-victorian .sheet-skill-name.occ-s { color: #2a5a28 !important; }
+  body.era-victorian .sheet-derived-cell { background: #eef0e8 !important; }
+  body.era-victorian .sheet-derived-v { color: #7a6808 !important; }
+  body.era-victorian .sheet-luck-cell { border-color: #a89018 !important; background: #f0efe0 !important; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; font-variant-numeric: slashed-zero; }
   body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 14px; min-height: 100vh; line-height: 1.5; }
@@ -74,6 +164,25 @@
   .era-card-name { font-family: var(--head); font-size: 20px; letter-spacing: 3px; color: var(--teal-bright); margin-bottom: 4px; }
   .era-card-year { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 2px; margin-bottom: 10px; }
   .era-card-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* ── Era Card Identity (static — per-card colors/ornaments before selection) ── */
+  #era-modern { background: #12141e; }
+  #era-modern::before { content: '◈'; display: block; font-size: 22px; color: #28a8dc; margin-bottom: 8px; opacity: 0.75; }
+  #era-modern .era-card-name { color: #28a8dc; }
+  #era-modern .era-card-year { color: #9ab018; }
+  #era-modern.selected { background: rgba(10,80,130,0.3); }
+
+  #era-1920s { background: #1c1408; }
+  #era-1920s::before { content: '— ❖ —'; display: block; font-size: 12px; letter-spacing: 5px; color: #b08818; margin-bottom: 8px; }
+  #era-1920s .era-card-name { color: #d09020; font-family: 'Playfair Display', serif; font-style: italic; }
+  #era-1920s .era-card-year { color: #b02818; }
+  #era-1920s.selected { background: rgba(90,50,0,0.35); }
+
+  #era-victorian { background: #0e1610; }
+  #era-victorian::before { content: '❦'; display: block; font-size: 26px; color: #5a9830; margin-bottom: 4px; opacity: 0.8; line-height: 1.2; }
+  #era-victorian .era-card-name { color: #6ab048; font-family: 'Cinzel', serif; }
+  #era-victorian .era-card-year { color: #b09018; }
+  #era-victorian.selected { background: rgba(25,65,20,0.4); }
 
   /* ── Form Fields ── */
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -646,10 +755,27 @@ function goStep(n) {
 // ══════════════════════════════════════════════════════
 // ERA
 // ══════════════════════════════════════════════════════
+// ── Era theme helpers ──
+const ERA_HEADERS = {
+  modern:    { sub: 'CLASSIFIED INVESTIGATOR FILE',          cls: '7TH EDITION — MODERN ERA' },
+  '1920s':   { sub: 'ARKHAM INVESTIGATOR DOSSIER',           cls: '7TH EDITION — JAZZ AGE' },
+  victorian: { sub: 'INVESTIGATOR OF UNEXPLAINED PHENOMENA', cls: '7TH EDITION — VICTORIAN ENGLAND' }
+};
+function applyEraTheme(era) {
+  document.body.classList.remove('era-modern', 'era-1920s', 'era-victorian');
+  document.body.classList.add('era-' + era);
+  const h = ERA_HEADERS[era];
+  if (h) {
+    document.querySelector('.coc-subtitle').textContent = h.sub;
+    document.querySelector('.coc-class').textContent    = h.cls;
+  }
+}
+
 function selectEra(era) {
   selectedEra = era;
   document.querySelectorAll('.era-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('era-'+era).classList.add('selected');
+  applyEraTheme(era);
 }
 
 // ══════════════════════════════════════════════════════
@@ -1130,6 +1256,7 @@ function applyCharData(c) {
   // Sync era card
   document.querySelectorAll('.era-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('era-'+selectedEra)?.classList.add('selected');
+  applyEraTheme(selectedEra);
 }
 
 function saveInvestigator(btn, silent=false) {
@@ -1269,6 +1396,7 @@ function newInvestigator() {
   document.getElementById('p-sex').value = 'F';
   document.querySelectorAll('.era-card').forEach(c=>c.classList.remove('selected'));
   document.getElementById('era-1920s').classList.add('selected');
+  applyEraTheme('1920s');
   goStep(0);
 }
 
@@ -1277,6 +1405,7 @@ function newInvestigator() {
 // ══════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('era-1920s').classList.add('selected');
+  applyEraTheme('1920s');
   checkSharedURL();
 });
 </script>
