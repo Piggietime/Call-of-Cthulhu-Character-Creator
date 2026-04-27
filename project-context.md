@@ -69,28 +69,26 @@ distributes occupation skill points → distributes personal interest points →
 adds equipment → views investigator sheet → saves/shares
 
 ## Where we left off
-Last commit: (initial setup)
-In progress: index.html starter file
-Branch: main
+Last commit: 7dc1b81 — 2026-04-27 — Reconcile skills with Roll20 official CoC 7e sheet
+In progress: none
+Branch: master
 
 ## What's next
 
 ### Phase 1 — Core wizard
-- [ ] Era selection step (Modern / 1920s / Victorian)
-- [ ] Personal info step (name, occupation title, residence, birthplace, age, sex, appearance)
-- [ ] Stats step — roll 3D6×5 / (2D6+6)×5, Quick Assign, manual entry; show derived stats live
-- [ ] Occupation step — pick from occupation list, see skill point formula, priority stats highlighted
-- [ ] Skill distribution step — spend occupation points + personal interest points on skills
-- [ ] Equipment step — weapons and gear
+- [ ] Browser test all three era themes end-to-end
+- [ ] Equipment step — weapons table and gear checklist (placeholder currently)
+- [ ] Occupation skill list audit against Roll20 source for accuracy
+- [ ] Additional skills from Roll20 review (Demolitions, Hypnosis, Read Lips, Artillery — verify eras/bases)
 
 ### Phase 2 — Sheet & Print
 - [ ] Investigator sheet render (all sections)
 - [ ] Print/PDF layout (clean page breaks, compact skill grid)
 
 ### Phase 3 — Save/Load & Sharing
-- [ ] localStorage save/load with named slots
-- [ ] JSON export/import
-- [ ] URL sharing (?c= base64)
+- [x] localStorage save/load with named slots
+- [x] JSON export/import
+- [x] URL sharing (?c= base64)
 
 ### Phase 4 — Play & Advancement
 - [ ] Play panel (HP/SAN/Luck/MP trackers, skill chips, weapons)
@@ -116,6 +114,8 @@ Branch: main
 - 2026-04-27 — Tech stack: vanilla HTML/CSS/JS, Vercel — same as Delta Green project
 - 2026-04-27 — Three eras: Modern, 1920s, Victorian England
 - 2026-04-27 — 7th Edition rules
+- 2026-04-27 — Era themes via body.era-X CSS class; variables cascade automatically
+- 2026-04-27 — Skills reconciled against Roll20 official sheet (coc_7th_ed.html)
 
 ## Change log
-- 2026-04-27 — Project initialized — Source: Claude Code
+- 2026-04-27 — Era-specific visual themes (Modern/1920s/Victorian); Dodge fix; Firearms SMG; Listen era-aware; initial project — Source: Claude Code
