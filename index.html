@@ -637,14 +637,15 @@ const ALL_SKILLS = [
   {name:'Credit Rating',    base:0,  eras:['all'], special:'credit'},
   {name:'Cthulhu Mythos',   base:0,  eras:['all'], special:'mythos'},
   {name:'Disguise',         base:5,  eras:['all']},
-  {name:'Dodge',            base:'DEX2', eras:['all']},
+  {name:'Dodge',            base:'DODGE', eras:['all']},
   {name:'Drive Auto',       base:20, eras:['modern','1920s']},
   {name:'Electrical Repair',base:10, eras:['all']},
   {name:'Electronics',      base:1,  eras:['modern']},
   {name:'Fast Talk',        base:5,  eras:['all']},
   {name:'Fighting (Brawl)', base:25, eras:['all']},
-  {name:'Firearms (Handgun)',base:20,eras:['all']},
-  {name:'Firearms (Rifle/Shotgun)',base:25,eras:['all']},
+  {name:'Firearms (Handgun)',       base:20, eras:['all']},
+  {name:'Firearms (Rifle/Shotgun)', base:25, eras:['all']},
+  {name:'Firearms (SMG)',           base:15, eras:['modern']},
   {name:'First Aid',        base:30, eras:['all']},
   {name:'History',          base:5,  eras:['all']},
   {name:'Hypnosis',         base:1,  eras:['all']},
@@ -654,7 +655,7 @@ const ALL_SKILLS = [
   {name:'Language (Own)',   base:'EDU5', eras:['all']},
   {name:'Law',              base:5,  eras:['all']},
   {name:'Library Use',      base:20, eras:['all']},
-  {name:'Listen',           base:20, eras:['all']},
+  {name:'Listen',           base:'LISTEN', eras:['all']},
   {name:'Locksmith',        base:1,  eras:['all']},
   {name:'Mechanical Repair',base:10, eras:['all']},
   {name:'Medicine',         base:1,  eras:['all']},
@@ -872,8 +873,9 @@ function clearStats() {
 // ══════════════════════════════════════════════════════
 function getSkillBase(skill) {
   if(typeof skill.base === 'number') return skill.base;
-  if(skill.base === 'DEX2') return Math.floor((stats.DEX||0)/5)*2; // DEX×2 but stats are already ×5
-  if(skill.base === 'EDU5') return stats.EDU||0; // EDU×5 = stat value (already ×5)
+  if(skill.base === 'DODGE') return Math.floor((stats.DEX||0)/2);       // half DEX
+  if(skill.base === 'LISTEN') return selectedEra === 'modern' ? 25 : 20; // era-specific
+  if(skill.base === 'EDU5')  return stats.EDU||0;                        // full EDU value
   return 0;
 }
 
