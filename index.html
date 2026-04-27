@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Call of Cthulhu — Investigator Documentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@400;500;600&family=Source+Sans+3:wght@400;600&display=swap');
+
+  :root {
+    --bg:      #1a1714;
+    --bg2:     #221e1a;
+    --bg3:     #2d2820;
+    --border:  #3d3428;
+    --border2: #4d4438;
+    --teal:        #2a7878;
+    --teal-dim:    #1a4a4a;
+    --teal-bright: #50a8a8;
+    --amber:   #c8a840;
+    --red:     #b03030;
+    --text:    #d8cfc0;
+    --text2:   #8a8070;
+    --text3:   #5a5048;
+    --mono:  'Share Tech Mono', monospace;
+    --head:  'Oswald', sans-serif;
+    --body:  'Source Sans 3', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-variant-numeric: slashed-zero; }
+  body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 14px; min-height: 100vh; line-height: 1.5; }
+  body::before { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 1000; }
+
+  .app-wrapper { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* ── Header ── */
+  .coc-header { text-align: center; padding: 2rem 0 1.5rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border); position: relative; }
+  .coc-header::after { content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%); width: 120px; height: 2px; background: var(--teal); }
+  .coc-logo { font-family: var(--head); font-size: 42px; font-weight: 600; letter-spacing: 8px; color: var(--teal-bright); text-shadow: 0 0 40px rgba(80,168,168,0.3); margin-bottom: 4px; }
+  .coc-subtitle { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 4px; }
+  .coc-class { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 3px; margin-top: 6px; }
+  .header-btns { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; align-items: center; }
+  .new-char-btn { background: transparent; border: 1px solid var(--text3); color: var(--text3); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 5px 12px; cursor: pointer; text-transform: uppercase; }
+  .new-char-btn:hover { border-color: var(--teal-bright); color: var(--teal-bright); }
+  .load-btn { background: transparent; border: 1px solid var(--amber); color: var(--amber); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 5px 12px; cursor: pointer; text-transform: uppercase; }
+  .load-btn:hover { background: rgba(200,168,64,0.1); }
+
+  /* ── Step Nav ── */
+  .step-nav { display: flex; gap: 2px; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 2px; flex-wrap: wrap; }
+  .step-btn { background: none; border: none; color: var(--text3); font-family: var(--mono); font-size: 10px; letter-spacing: 1px; padding: 8px 12px; cursor: pointer; text-transform: uppercase; position: relative; transition: color .15s; white-space: nowrap; }
+  .step-btn:hover { color: var(--text); }
+  .step-btn.active { color: var(--teal-bright); }
+  .step-btn.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--teal); }
+  .step-num { display: block; font-size: 8px; color: var(--text3); margin-bottom: 2px; }
+  .step-btn.active .step-num { color: var(--teal); }
+
+  /* ── Panels ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .section-title { font-family: var(--head); font-size: 22px; letter-spacing: 3px; color: var(--teal-bright); margin-bottom: 6px; }
+  .section-sub { font-family: var(--mono); font-size: 11px; color: var(--text3); letter-spacing: 1px; margin-bottom: 1.5rem; }
+
+  /* ── Nav Buttons ── */
+  .nav-btns { display: flex; gap: 8px; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .nav-btn { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; padding: 10px 24px; cursor: pointer; text-transform: uppercase; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); }
+  .nav-btn.primary { border-color: var(--teal); color: var(--teal-bright); background: var(--teal-dim); }
+  .nav-btn:hover { border-color: var(--text2); color: var(--text); }
+  .nav-btn.primary:hover { background: rgba(42,120,120,0.3); }
+
+  /* ── Era Cards ── */
+  .era-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 1rem; }
+  .era-card { border: 2px solid var(--border); background: var(--bg2); padding: 20px; cursor: pointer; transition: all .15s; text-align: center; }
+  .era-card:hover { border-color: var(--teal); background: var(--bg3); }
+  .era-card.selected { border-color: var(--teal-bright); background: var(--teal-dim); }
+  .era-card-name { font-family: var(--head); font-size: 20px; letter-spacing: 3px; color: var(--teal-bright); margin-bottom: 4px; }
+  .era-card-year { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 2px; margin-bottom: 10px; }
+  .era-card-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  /* ── Form Fields ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; }
+  .form-input { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); font-family: var(--mono); font-size: 13px; padding: 8px 10px; width: 100%; }
+  .form-input:focus { outline: none; border-color: var(--teal); }
+  select.form-input option { background: var(--bg3); }
+
+  /* ── Stats Step ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+  .stat-cell { background: var(--bg2); border: 1px solid var(--border); padding: 12px 10px; text-align: center; }
+  .stat-label { font-family: var(--mono); font-size: 9px; color: var(--text3); letter-spacing: 2px; margin-bottom: 4px; }
+  .stat-roll-hint { font-family: var(--mono); font-size: 9px; color: var(--teal); margin-bottom: 6px; }
+  .stat-input { width: 70px; background: var(--bg3); border: 1px solid var(--border2); color: var(--teal-bright); font-family: var(--head); font-size: 24px; text-align: center; padding: 4px; }
+  .stat-input:focus { outline: none; border-color: var(--teal-bright); }
+  .stat-fractions { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 4px; }
+  .array-btns { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .array-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; padding: 7px 16px; cursor: pointer; text-transform: uppercase; background: var(--bg3); border: 1px solid var(--border2); color: var(--text2); }
+  .array-btn:hover { border-color: var(--teal); color: var(--teal-bright); }
+  .derived-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .derived-cell { background: var(--bg3); border: 1px solid var(--border); padding: 8px; text-align: center; }
+  .derived-label { font-family: var(--mono); font-size: 8px; color: var(--text3); letter-spacing: 1px; }
+  .derived-val { font-family: var(--head); font-size: 20px; color: var(--amber); margin: 2px 0; }
+  .derived-note { font-family: var(--mono); font-size: 8px; color: var(--text3); }
+  .luck-cell { background: var(--bg3); border: 1px solid var(--amber); padding: 8px; text-align: center; }
+  .luck-input { width: 60px; background: transparent; border: 1px solid var(--border2); color: var(--amber); font-family: var(--head); font-size: 20px; text-align: center; padding: 2px; }
+  .luck-input:focus { outline: none; border-color: var(--amber); }
+
+  /* ── Occupation Cards ── */
+  .occ-filter { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .occ-filter-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; padding: 5px 14px; cursor: pointer; text-transform: uppercase; background: transparent; border: 1px solid var(--border2); color: var(--text3); }
+  .occ-filter-btn.active { border-color: var(--teal); color: var(--teal-bright); }
+  .occ-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 440px; overflow-y: auto; }
+  .occ-card { border: 1px solid var(--border); background: var(--bg2); padding: 14px; cursor: pointer; transition: all .15s; }
+  .occ-card:hover { border-color: var(--teal); }
+  .occ-card.selected { border-color: var(--teal-bright); background: var(--teal-dim); }
+  .occ-name { font-family: var(--head); font-size: 15px; letter-spacing: 1px; color: var(--text); margin-bottom: 2px; }
+  .occ-pts { font-family: var(--mono); font-size: 10px; color: var(--amber); margin-bottom: 4px; }
+  .occ-cr { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 6px; }
+  .occ-skills-preview { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  .occ-detail { margin-top: 1rem; background: var(--bg3); border: 1px solid var(--teal-dim); padding: 14px; display: none; }
+  .occ-detail.visible { display: block; }
+
+  /* ── Skills Step ── */
+  .skill-pools { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1rem; }
+  .pool-box { background: var(--bg3); border: 1px solid var(--border); padding: 12px; text-align: center; }
+  .pool-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 1px; margin-bottom: 4px; }
+  .pool-val { font-family: var(--head); font-size: 28px; color: var(--teal-bright); }
+  .pool-val.occ-pool { color: var(--amber); }
+  .pool-val.exhausted { color: var(--red); }
+  .skills-header { display: grid; grid-template-columns: 1fr 55px 55px 55px 80px; gap: 4px; padding: 4px 8px; background: var(--bg3); font-family: var(--mono); font-size: 9px; color: var(--text3); letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+  .skill-row { display: grid; grid-template-columns: 1fr 55px 55px 55px 80px; gap: 4px; padding: 3px 8px; border-bottom: 1px solid var(--border); align-items: center; font-size: 12px; }
+  .skill-row:hover { background: var(--bg3); }
+  .skill-row.occ-skill { background: rgba(200,168,64,0.05); }
+  .skill-row.occ-skill .skill-name { color: var(--amber); }
+  .skill-name { color: var(--text2); font-size: 12px; }
+  .skill-base-val { font-family: var(--mono); font-size: 11px; color: var(--text3); text-align: center; }
+  .skill-half { font-family: var(--mono); font-size: 11px; color: var(--text3); text-align: center; }
+  .skill-fifth { font-family: var(--mono); font-size: 11px; color: var(--text3); text-align: center; }
+  .skill-add-input { width: 70px; background: var(--bg2); border: 1px solid var(--border2); color: var(--teal-bright); font-family: var(--mono); font-size: 12px; text-align: center; padding: 2px 4px; }
+  .skill-add-input:focus { outline: none; border-color: var(--teal-bright); }
+  .skill-add-input.pi-input { color: var(--text); border-color: var(--border); }
+  .credit-rating-row { background: rgba(80,168,168,0.08); border-bottom: 1px solid var(--border); padding: 6px 8px; display: flex; align-items: center; gap: 12px; font-size: 12px; }
+  .mythos-row { background: rgba(176,48,48,0.08); border-bottom: 1px solid var(--border); padding: 3px 8px; display: grid; grid-template-columns: 1fr 55px 55px 55px 80px; gap: 4px; align-items: center; font-size: 12px; color: var(--red); }
+
+  /* ── Sheet ── */
+  .sheet-wrapper { background: white; font-family: var(--body); color: #222; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+  .sheet-top-bar { background: #2a5a5a; color: #a0d8d8; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 2px; }
+  .sheet-section { border-bottom: 1px solid #ccc; }
+  .sheet-section-hdr { background: #eaeae5; color: #444; padding: 5px 14px; font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid #ccc; }
+  .sheet-row { display: flex; border-bottom: 1px solid #e0e0e0; }
+  .sheet-row:last-child { border-bottom: none; }
+  .sheet-cell { flex: 1; padding: 6px 12px; border-right: 1px solid #e0e0e0; }
+  .sheet-cell:last-child { border-right: none; }
+  .sheet-cell-label { font-family: 'Share Tech Mono', monospace; font-size: 8px; color: #888; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px; }
+  .sheet-cell-val { font-size: 13px; color: #222; font-weight: 600; min-height: 18px; }
+  .sheet-personal-layout { display: flex; }
+  .sheet-personal-fields { flex: 1; }
+  .sheet-portrait-box { width: 120px; border-left: 1px solid #ccc; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; gap: 6px; flex-shrink: 0; }
+  .sheet-portrait-upload { font-size: 9px; font-family: 'Share Tech Mono',monospace; color: #999; cursor: pointer; border: 1px dashed #ccc; padding: 3px 6px; }
+  .sheet-portrait-img { max-width: 100px; max-height: 110px; object-fit: cover; }
+  .sheet-portrait-empty { width: 100px; height: 110px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #bbb; font-family: 'Share Tech Mono',monospace; font-size: 9px; letter-spacing: 1px; }
+
+  /* Sheet Characteristics */
+  .sheet-char-grid { display: grid; grid-template-columns: repeat(8, 1fr); }
+  .sheet-char-cell { text-align: center; padding: 8px 4px; border-right: 1px solid #ccc; }
+  .sheet-char-cell:last-child { border-right: none; }
+  .sheet-char-k { font-family: 'Share Tech Mono',monospace; font-size: 8px; color: #888; letter-spacing: 1px; }
+  .sheet-char-v { font-family: 'Oswald',sans-serif; font-size: 20px; color: #2a5a5a; margin: 2px 0; }
+  .sheet-char-half { font-family: 'Share Tech Mono',monospace; font-size: 9px; color: #888; }
+  .sheet-char-fifth { font-family: 'Share Tech Mono',monospace; font-size: 9px; color: #aaa; }
+
+  /* Sheet Derived */
+  .sheet-derived-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; padding: 8px 14px; }
+  .sheet-derived-cell { background: #f0ede8; border: 1px solid #ccc; border-radius: 2px; padding: 8px; text-align: center; }
+  .sheet-derived-k { font-family: 'Share Tech Mono',monospace; font-size: 8px; color: #666; letter-spacing: 1px; }
+  .sheet-derived-v { font-family: 'Oswald',sans-serif; font-size: 20px; color: #7a5800; margin: 2px 0; }
+  .sheet-current-v { font-size: 10px; color: #888; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .sheet-current-box { display: inline-block; min-width: 30px; border-bottom: 1px solid #aaa; text-align: center; font-size: 11px; color: #333; }
+  .sheet-luck-cell { background: #f5f0e8; border: 2px solid #c8a840; }
+
+  /* Sheet Skills */
+  .sheet-skills-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+  .sheet-skill-item { display: grid; grid-template-columns: 12px 1fr auto auto auto; gap: 3px; align-items: center; padding: 3px 6px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; font-size: 11px; }
+  .sheet-skill-item:nth-child(3n) { border-right: none; }
+  .sheet-skill-item:nth-last-child(-n+3) { border-bottom: none; }
+  .sheet-skill-check { width: 10px; height: 10px; border: 1px solid #888; border-radius: 1px; flex-shrink: 0; }
+  .sheet-skill-name { color: #333; font-size: 10px; }
+  .sheet-skill-name.occ-s { color: #2a5a5a; }
+  .sheet-skill-val { font-family: 'Share Tech Mono',monospace; font-size: 10px; color: #333; font-weight: bold; }
+  .sheet-skill-half { font-family: 'Share Tech Mono',monospace; font-size: 9px; color: #888; }
+  .sheet-skill-fifth { font-family: 'Share Tech Mono',monospace; font-size: 9px; color: #aaa; }
+
+  /* Sheet Weapons */
+  .sheet-weapon-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .sheet-weapon-table th { background: #eaeae5; font-family: 'Share Tech Mono',monospace; font-size: 9px; letter-spacing: 1px; color: #555; padding: 5px 8px; text-align: left; border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; }
+  .sheet-weapon-table td { padding: 5px 8px; border-bottom: 1px solid #eee; border-right: 1px solid #eee; color: #333; }
+  .sheet-weapon-table td:last-child, .sheet-weapon-table th:last-child { border-right: none; }
+  .sheet-weapon-empty td { background: #f9f9f9; color: #ddd; }
+
+  /* Sheet Footer */
+  .sheet-footer { background: #eaeae5; padding: 6px 14px; font-family: 'Share Tech Mono',monospace; font-size: 9px; color: #777; letter-spacing: 1px; display: flex; justify-content: space-between; }
+
+  /* Print/Save buttons */
+  .print-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 8px 20px; cursor: pointer; text-transform: uppercase; background: var(--teal-dim); border: 1px solid var(--teal); color: var(--teal-bright); margin-right: 8px; }
+  .save-btn  { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 8px 20px; cursor: pointer; text-transform: uppercase; background: var(--bg3); border: 1px solid var(--amber); color: var(--amber); margin-right: 8px; }
+  .share-btn { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 8px 20px; cursor: pointer; text-transform: uppercase; background: var(--bg3); border: 1px solid var(--border2); color: var(--text2); }
+  .share-btn:hover { border-color: var(--text); color: var(--text); }
+  .export-btn { font-family: var(--mono); font-size: 10px; padding: 8px 16px; cursor: pointer; text-transform: uppercase; background: transparent; border: 1px solid var(--border2); color: var(--text3); }
+  .export-btn:hover { color: var(--text); border-color: var(--text2); }
+
+  /* ── Load Modal ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: var(--bg2); border: 1px solid var(--border2); width: 500px; max-height: 80vh; display: flex; flex-direction: column; }
+  .modal-hdr { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: 2px; color: var(--text2); }
+  .modal-close { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 18px; }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { overflow-y: auto; padding: 8px; }
+  .modal-empty { padding: 24px; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--text3); letter-spacing: 2px; }
+  .modal-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border: 1px solid var(--border); margin-bottom: 6px; background: var(--bg3); }
+  .modal-item-name { font-family: var(--head); font-size: 16px; color: var(--text); }
+  .modal-item-meta { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 2px; }
+  .modal-item-actions { display: flex; gap: 6px; }
+  .modal-load-btn { font-family: var(--mono); font-size: 10px; padding: 5px 12px; cursor: pointer; border: 1px solid var(--teal); color: var(--teal-bright); background: var(--teal-dim); }
+  .modal-del-btn  { font-family: var(--mono); font-size: 10px; padding: 5px 12px; cursor: pointer; border: 1px solid var(--border2); color: var(--text3); background: transparent; }
+  .modal-del-btn:hover { border-color: var(--red); color: var(--red); }
+  .modal-import-row { padding: 10px 12px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; }
+
+  /* ── Import Banner ── */
+  .import-banner { background: var(--teal-dim); border: 1px solid var(--teal); padding: 12px 16px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--teal-bright); letter-spacing: 1px; }
+  .import-banner button { font-family: var(--mono); font-size: 10px; padding: 5px 12px; cursor: pointer; border: 1px solid var(--teal-bright); color: var(--teal-bright); background: transparent; }
+
+  /* ── Print ── */
+  @page { margin: 0.5in; size: letter; }
+  @media print {
+    body { background: white !important; color: #111 !important; }
+    body::before { display: none !important; }
+    .coc-header, .step-nav, .nav-btns, .print-btn, .save-btn, .share-btn, .export-btn, .import-banner, .array-btns, .modal-overlay { display: none !important; }
+    .panel { display: none !important; }
+    #panel6 { display: block !important; }
+    .app-wrapper { padding: 0 !important; max-width: 100% !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .sheet-wrapper { border: none !important; background: white !important; }
+    .sheet-top-bar { background: #2a5a5a !important; }
+    .sheet-section { border-bottom: 1px solid #ccc !important; }
+    .sheet-section-hdr { background: #eaeae5 !important; color: #444 !important; border-bottom: 1px solid #ccc !important; }
+    .sheet-row { border-bottom: 1px solid #ccc !important; }
+    .sheet-row:last-child { border-bottom: none !important; }
+    .sheet-cell { border-right: 1px solid #ccc !important; }
+    .sheet-cell:last-child { border-right: none !important; }
+    .sheet-char-grid { border-bottom: 1px solid #ccc !important; }
+    .sheet-char-cell { border-right: 1px solid #ccc !important; padding: 5px 4px !important; }
+    .sheet-char-v { font-size: 16px !important; color: #2a5a5a !important; }
+    .sheet-derived-grid { gap: 4px !important; padding: 5px 14px !important; }
+    .sheet-derived-cell { padding: 5px !important; background: #f0ede8 !important; border: 1px solid #ccc !important; }
+    .sheet-derived-k { font-size: 8px !important; }
+    .sheet-derived-v { font-size: 15px !important; }
+    .sheet-luck-cell { border: 2px solid #c8a840 !important; background: #f5f0e8 !important; }
+    .sheet-skills-section { page-break-before: always !important; }
+    .sheet-skill-item { border-right: 1px solid #ccc !important; border-bottom: 1px solid #ccc !important; padding: 2px 5px !important; font-size: 9px !important; }
+    .sheet-skill-item:nth-child(3n) { border-right: none !important; }
+    .sheet-skill-item:last-child { border-right: none !important; border-bottom: none !important; }
+    .sheet-skill-item:nth-last-child(-n+3) { border-bottom: none !important; }
+    .sheet-skill-name { font-size: 9px !important; color: #333 !important; }
+    .sheet-skill-name.occ-s { color: #2a5a5a !important; }
+    .sheet-skill-val { font-size: 9px !important; }
+    .sheet-skill-half { font-size: 8px !important; }
+    .sheet-skill-fifth { font-size: 8px !important; }
+    .sheet-psych-section { page-break-before: always !important; border-top: 1px solid #999 !important; }
+    .sheet-weapon-table th { background: #eaeae5 !important; }
+    .sheet-footer { background: #eaeae5 !important; }
+    .sheet-portrait-box { border-left: 1px solid #ccc !important; }
+  }
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+
+  <!-- Import Banner -->
+  <div class="import-banner" id="import-banner" style="display:none">
+    <span>⬇ Shared investigator detected — import this character?</span>
+    <div style="display:flex;gap:8px">
+      <button onclick="importSharedChar()">Import</button>
+      <button onclick="dismissImportBanner()">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="coc-header">
+    <div class="coc-logo">CALL OF CTHULHU</div>
+    <div class="coc-subtitle">INVESTIGATOR DOCUMENTATION SYSTEM</div>
+    <div class="coc-class">7TH EDITION — KEEPER'S REFERENCE</div>
+    <div class="header-btns">
+      <button class="new-char-btn" onclick="newInvestigator()">✦ New Investigator</button>
+      <button class="load-btn" onclick="openLoadModal()">⬆ Load Investigator</button>
+    </div>
+  </div>
+
+  <!-- Step Nav -->
+  <div class="step-nav">
+    <button class="step-btn active" id="step-btn-0" onclick="goStep(0)"><span class="step-num">01</span>Era</button>
+    <button class="step-btn" id="step-btn-1" onclick="goStep(1)"><span class="step-num">02</span>Personal</button>
+    <button class="step-btn" id="step-btn-2" onclick="goStep(2)"><span class="step-num">03</span>Characteristics</button>
+    <button class="step-btn" id="step-btn-3" onclick="goStep(3)"><span class="step-num">04</span>Occupation</button>
+    <button class="step-btn" id="step-btn-4" onclick="goStep(4)"><span class="step-num">05</span>Skills</button>
+    <button class="step-btn" id="step-btn-5" onclick="goStep(5)"><span class="step-num">06</span>Equipment</button>
+    <button class="step-btn" id="step-btn-6" onclick="goStep(6)"><span class="step-num">07</span>Sheet</button>
+  </div>
+
+  <!-- PANEL 0: Era -->
+  <div class="panel active" id="panel0">
+    <div class="section-title">Select Era</div>
+    <div class="section-sub">Choose the time period for your investigation.</div>
+    <div class="era-grid">
+      <div class="era-card" id="era-modern" onclick="selectEra('modern')">
+        <div class="era-card-name">MODERN</div>
+        <div class="era-card-year">PRESENT DAY</div>
+        <div class="era-card-desc">Contemporary investigations. Access to modern technology, the internet, and current institutions. The world is familiar, but the horrors are no less ancient.</div>
+      </div>
+      <div class="era-card" id="era-1920s" onclick="selectEra('1920s')">
+        <div class="era-card-name">1920s</div>
+        <div class="era-card-year">JAZZ AGE • 1920–1930</div>
+        <div class="era-card-desc">The classic era. The Great War is over, jazz fills the clubs, and Prohibition rules America. Strange cults flourish in the shadows of a changing world.</div>
+      </div>
+      <div class="era-card" id="era-victorian" onclick="selectEra('victorian')">
+        <div class="era-card-name">VICTORIAN</div>
+        <div class="era-card-year">1890s ENGLAND</div>
+        <div class="era-card-desc">The height of empire. Gaslight and fog, hansom cabs and telegram. Science and superstition clash as explorers bring back more than specimens from distant lands.</div>
+      </div>
+    </div>
+    <div class="nav-btns">
+      <button class="nav-btn primary" onclick="goStep(1)">NEXT: PERSONAL INFO →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 1: Personal Info -->
+  <div class="panel" id="panel1">
+    <div class="section-title">Investigator Details</div>
+    <div class="section-sub">Record the personal history of your investigator.</div>
+    <div class="form-grid" style="margin-bottom:12px">
+      <div class="form-group">
+        <label class="form-label">Investigator Name</label>
+        <input class="form-input" id="p-name" type="text" placeholder="Full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Occupation</label>
+        <input class="form-input" id="p-occ-title" type="text" placeholder="e.g. Private Investigator" readonly>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Residence</label>
+        <input class="form-input" id="p-residence" type="text" placeholder="City, Country">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Birthplace</label>
+        <input class="form-input" id="p-birthplace" type="text" placeholder="City, Country">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Age / Date of Birth</label>
+        <input class="form-input" id="p-age" type="text" placeholder="e.g. 32 / 1892">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sex</label>
+        <select class="form-input" id="p-sex">
+          <option value="F">Female</option>
+          <option value="M">Male</option>
+          <option value="—">—</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-grid-3" style="margin-bottom:12px">
+      <div class="form-group">
+        <label class="form-label">Height</label>
+        <input class="form-input" id="p-height" type="text" placeholder='e.g. 5&apos;10"'>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Weight</label>
+        <input class="form-input" id="p-weight" type="text" placeholder="e.g. 160 lbs">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Hair</label>
+        <input class="form-input" id="p-hair" type="text" placeholder="e.g. Brown">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Eyes</label>
+        <input class="form-input" id="p-eyes" type="text" placeholder="e.g. Grey">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Skin</label>
+        <input class="form-input" id="p-skin" type="text" placeholder="e.g. Fair">
+      </div>
+    </div>
+    <div class="form-group full" style="margin-bottom:12px">
+      <label class="form-label">Description / Distinguishing Features</label>
+      <textarea class="form-input" id="p-desc" rows="2" placeholder="Physical description or notable features…"></textarea>
+    </div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goStep(0)">← ERA</button>
+      <button class="nav-btn primary" onclick="goStep(2)">NEXT: CHARACTERISTICS →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 2: Characteristics -->
+  <div class="panel" id="panel2">
+    <div class="section-title">Characteristics</div>
+    <div class="section-sub">Roll or assign your investigator's eight primary characteristics.</div>
+    <div class="array-btns">
+      <button class="array-btn" onclick="rollAll()">🎲 Roll All</button>
+      <button class="array-btn" onclick="quickAssign()">⚡ Quick Assign</button>
+      <button class="array-btn" onclick="clearStats()">✕ Clear</button>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-left:8px;align-self:center">STR/CON/DEX/APP/POW = 3D6×5 &nbsp;|&nbsp; SIZ/INT/EDU = (2D6+6)×5</span>
+    </div>
+    <div class="stats-grid" id="stats-grid"></div>
+    <!-- Luck -->
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:1rem;padding:10px 12px;background:var(--bg3);border:1px solid var(--border)">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:1px">LUCK (3D6×5)</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:2px">Rolled separately. Spent during play, never used for skill checks.</div>
+      </div>
+      <input class="luck-input" id="stat-LUCK" type="number" min="15" max="90" placeholder="—" oninput="updateDerived()">
+      <button class="array-btn" onclick="rollLuck()">Roll Luck</button>
+    </div>
+    <div class="derived-grid" id="derived-grid"></div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goStep(1)">← PERSONAL</button>
+      <button class="nav-btn primary" onclick="goStep(3)">NEXT: OCCUPATION →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 3: Occupation -->
+  <div class="panel" id="panel3">
+    <div class="section-title">Occupation</div>
+    <div class="section-sub">Select your investigator's occupation. This determines your skill point pool and Credit Rating range.</div>
+    <div class="occ-filter" id="occ-filter"></div>
+    <div id="occ-detail-box" class="occ-detail"></div>
+    <div class="occ-grid" id="occ-grid"></div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goStep(2)">← CHARACTERISTICS</button>
+      <button class="nav-btn primary" onclick="goStep(4)">NEXT: SKILLS →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 4: Skills -->
+  <div class="panel" id="panel4">
+    <div class="section-title">Skills</div>
+    <div class="section-sub" id="skills-sub">Distribute occupation and personal interest points. Occupation skills are highlighted.</div>
+    <div class="skill-pools" id="skill-pools"></div>
+    <div class="skills-header">
+      <span>Skill</span><span style="text-align:center">Base%</span><span style="text-align:center">Hard</span><span style="text-align:center">Extreme</span><span style="text-align:center">Add Points</span>
+    </div>
+    <div id="skills-list"></div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goStep(3)">← OCCUPATION</button>
+      <button class="nav-btn primary" onclick="goStep(5)">NEXT: EQUIPMENT →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 5: Equipment -->
+  <div class="panel" id="panel5">
+    <div class="section-title">Weapons &amp; Equipment</div>
+    <div class="section-sub">Record weapons carried and personal possessions.</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:1rem">Equipment detail coming soon — proceed to sheet to view your investigator.</div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goStep(4)">← SKILLS</button>
+      <button class="nav-btn primary" onclick="goStep(6); renderSheet()">VIEW SHEET →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 6: Sheet -->
+  <div class="panel" id="panel6">
+    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+      <button class="print-btn" onclick="renderSheet();window.print()">⎙ Print / PDF</button>
+      <button class="save-btn" onclick="saveInvestigator(this)">⬇ Save</button>
+      <button class="share-btn" onclick="shareInvestigator()">⬗ Share URL</button>
+      <button class="export-btn" onclick="exportToJSON()">↓ JSON</button>
+      <label class="export-btn" style="cursor:pointer">↑ Import JSON<input type="file" accept=".json" style="display:none" onchange="importFromJSON(this)"></label>
+    </div>
+    <div id="sheet-output"></div>
+  </div>
+
+</div><!-- end app-wrapper -->
+
+<!-- Load Modal -->
+<div class="modal-overlay" id="load-modal" onclick="if(event.target===this)closeLoadModal()">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span>// LOAD INVESTIGATOR</span>
+      <button class="modal-close" onclick="closeLoadModal()">✕</button>
+    </div>
+    <div class="modal-body" id="load-modal-list"></div>
+    <div class="modal-import-row">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Import JSON:</span>
+      <label class="export-btn" style="cursor:pointer">Choose File<input type="file" accept=".json" style="display:none" onchange="importFromJSON(this)"></label>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════
+
+const ERAS = [
+  { id:'modern',   name:'Modern',   year:'Present Day',    desc:'Contemporary investigations.' },
+  { id:'1920s',    name:'1920s',    year:'Jazz Age 1920–30', desc:'The classic era.' },
+  { id:'victorian',name:'Victorian',year:'1890s England',   desc:'Gaslight and empire.' }
+];
+
+const STAT_KEYS = ['STR','CON','SIZ','DEX','APP','INT','POW','EDU'];
+const STAT_ROLL_TYPE = { STR:'3D6', CON:'3D6', SIZ:'2D6+6', DEX:'3D6', APP:'3D6', INT:'2D6+6', POW:'3D6', EDU:'2D6+6' };
+
+function rollStat(key) {
+  const t = STAT_ROLL_TYPE[key];
+  if(t === '3D6')   return (Math.ceil(Math.random()*6)+Math.ceil(Math.random()*6)+Math.ceil(Math.random()*6)) * 5;
+  if(t === '2D6+6') return (Math.ceil(Math.random()*6)+Math.ceil(Math.random()*6)+6) * 5;
+}
+
+// Skills — base value is number or 'DEX2' or 'EDU5' etc.
+const ALL_SKILLS = [
+  {name:'Accounting',       base:5,  eras:['all']},
+  {name:'Animal Handling',  base:5,  eras:['all']},
+  {name:'Anthropology',     base:1,  eras:['all']},
+  {name:'Appraise',         base:5,  eras:['all']},
+  {name:'Archaeology',      base:1,  eras:['all']},
+  {name:'Art/Craft',        base:5,  eras:['all'], specialty:true},
+  {name:'Charm',            base:15, eras:['all']},
+  {name:'Climb',            base:20, eras:['all']},
+  {name:'Computer Use',     base:5,  eras:['modern']},
+  {name:'Credit Rating',    base:0,  eras:['all'], special:'credit'},
+  {name:'Cthulhu Mythos',   base:0,  eras:['all'], special:'mythos'},
+  {name:'Disguise',         base:5,  eras:['all']},
+  {name:'Dodge',            base:'DEX2', eras:['all']},
+  {name:'Drive Auto',       base:20, eras:['modern','1920s']},
+  {name:'Electrical Repair',base:10, eras:['all']},
+  {name:'Electronics',      base:1,  eras:['modern']},
+  {name:'Fast Talk',        base:5,  eras:['all']},
+  {name:'Fighting (Brawl)', base:25, eras:['all']},
+  {name:'Firearms (Handgun)',base:20,eras:['all']},
+  {name:'Firearms (Rifle/Shotgun)',base:25,eras:['all']},
+  {name:'First Aid',        base:30, eras:['all']},
+  {name:'History',          base:5,  eras:['all']},
+  {name:'Hypnosis',         base:1,  eras:['all']},
+  {name:'Intimidate',       base:15, eras:['all']},
+  {name:'Jump',             base:20, eras:['all']},
+  {name:'Language (Other)', base:1,  eras:['all'], specialty:true},
+  {name:'Language (Own)',   base:'EDU5', eras:['all']},
+  {name:'Law',              base:5,  eras:['all']},
+  {name:'Library Use',      base:20, eras:['all']},
+  {name:'Listen',           base:20, eras:['all']},
+  {name:'Locksmith',        base:1,  eras:['all']},
+  {name:'Mechanical Repair',base:10, eras:['all']},
+  {name:'Medicine',         base:1,  eras:['all']},
+  {name:'Natural World',    base:10, eras:['all']},
+  {name:'Navigate',         base:10, eras:['all']},
+  {name:'Occult',           base:5,  eras:['all']},
+  {name:'Operate Heavy Machinery',base:1,eras:['all']},
+  {name:'Persuade',         base:10, eras:['all']},
+  {name:'Photography',      base:5,  eras:['modern','1920s']},
+  {name:'Pilot',            base:1,  eras:['all'], specialty:true},
+  {name:'Psychology',       base:10, eras:['all']},
+  {name:'Psychoanalysis',   base:1,  eras:['all']},
+  {name:'Ride',             base:5,  eras:['all']},
+  {name:'Science',          base:1,  eras:['all'], specialty:true},
+  {name:'Sleight of Hand',  base:10, eras:['all']},
+  {name:'Spot Hidden',      base:25, eras:['all']},
+  {name:'Stealth',          base:20, eras:['all']},
+  {name:'Survival',         base:10, eras:['all'], specialty:true},
+  {name:'Swim',             base:20, eras:['all']},
+  {name:'Throw',            base:20, eras:['all']},
+  {name:'Track',            base:10, eras:['all']}
+];
+
+const OCCUPATIONS = [
+  {name:'Antiquarian',     eras:['all'], pts:'EDU×4', cr:[30,70], skills:['Appraise','Art/Craft','History','Library Use','Navigate','Occult','Spot Hidden'],            chooseN:1, chooseFrom:['Accounting','Natural World','Language (Other)','Law'],              desc:'Collector of rare objects and esoteric knowledge.'},
+  {name:'Artist',          eras:['all'], pts:'EDU×2+DEX×2', cr:[9,50], skills:['Art/Craft','History','Natural World','Photography','Psychology','Spot Hidden'],         chooseN:2, chooseFrom:['Language (Other)','Climb','Jump','Stealth','Persuade'],            desc:'Painter, sculptor, writer or other creative.'},
+  {name:'Author',          eras:['all'], pts:'EDU×4', cr:[9,30], skills:['Art/Craft','History','Library Use','Occult','Psychology'],                                    chooseN:3, chooseFrom:['Language (Other)','Anthropology','Charm','Fast Talk','Persuade'],  desc:'Writer of fiction, journalism, or academia.'},
+  {name:'Clergy',          eras:['all'], pts:'EDU×4', cr:[9,60], skills:['Accounting','History','Library Use','Listen','Persuade','Psychology'],                        chooseN:2, chooseFrom:['Language (Other)','Art/Craft','Medicine','Natural World','Occult'],  desc:'Minister, priest, rabbi or other religious leader.'},
+  {name:'Criminal',        eras:['all'], pts:'EDU×2+DEX×2', cr:[5,65], skills:['Appraise','Disguise','Fast Talk','Fighting (Brawl)','Firearms (Handgun)','Locksmith','Sleight of Hand','Stealth'], chooseN:0, chooseFrom:[], desc:'Career criminal — burglar, grifter, or gangster.'},
+  {name:'Doctor of Medicine',eras:['all'], pts:'EDU×4', cr:[30,80], skills:['First Aid','Language (Other)','Library Use','Medicine','Psychology','Science'],              chooseN:2, chooseFrom:['Accounting','Language (Other)','Persuade','Psychoanalysis'],       desc:'Trained physician and surgeon.'},
+  {name:'Engineer',        eras:['modern','1920s'], pts:'EDU×4', cr:[30,70], skills:['Accounting','Electrical Repair','Library Use','Mechanical Repair','Operate Heavy Machinery','Science'], chooseN:2, chooseFrom:['Art/Craft','Electronics','Law','Navigate','Pilot'], desc:'Civil, mechanical or electrical engineer.'},
+  {name:'Entertainer',     eras:['all'], pts:'EDU×2+APP×2', cr:[9,70], skills:['Art/Craft','Charm','Disguise','Fast Talk','Listen','Psychology','Sleight of Hand'],     chooseN:1, chooseFrom:['Language (Other)','Accounting','Jump','Stealth'],                  desc:'Actor, musician, comedian or performer.'},
+  {name:'Farmer/Labourer', eras:['all'], pts:'EDU×2+STR×2', cr:[9,30], skills:['Animal Handling','Drive Auto','Fighting (Brawl)','Mechanical Repair','Natural World','Operate Heavy Machinery','Track'], chooseN:1, chooseFrom:['Accounting','First Aid','Ride','Survival'], desc:'Rural worker, farmer or manual labourer.'},
+  {name:'Journalist',      eras:['all'], pts:'EDU×4', cr:[9,30], skills:['Art/Craft','Fast Talk','History','Library Use','Listen','Psychology','Spot Hidden'],           chooseN:1, chooseFrom:['Language (Other)','Accounting','Charm','Persuade'],                 desc:'Reporter for newspaper, radio or magazine.'},
+  {name:'Lawyer',          eras:['all'], pts:'EDU×4', cr:[30,80], skills:['Accounting','Fast Talk','History','Intimidate','Law','Library Use','Persuade','Psychology'],  chooseN:0, chooseFrom:[],                                                                   desc:'Solicitor, barrister, or legal counsel.'},
+  {name:'Librarian',       eras:['all'], pts:'EDU×4', cr:[9,35], skills:['Accounting','Anthropology','History','Language (Other)','Library Use','Natural World','Occult'], chooseN:1, chooseFrom:['Archaeology','Art/Craft','Science'],                               desc:'Keeper of books and records.'},
+  {name:'Military Officer',eras:['all'], pts:'EDU×2+DEX×2', cr:[20,70], skills:['Accounting','Firearms (Handgun)','First Aid','History','Intimidate','Navigate','Persuade','Ride'], chooseN:0, chooseFrom:[],                                                      desc:'Commissioned officer, active or retired.'},
+  {name:'Nurse',           eras:['all'], pts:'EDU×4', cr:[9,35], skills:['First Aid','Listen','Medicine','Psychology','Science','Spot Hidden','Stealth'],                chooseN:1, chooseFrom:['Accounting','Art/Craft','Language (Other)'],                         desc:'Trained medical nurse or field medic.'},
+  {name:'Occultist',       eras:['all'], pts:'EDU×4', cr:[9,65], skills:['Anthropology','History','Language (Other)','Library Use','Natural World','Occult','Persuade'], chooseN:1, chooseFrom:['Art/Craft','Charm','Fast Talk','Psychoanalysis'],                    desc:'Dedicated student of the esoteric and arcane.'},
+  {name:'Parapsychologist',eras:['all'], pts:'EDU×4', cr:[9,30], skills:['Anthropology','Art/Craft','History','Library Use','Occult','Psychology','Spot Hidden'],        chooseN:1, chooseFrom:['Language (Other)','Accounting','Charm','Fast Talk'],               desc:'Investigator of paranormal phenomena.'},
+  {name:'Police Detective', eras:['all'], pts:'EDU×2+STR×2', cr:[20,50], skills:['Art/Craft','Disguise','Fast Talk','Firearms (Handgun)','Intimidate','Law','Listen','Psychology','Spot Hidden'], chooseN:0, chooseFrom:[],                                          desc:'Plain-clothes detective or investigator.'},
+  {name:'Private Investigator',eras:['all'], pts:'EDU×2+DEX×2', cr:[9,30], skills:['Art/Craft','Disguise','Electrical Repair','Fast Talk','Law','Library Use','Psychology','Spot Hidden'], chooseN:0, chooseFrom:[],                                                desc:'Freelance investigator for hire.'},
+  {name:'Professor',       eras:['all'], pts:'EDU×4', cr:[20,70], skills:['Anthropology','History','Language (Other)','Library Use','Occult','Other Language','Psychology'], chooseN:2, chooseFrom:['Accounting','Archaeology','Art/Craft','Natural World','Science'], desc:'University academic and researcher.'},
+  {name:'Scientist',       eras:['all'], pts:'EDU×4', cr:[9,40], skills:['Electrical Repair','First Aid','Library Use','Mechanical Repair','Natural World','Science','Spot Hidden'], chooseN:2, chooseFrom:['Language (Other)','Accounting','Medicine','Navigate'],  desc:'Research scientist in any discipline.'},
+  {name:'Soldier',         eras:['all'], pts:'EDU×2+DEX×2', cr:[9,30], skills:['Climb','Fighting (Brawl)','Firearms (Rifle/Shotgun)','First Aid','Navigate','Stealth','Survival'], chooseN:1, chooseFrom:['Drive Auto','Heavy Weapons','Mechanical Repair','Ride'],   desc:'Enlisted soldier, active or veteran.'},
+  {name:'Spy',             eras:['all'], pts:'EDU×2+APP×2', cr:[20,60], skills:['Charm','Disguise','Fast Talk','Firearms (Handgun)','Language (Other)','Listen','Psychology','Stealth'], chooseN:0, chooseFrom:[],                                                   desc:'Intelligence operative or agent.'},
+  {name:'Student',         eras:['all'], pts:'EDU×4', cr:[5,25], skills:['Language (Other)','Library Use','Listen','Psychology','Spot Hidden'],                         chooseN:3, chooseFrom:['Accounting','Anthropology','Archaeology','Art/Craft','History','Natural World','Occult','Science'], desc:'University student, curious and resourceful.'},
+  {name:'Dilettante',      eras:['all'], pts:'APP×4', cr:[50,99], skills:['Appraise','Art/Craft','Firearms (Handgun)','History','Occult','Persuade','Ride'],             chooseN:1, chooseFrom:['Language (Other)','Anthropology','Charm','Fast Talk','Natural World'],  desc:'Wealthy person of leisure — many resources, few responsibilities.'},
+  {name:'Explorer',        eras:['all'], pts:'EDU×2+STR×2', cr:[30,70], skills:['Climb','Firearms (Rifle/Shotgun)','History','Jump','Navigate','Natural World','Persuade','Survival'], chooseN:0, chooseFrom:[],                                                      desc:'Adventurer and discoverer of lost worlds.'},
+];
+
+// Build/Damage Bonus table (STR+SIZ)
+function getBuildAndDB(str, siz) {
+  const total = (str||0) + (siz||0);
+  if(total <= 64)  return { build:-2, db:'-2' };
+  if(total <= 84)  return { build:-1, db:'-1' };
+  if(total <= 124) return { build:0,  db:'None' };
+  if(total <= 164) return { build:1,  db:'+1D4' };
+  if(total <= 204) return { build:2,  db:'+1D6' };
+  if(total <= 284) return { build:3,  db:'+2D6' };
+  return { build:4, db:'+3D6' };
+}
+
+function getMoveRate(str, dex, siz) {
+  if(!str||!dex||!siz) return '—';
+  if(dex < siz && str < siz) return 7;
+  if(dex > siz && str > siz) return 9;
+  return 8;
+}
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let selectedEra    = '1920s';
+let stats          = { STR:0, CON:0, SIZ:0, DEX:0, APP:0, INT:0, POW:0, EDU:0 };
+let luck           = 0;
+let selectedOcc    = null;
+let occSkillAdded  = {};  // skill name → points from occupation pool
+let piSkillAdded   = {};  // skill name → points from personal interest pool
+let creditRating   = 0;
+let portraitData   = null;
+let isEditMode     = false;
+let pendingSharedChar = null;
+
+// ══════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════
+function goStep(n) {
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===n));
+  document.querySelectorAll('.step-btn').forEach((b,i) => b.classList.toggle('active', i===n));
+  if(n===2) renderStatsGrid();
+  if(n===3) renderOccupations();
+  if(n===4) renderSkills();
+  if(n===6) renderSheet();
+  window.scrollTo(0,0);
+}
+
+// ══════════════════════════════════════════════════════
+// ERA
+// ══════════════════════════════════════════════════════
+function selectEra(era) {
+  selectedEra = era;
+  document.querySelectorAll('.era-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('era-'+era).classList.add('selected');
+}
+
+// ══════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════
+function renderStatsGrid() {
+  const grid = document.getElementById('stats-grid');
+  grid.innerHTML = STAT_KEYS.map(k => {
+    const rt = STAT_ROLL_TYPE[k];
+    const v  = stats[k] || '';
+    const half  = v ? Math.floor(v/2) : '—';
+    const fifth = v ? Math.floor(v/5) : '—';
+    return `<div class="stat-cell">
+      <div class="stat-label">${k}</div>
+      <div class="stat-roll-hint">${rt}×5</div>
+      <input class="stat-input" id="stat-${k}" type="number" min="5" max="100" value="${v||''}" placeholder="—"
+        oninput="stats['${k}']=parseInt(this.value)||0;updateDerived()">
+      <div class="stat-fractions">½ ${half} &nbsp; ⅕ ${fifth}</div>
+    </div>`;
+  }).join('');
+  updateDerived();
+}
+
+function updateDerived() {
+  STAT_KEYS.forEach(k => {
+    const el = document.getElementById('stat-'+k);
+    if(el) {
+      stats[k] = parseInt(el.value)||0;
+      const half  = stats[k] ? Math.floor(stats[k]/2) : '—';
+      const fifth = stats[k] ? Math.floor(stats[k]/5) : '—';
+      const frac = el.closest('.stat-cell')?.querySelector('.stat-fractions');
+      if(frac) frac.textContent = `½ ${half}   ⅕ ${fifth}`;
+    }
+  });
+  luck = parseInt(document.getElementById('stat-LUCK')?.value)||0;
+
+  const hp  = stats.CON && stats.SIZ ? Math.floor((stats.CON+stats.SIZ)/10) : '—';
+  const san = stats.POW ? stats.POW*5 : '—';
+  const mp  = stats.POW ? Math.floor(stats.POW/5) : '—';
+  const { build, db } = getBuildAndDB(stats.STR, stats.SIZ);
+  const move = getMoveRate(stats.STR, stats.DEX, stats.SIZ);
+
+  const grid = document.getElementById('derived-grid');
+  if(!grid) return;
+  grid.innerHTML = [
+    { k:'HIT POINTS',    v: hp,   note:`(CON+SIZ)÷10` },
+    { k:'SANITY',        v: san,  note:`POW×5` },
+    { k:'MAGIC POINTS',  v: mp,   note:`POW÷5` },
+    { k:'BUILD',         v: stats.STR&&stats.SIZ ? build : '—', note:`STR+SIZ table` },
+    { k:'DAMAGE BONUS',  v: stats.STR&&stats.SIZ ? db    : '—', note:`STR+SIZ table` },
+    { k:'MOVE RATE',     v: move, note:`STR/DEX/SIZ` },
+  ].map(d => `<div class="derived-cell">
+    <div class="derived-label">${d.k}</div>
+    <div class="derived-val">${d.v}</div>
+    <div class="derived-note">${d.note}</div>
+  </div>`).join('');
+}
+
+function rollAll() {
+  STAT_KEYS.forEach(k => {
+    stats[k] = rollStat(k);
+    const el = document.getElementById('stat-'+k);
+    if(el) el.value = stats[k];
+  });
+  updateDerived();
+}
+
+function rollLuck() {
+  luck = (Math.ceil(Math.random()*6)+Math.ceil(Math.random()*6)+Math.ceil(Math.random()*6))*5;
+  const el = document.getElementById('stat-LUCK');
+  if(el) { el.value = luck; updateDerived(); }
+}
+
+function quickAssign() {
+  const vals = STAT_KEYS.map(k => rollStat(k)).sort((a,b)=>b-a);
+  // assign highest to INT, EDU, then fill the rest
+  const priority = ['EDU','INT','POW','CON','SIZ','DEX','APP','STR'];
+  priority.forEach((k,i) => {
+    stats[k] = vals[i] || 0;
+    const el = document.getElementById('stat-'+k);
+    if(el) el.value = stats[k];
+  });
+  updateDerived();
+}
+
+function clearStats() {
+  STAT_KEYS.forEach(k => { stats[k]=0; const el=document.getElementById('stat-'+k); if(el) el.value=''; });
+  const luckEl = document.getElementById('stat-LUCK'); if(luckEl) luckEl.value='';
+  updateDerived();
+}
+
+// ══════════════════════════════════════════════════════
+// SKILLS — base value calculation
+// ══════════════════════════════════════════════════════
+function getSkillBase(skill) {
+  if(typeof skill.base === 'number') return skill.base;
+  if(skill.base === 'DEX2') return Math.floor((stats.DEX||0)/5)*2; // DEX×2 but stats are already ×5
+  if(skill.base === 'EDU5') return stats.EDU||0; // EDU×5 = stat value (already ×5)
+  return 0;
+}
+
+function getSkillTotal(skillName) {
+  const s = ALL_SKILLS.find(x=>x.name===skillName);
+  if(!s) return 0;
+  const base = getSkillBase(s);
+  const occ  = occSkillAdded[skillName] || 0;
+  const pi   = piSkillAdded[skillName]  || 0;
+  return Math.min(99, base + occ + pi);
+}
+
+function getEraSkills() {
+  return ALL_SKILLS.filter(s => s.eras.includes('all') || s.eras.includes(selectedEra));
+}
+
+// ══════════════════════════════════════════════════════
+// OCCUPATION POINTS
+// ══════════════════════════════════════════════════════
+function calcOccPts() {
+  if(!selectedOcc) return 0;
+  const formula = selectedOcc.pts;
+  const S = stats;
+  const max = (k,n) => Math.max(S[k]||0, n);
+  try {
+    // Parse formulas: EDU×4, EDU×2+DEX×2, APP×4, EDU×2+STR×2, etc.
+    let pts = 0;
+    formula.split('+').forEach(part => {
+      const m = part.trim().match(/([A-Z]+)×(\d+)/);
+      if(m) pts += (S[m[1]]||0) * parseInt(m[2]);
+    });
+    return pts;
+  } catch { return 0; }
+}
+
+function calcPIPts() {
+  return (stats.INT || 0) * 2;
+}
+
+function usedOccPts() { return Object.values(occSkillAdded).reduce((a,b)=>a+b,0); }
+function usedPIPts()  { return Object.values(piSkillAdded).reduce((a,b)=>a+b,0); }
+
+// ══════════════════════════════════════════════════════
+// RENDER: OCCUPATIONS
+// ══════════════════════════════════════════════════════
+function renderOccupations(filterEra) {
+  if(!filterEra) filterEra = selectedEra;
+  // Filter buttons
+  const filterDiv = document.getElementById('occ-filter');
+  filterDiv.innerHTML = ['all','modern','1920s','victorian'].map(e =>
+    `<button class="occ-filter-btn ${filterEra===e?'active':''}" onclick="renderOccupations('${e}')">${e==='all'?'All Eras':e==='modern'?'Modern':e==='1920s'?'1920s':'Victorian'}</button>`
+  ).join('');
+
+  const list = filterEra==='all' ? OCCUPATIONS : OCCUPATIONS.filter(o=>o.eras.includes('all')||o.eras.includes(filterEra));
+
+  document.getElementById('occ-grid').innerHTML = list.map(o => `
+    <div class="occ-card ${selectedOcc?.name===o.name?'selected':''}" onclick="selectOcc(${JSON.stringify(o.name)})">
+      <div class="occ-name">${o.name}</div>
+      <div class="occ-pts">Skill pts: ${o.pts} &nbsp;|&nbsp; CR: ${o.cr[0]}–${o.cr[1]}%</div>
+      <div class="occ-skills-preview">${[...o.skills,...(o.chooseN>0?['+ choose '+o.chooseN]:[])].join(', ')}</div>
+    </div>`
+  ).join('');
+
+  if(selectedOcc) showOccDetail(selectedOcc);
+}
+
+function selectOcc(name) {
+  selectedOcc = OCCUPATIONS.find(o=>o.name===name);
+  document.getElementById('p-occ-title').value = name;
+  occSkillAdded = {};
+  piSkillAdded  = {};
+  document.querySelectorAll('.occ-card').forEach(c => c.classList.toggle('selected', c.querySelector('.occ-name')?.textContent===name));
+  showOccDetail(selectedOcc);
+}
+
+function showOccDetail(occ) {
+  const box = document.getElementById('occ-detail-box');
+  const pts = calcOccPts();
+  box.className = 'occ-detail visible';
+  box.innerHTML = `
+    <div style="font-family:var(--head);font-size:16px;color:var(--teal-bright);margin-bottom:6px">${occ.name}</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${occ.desc}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:4px">Skill Points: ${occ.pts} = <strong>${pts}</strong> pts &nbsp;|&nbsp; Credit Rating: ${occ.cr[0]}–${occ.cr[1]}%</div>
+    <div style="font-size:12px;color:var(--text2)">
+      <strong style="font-family:var(--mono);font-size:10px;color:var(--text3)">OCCUPATION SKILLS:</strong><br>
+      ${occ.skills.join(', ')}${occ.chooseN>0?`<br><em>+ choose ${occ.chooseN} from: ${occ.chooseFrom.join(', ')}</em>`:''}
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER: SKILLS
+// ══════════════════════════════════════════════════════
+function renderSkills() {
+  const occPts   = calcOccPts();
+  const piPts    = calcPIPts();
+  const usedOcc  = usedOccPts();
+  const usedPI   = usedPIPts();
+  const remOcc   = occPts - usedOcc;
+  const remPI    = piPts  - usedPI;
+
+  document.getElementById('skill-pools').innerHTML = `
+    <div class="pool-box"><div class="pool-label">OCCUPATION POINTS</div><div class="pool-val occ-pool ${remOcc<0?'exhausted':''}">${remOcc}</div><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">of ${occPts} remaining</div></div>
+    <div class="pool-box"><div class="pool-label">PERSONAL INTEREST</div><div class="pool-val ${remPI<0?'exhausted':''}">${remPI}</div><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">of ${piPts} (INT×2) remaining</div></div>`;
+
+  const occSkills = selectedOcc ? [...selectedOcc.skills] : [];
+  const eraSkills = getEraSkills().filter(s => !s.special);
+  // Sort: occ skills first, then alpha
+  const sorted = [...eraSkills].sort((a,b) => {
+    const ao = occSkills.includes(a.name), bo = occSkills.includes(b.name);
+    if(ao && !bo) return -1; if(!ao && bo) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  let rows = `
+    <div class="credit-rating-row">
+      <span style="font-family:var(--mono);font-size:10px;color:var(--teal-bright);min-width:140px">Credit Rating</span>
+      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Range: ${selectedOcc?selectedOcc.cr[0]+'–'+selectedOcc.cr[1]:'—'}%</span>
+      <input type="number" min="0" max="99" value="${creditRating||''}" placeholder="${selectedOcc?selectedOcc.cr[0]:'0'}"
+        style="width:60px;background:var(--bg2);border:1px solid var(--border2);color:var(--teal-bright);font-family:var(--mono);font-size:12px;text-align:center;padding:2px 4px"
+        oninput="creditRating=parseInt(this.value)||0">
+    </div>
+    <div class="mythos-row">
+      <span>Cthulhu Mythos</span><span style="text-align:center">0%</span><span style="text-align:center">—</span><span style="text-align:center">—</span><span style="text-align:center;color:var(--text3);font-size:10px">Gained in play</span>
+    </div>`;
+
+  rows += sorted.map(s => {
+    const isOcc  = occSkills.includes(s.name);
+    const base   = getSkillBase(s);
+    const oAdd   = occSkillAdded[s.name]||0;
+    const piAdd  = piSkillAdded[s.name]||0;
+    const total  = Math.min(99, base+oAdd+piAdd);
+    const hard   = Math.floor(total/2);
+    const fifth  = Math.floor(total/5);
+    return `<div class="skill-row ${isOcc?'occ-skill':''}">
+      <span class="skill-name">${s.name}${s.specialty?' <em style="font-size:10px;color:var(--text3)">(specialty)</em>':''}</span>
+      <span class="skill-base-val">${base}%</span>
+      <span class="skill-half">${hard}%</span>
+      <span class="skill-fifth">${fifth}%</span>
+      <div style="display:flex;gap:3px">
+        <input class="skill-add-input" type="number" min="0" max="99" value="${oAdd||''}" placeholder="Occ"
+          title="Occupation points" oninput="setSkillPts('occ','${s.name}',parseInt(this.value)||0)">
+        <input class="skill-add-input pi-input" type="number" min="0" max="99" value="${piAdd||''}" placeholder="PI"
+          title="Personal interest points" oninput="setSkillPts('pi','${s.name}',parseInt(this.value)||0)">
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('skills-list').innerHTML = rows;
+}
+
+function setSkillPts(pool, skill, val) {
+  if(pool==='occ') occSkillAdded[skill] = val; else piSkillAdded[skill] = val;
+  if(!val) { delete (pool==='occ'?occSkillAdded:piSkillAdded)[skill]; }
+  // Update pool display only
+  const occPts = calcOccPts(), piPts = calcPIPts();
+  const remOcc = occPts - usedOccPts(), remPI = piPts - usedPIPts();
+  const pools = document.getElementById('skill-pools');
+  if(pools) {
+    pools.querySelector('.occ-pool').textContent = remOcc;
+    pools.querySelector('.occ-pool').className = `pool-val occ-pool${remOcc<0?' exhausted':''}`;
+    const piVal = pools.querySelectorAll('.pool-val')[1];
+    if(piVal) { piVal.textContent = remPI; piVal.className = `pool-val${remPI<0?' exhausted':''}`; }
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER: SHEET
+// ══════════════════════════════════════════════════════
+function renderSheet() {
+  const name       = document.getElementById('p-name')?.value || '—';
+  const occTitle   = document.getElementById('p-occ-title')?.value || (selectedOcc?.name||'—');
+  const residence  = document.getElementById('p-residence')?.value || '—';
+  const birthplace = document.getElementById('p-birthplace')?.value || '—';
+  const age        = document.getElementById('p-age')?.value || '—';
+  const sex        = document.getElementById('p-sex')?.value || '—';
+  const height     = document.getElementById('p-height')?.value || '—';
+  const weight     = document.getElementById('p-weight')?.value || '—';
+  const hair       = document.getElementById('p-hair')?.value || '—';
+  const eyes       = document.getElementById('p-eyes')?.value || '—';
+  const skin       = document.getElementById('p-skin')?.value || '—';
+  const desc       = document.getElementById('p-desc')?.value || '—';
+  const eraLabel   = ERAS.find(e=>e.id===selectedEra)?.name || '—';
+
+  const hp    = stats.CON&&stats.SIZ ? Math.floor((stats.CON+stats.SIZ)/10) : '—';
+  const san   = stats.POW ? stats.POW*5 : '—';
+  const mp    = stats.POW ? Math.floor(stats.POW/5) : '—';
+  const { build, db } = getBuildAndDB(stats.STR, stats.SIZ);
+  const move  = getMoveRate(stats.STR, stats.DEX, stats.SIZ);
+  const ownLang = stats.EDU || 0;
+
+  const charHtml = STAT_KEYS.map(k => {
+    const v    = stats[k] || 0;
+    const half = Math.floor(v/2), fifth = Math.floor(v/5);
+    return `<div class="sheet-char-cell">
+      <div class="sheet-char-k">${k}</div>
+      <div class="sheet-char-v">${v||'—'}</div>
+      <div class="sheet-char-half">½ ${v?half:'—'}</div>
+      <div class="sheet-char-fifth">⅕ ${v?fifth:'—'}</div>
+    </div>`;
+  }).join('');
+
+  const eraSkills = getEraSkills().filter(s=>!s.special);
+  const occSkills = selectedOcc?[...selectedOcc.skills]:[];
+  const skillsHtml = [...eraSkills].sort((a,b)=>a.name.localeCompare(b.name)).map(s => {
+    const isOcc  = occSkills.includes(s.name);
+    const total  = getSkillTotal(s.name);
+    const hard   = Math.floor(total/2);
+    const fifth  = Math.floor(total/5);
+    return `<div class="sheet-skill-item">
+      <span class="sheet-skill-check"></span>
+      <span class="sheet-skill-name ${isOcc?'occ-s':''}">${s.name}</span>
+      <span class="sheet-skill-val">${total}%</span>
+      <span class="sheet-skill-half">${hard}</span>
+      <span class="sheet-skill-fifth">${fifth}</span>
+    </div>`;
+  }).join('');
+
+  const portraitHtml = portraitData
+    ? `<img class="sheet-portrait-img" src="${portraitData}">`
+    : `<div class="sheet-portrait-empty">PHOTO</div>`;
+
+  document.getElementById('sheet-output').innerHTML = `
+  <div class="sheet-wrapper">
+    <div class="sheet-top-bar">
+      <span>CALL OF CTHULHU — INVESTIGATOR SHEET</span>
+      <small>${eraLabel.toUpperCase()} ERA — 7TH EDITION</small>
+    </div>
+
+    <div class="sheet-section">
+      <div class="sheet-section-hdr">01 — Investigator Data</div>
+      <div class="sheet-personal-layout">
+        <div class="sheet-personal-fields">
+          <div class="sheet-row">
+            <div class="sheet-cell"><div class="sheet-cell-label">Name</div><div class="sheet-cell-val">${name}</div></div>
+            <div class="sheet-cell"><div class="sheet-cell-label">Occupation</div><div class="sheet-cell-val">${occTitle}</div></div>
+            <div class="sheet-cell"><div class="sheet-cell-label">Era</div><div class="sheet-cell-val">${eraLabel}</div></div>
+          </div>
+          <div class="sheet-row">
+            <div class="sheet-cell"><div class="sheet-cell-label">Residence</div><div class="sheet-cell-val">${residence}</div></div>
+            <div class="sheet-cell"><div class="sheet-cell-label">Birthplace</div><div class="sheet-cell-val">${birthplace}</div></div>
+            <div class="sheet-cell"><div class="sheet-cell-label">Age / D.O.B.</div><div class="sheet-cell-val">${age}</div></div>
+          </div>
+          <div class="sheet-row">
+            <div class="sheet-cell"><div class="sheet-cell-label">Sex</div><div class="sheet-cell-val">${sex}</div></div>
+            <div class="sheet-cell"><div class="sheet-cell-label">Height / Weight</div><div class="sheet-cell-val">${height} / ${weight}</div></div>
+            <div class="sheet-cell"><div class="sheet-cell-label">Hair / Eyes / Skin</div><div class="sheet-cell-val">${hair} / ${eyes} / ${skin}</div></div>
+          </div>
+          <div class="sheet-row">
+            <div class="sheet-cell" style="grid-column:1/-1"><div class="sheet-cell-label">Description</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px">${desc}</div></div>
+          </div>
+        </div>
+        <div class="sheet-portrait-box">
+          ${portraitHtml}
+          <label class="sheet-portrait-upload" style="display:${window.matchMedia('print').matches?'none':'block'}">
+            Upload Photo<input type="file" accept="image/*" style="display:none" onchange="uploadPortrait(this)">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet-section">
+      <div class="sheet-section-hdr">02 — Characteristics</div>
+      <div class="sheet-char-grid">${charHtml}</div>
+    </div>
+
+    <div class="sheet-section">
+      <div class="sheet-section-hdr">03 — Derived Attributes</div>
+      <div class="sheet-derived-grid">
+        <div class="sheet-derived-cell"><div class="sheet-derived-k">HIT POINTS</div><div class="sheet-derived-v">${hp}</div><div class="sheet-current-v">Current: <span class="sheet-current-box"></span></div></div>
+        <div class="sheet-derived-cell sheet-luck-cell"><div class="sheet-derived-k">LUCK</div><div class="sheet-derived-v">${luck||'—'}</div><div class="sheet-current-v">Current: <span class="sheet-current-box"></span></div></div>
+        <div class="sheet-derived-cell"><div class="sheet-derived-k">MAGIC POINTS</div><div class="sheet-derived-v">${mp}</div><div class="sheet-current-v">Current: <span class="sheet-current-box"></span></div></div>
+        <div class="sheet-derived-cell"><div class="sheet-derived-k">SANITY</div><div class="sheet-derived-v">${san}</div><div class="sheet-current-v">Current: <span class="sheet-current-box"></span></div></div>
+        <div class="sheet-derived-cell"><div class="sheet-derived-k">BUILD</div><div class="sheet-derived-v">${stats.STR&&stats.SIZ?build:'—'}</div><div class="sheet-current-v"></div></div>
+        <div class="sheet-derived-cell"><div class="sheet-derived-k">DAMAGE BONUS</div><div class="sheet-derived-v" style="font-size:15px">${stats.STR&&stats.SIZ?db:'—'}</div><div class="sheet-current-v"></div></div>
+        <div class="sheet-derived-cell"><div class="sheet-derived-k">MOVE RATE</div><div class="sheet-derived-v">${move}</div><div class="sheet-current-v"></div></div>
+        <div class="sheet-derived-cell"><div class="sheet-derived-k">LANGUAGE (OWN)</div><div class="sheet-derived-v">${ownLang||'—'}</div><div class="sheet-current-v">EDU×5%</div></div>
+      </div>
+    </div>
+
+    <div class="sheet-section sheet-skills-section">
+      <div class="sheet-section-hdr">Skills &nbsp;|&nbsp; Teal = Occupation Skill &nbsp;|&nbsp; Each shows: Total% / Hard(½) / Extreme(⅕)</div>
+      <div class="sheet-skills-grid">${skillsHtml}</div>
+    </div>
+
+    <div class="sheet-section sheet-psych-section">
+      <div class="sheet-section-hdr">Backstory &amp; Psychology</div>
+      <div class="sheet-row">
+        <div class="sheet-cell" style="min-height:60px"><div class="sheet-cell-label">Personal Description</div><div class="sheet-cell-val"></div></div>
+        <div class="sheet-cell" style="min-height:60px"><div class="sheet-cell-label">Ideology / Beliefs</div><div class="sheet-cell-val"></div></div>
+      </div>
+      <div class="sheet-row">
+        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Significant People</div><div class="sheet-cell-val"></div></div>
+        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Meaningful Locations</div><div class="sheet-cell-val"></div></div>
+      </div>
+      <div class="sheet-row">
+        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Treasured Possessions</div><div class="sheet-cell-val"></div></div>
+        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Traits</div><div class="sheet-cell-val"></div></div>
+      </div>
+      <div class="sheet-row">
+        <div class="sheet-cell" style="min-height:40px"><div class="sheet-cell-label">Injuries / Scars / Wounds</div><div class="sheet-cell-val"></div></div>
+        <div class="sheet-cell" style="min-height:40px"><div class="sheet-cell-label">Phobias &amp; Manias</div><div class="sheet-cell-val"></div></div>
+      </div>
+    </div>
+
+    <div class="sheet-section">
+      <div class="sheet-section-hdr">Weapons &amp; Combat</div>
+      <table class="sheet-weapon-table">
+        <thead><tr><th>Weapon</th><th>Skill%</th><th>Damage</th><th>Range</th><th>Attacks/Round</th><th>Ammo</th><th>Malfunction</th></tr></thead>
+        <tbody>
+          ${Array(5).fill('<tr class="sheet-weapon-empty"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>').join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sheet-section">
+      <div class="sheet-section-hdr">Equipment &amp; Possessions</div>
+      <div style="min-height:80px;padding:10px 14px;font-size:13px;color:#bbb;font-family:'Share Tech Mono',monospace">[Record gear, clues, and possessions here]</div>
+    </div>
+
+    <div class="sheet-footer">
+      <span>CALL OF CTHULHU 7TH EDITION — INVESTIGATOR SHEET</span>
+      <span>${eraLabel.toUpperCase()} ERA</span>
+    </div>
+  </div>`;
+}
+
+// Portrait upload
+function uploadPortrait(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { portraitData = e.target.result; renderSheet(); };
+  reader.readAsDataURL(file);
+}
+
+// ══════════════════════════════════════════════════════
+// SAVE / LOAD
+// ══════════════════════════════════════════════════════
+function buildCharData() {
+  return {
+    era: selectedEra,
+    personal: {
+      name:       document.getElementById('p-name')?.value||'',
+      occTitle:   document.getElementById('p-occ-title')?.value||'',
+      residence:  document.getElementById('p-residence')?.value||'',
+      birthplace: document.getElementById('p-birthplace')?.value||'',
+      age:        document.getElementById('p-age')?.value||'',
+      sex:        document.getElementById('p-sex')?.value||'',
+      height:     document.getElementById('p-height')?.value||'',
+      weight:     document.getElementById('p-weight')?.value||'',
+      hair:       document.getElementById('p-hair')?.value||'',
+      eyes:       document.getElementById('p-eyes')?.value||'',
+      skin:       document.getElementById('p-skin')?.value||'',
+      desc:       document.getElementById('p-desc')?.value||''
+    },
+    stats, luck, creditRating,
+    selectedOcc: selectedOcc?.name || null,
+    occSkillAdded: {...occSkillAdded},
+    piSkillAdded:  {...piSkillAdded},
+    portraitData
+  };
+}
+
+function applyCharData(c) {
+  selectedEra   = c.era || '1920s';
+  stats         = {...(c.stats||{})};
+  luck          = c.luck || 0;
+  creditRating  = c.creditRating || 0;
+  selectedOcc   = c.selectedOcc ? OCCUPATIONS.find(o=>o.name===c.selectedOcc)||null : null;
+  occSkillAdded = {...(c.occSkillAdded||{})};
+  piSkillAdded  = {...(c.piSkillAdded||{})};
+  portraitData  = c.portraitData || null;
+  if(c.personal) {
+    const p = c.personal;
+    const set = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
+    set('p-name',p.name); set('p-occ-title',p.occTitle); set('p-residence',p.residence);
+    set('p-birthplace',p.birthplace); set('p-age',p.age); set('p-sex',p.sex);
+    set('p-height',p.height); set('p-weight',p.weight); set('p-hair',p.hair);
+    set('p-eyes',p.eyes); set('p-skin',p.skin); set('p-desc',p.desc);
+  }
+  // Sync era card
+  document.querySelectorAll('.era-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('era-'+selectedEra)?.classList.add('selected');
+}
+
+function saveInvestigator(btn, silent=false) {
+  const name = document.getElementById('p-name')?.value.trim() || 'Unnamed Investigator';
+  const saves = JSON.parse(localStorage.getItem('coc_investigators')||'{}');
+  if(!silent && saves[name] && !confirm(`"${name}" is already saved. Overwrite?`)) return;
+  saves[name] = { ...buildCharData(), savedAt: new Date().toISOString() };
+  localStorage.setItem('coc_investigators', JSON.stringify(saves));
+  if(btn) { const orig=btn.textContent; btn.textContent='✓ SAVED'; setTimeout(()=>{btn.textContent=orig;},1500); }
+}
+
+function openLoadModal() {
+  renderLoadList();
+  document.getElementById('load-modal').classList.add('open');
+}
+
+function closeLoadModal() {
+  document.getElementById('load-modal').classList.remove('open');
+}
+
+function renderLoadList() {
+  const saves = JSON.parse(localStorage.getItem('coc_investigators')||'{}');
+  const keys  = Object.keys(saves);
+  const el    = document.getElementById('load-modal-list');
+  if(!keys.length) { el.innerHTML='<div class="modal-empty">NO SAVED INVESTIGATORS FOUND</div>'; return; }
+  el.innerHTML = keys.map(name => {
+    const c = saves[name];
+    const date = c.savedAt ? new Date(c.savedAt).toLocaleDateString() : '—';
+    const occ  = c.selectedOcc || '—';
+    const era  = ERAS.find(e=>e.id===c.era)?.name || c.era || '—';
+    return `<div class="modal-item">
+      <div><div class="modal-item-name">${name}</div><div class="modal-item-meta">${occ} // ${era} // Saved ${date}</div></div>
+      <div class="modal-item-actions">
+        <button class="modal-load-btn" onclick='loadInvestigator(${JSON.stringify(name)})'>Load</button>
+        <button class="modal-del-btn"  onclick='deleteInvestigator(${JSON.stringify(name)})'>Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function loadInvestigator(name) {
+  const saves = JSON.parse(localStorage.getItem('coc_investigators')||'{}');
+  const c = saves[name]; if(!c) return;
+  applyCharData(c);
+  isEditMode = true;
+  closeLoadModal();
+  goStep(6);
+}
+
+function deleteInvestigator(name) {
+  if(!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  const saves = JSON.parse(localStorage.getItem('coc_investigators')||'{}');
+  delete saves[name];
+  localStorage.setItem('coc_investigators', JSON.stringify(saves));
+  renderLoadList();
+}
+
+// ══════════════════════════════════════════════════════
+// JSON EXPORT / IMPORT
+// ══════════════════════════════════════════════════════
+function exportToJSON() {
+  const name = document.getElementById('p-name')?.value.trim() || 'Unnamed Investigator';
+  const data = { ...buildCharData(), exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = name.replace(/[^a-z0-9_\-\s]/gi,'').trim().replace(/\s+/g,'_')+'.json';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function importFromJSON(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const c = JSON.parse(e.target.result);
+      if(!c.personal || !c.stats) { alert('Invalid investigator file.'); return; }
+      applyCharData(c);
+      isEditMode = true;
+      input.value = '';
+      closeLoadModal();
+      goStep(6);
+    } catch { alert('Could not read file — make sure it is a valid investigator JSON.'); }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════════════
+// URL SHARING
+// ══════════════════════════════════════════════════════
+function shareInvestigator() {
+  try {
+    const data = buildCharData();
+    delete data.portraitData; // too large for URL
+    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    const url = location.origin + location.pathname + '?c=' + encoded;
+    navigator.clipboard.writeText(url).then(() => alert('Share URL copied to clipboard!'));
+  } catch { alert('Could not generate share URL.'); }
+}
+
+function checkSharedURL() {
+  const params = new URLSearchParams(location.search);
+  const c = params.get('c');
+  if(!c) return;
+  try {
+    const data = JSON.parse(decodeURIComponent(escape(atob(c))));
+    if(!data.personal || !data.stats) return;
+    pendingSharedChar = data;
+    document.getElementById('import-banner').style.display = 'flex';
+  } catch {}
+}
+
+function importSharedChar() {
+  if(!pendingSharedChar) return;
+  applyCharData(pendingSharedChar);
+  isEditMode = true;
+  dismissImportBanner();
+  goStep(6);
+}
+
+function dismissImportBanner() {
+  document.getElementById('import-banner').style.display = 'none';
+  history.replaceState(null,'',location.pathname);
+}
+
+// ══════════════════════════════════════════════════════
+// NEW INVESTIGATOR
+// ══════════════════════════════════════════════════════
+function newInvestigator() {
+  if(!confirm('Start a new investigator? Unsaved changes will be lost.')) return;
+  stats = { STR:0, CON:0, SIZ:0, DEX:0, APP:0, INT:0, POW:0, EDU:0 };
+  luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {};
+  creditRating = 0; portraitData = null; isEditMode = false; selectedEra = '1920s';
+  ['p-name','p-occ-title','p-residence','p-birthplace','p-age','p-height','p-weight','p-hair','p-eyes','p-skin','p-desc'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('p-sex').value = 'F';
+  document.querySelectorAll('.era-card').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('era-1920s').classList.add('selected');
+  goStep(0);
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('era-1920s').classList.add('selected');
+  checkSharedURL();
+});
+</script>
+</body>
+</html>
