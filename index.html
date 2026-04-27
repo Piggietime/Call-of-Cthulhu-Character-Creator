@@ -228,6 +228,10 @@
   .occ-skills-preview { font-size: 11px; color: var(--text2); line-height: 1.5; }
   .occ-detail { margin-top: 1rem; background: var(--bg3); border: 1px solid var(--teal-dim); padding: 14px; display: none; }
   .occ-detail.visible { display: block; }
+  .occ-skill-choice { background:none; border:1px solid var(--border2); color:var(--text2); font-family:var(--mono); font-size:10px; letter-spacing:0.5px; padding:3px 10px; cursor:pointer; transition:all .1s; }
+  .occ-skill-choice:hover:not([disabled]) { border-color:var(--teal); color:var(--teal-bright); }
+  .occ-skill-choice.chosen { border-color:var(--teal-bright); color:var(--teal-bright); background:var(--teal-dim); }
+  .occ-skill-choice[disabled] { opacity:0.35; cursor:not-allowed; }
 
   /* ── Skills Step ── */
   .skill-pools { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1rem; }
@@ -787,7 +791,8 @@ let luck           = 0;
 let selectedOcc    = null;
 let occSkillAdded  = {};  // skill name → points from occupation pool
 let piSkillAdded   = {};  // skill name → points from personal interest pool
-let creditRating   = 0;
+let creditRating     = 0;
+let occChosenSkills  = []; // skills chosen from occupation's chooseFrom list
 let charWeapons    = []; // [{name,skillPct,damage,range,attacks,ammo,mal}]
 let equipment      = '';
 let portraitData   = null;
@@ -869,7 +874,7 @@ function updateDerived() {
   luck = parseInt(document.getElementById('stat-LUCK')?.value)||0;
 
   const hp  = stats.CON && stats.SIZ ? Math.floor((stats.CON+stats.SIZ)/10) : '—';
-  const san = stats.POW ? stats.POW*5 : '—';
+  const san = stats.POW ? stats.POW : '—';
   const mp  = stats.POW ? Math.floor(stats.POW/5) : '—';
   const { build, db } = getBuildAndDB(stats.STR, stats.SIZ);
   const move = getMoveRate(stats.STR, stats.DEX, stats.SIZ);
@@ -878,7 +883,7 @@ function updateDerived() {
   if(!grid) return;
   grid.innerHTML = [
     { k:'HIT POINTS',    v: hp,   note:`(CON+SIZ)÷10` },
-    { k:'SANITY',        v: san,  note:`POW×5` },
+    { k:'SANITY',        v: san,  note:`= POW` },
     { k:'MAGIC POINTS',  v: mp,   note:`POW÷5` },
     { k:'BUILD',         v: stats.STR&&stats.SIZ ? build : '—', note:`STR+SIZ table` },
     { k:'DAMAGE BONUS',  v: stats.STR&&stats.SIZ ? db    : '—', note:`STR+SIZ table` },
@@ -998,26 +1003,65 @@ function renderOccupations(filterEra) {
 }
 
 function selectOcc(name) {
-  selectedOcc = OCCUPATIONS.find(o=>o.name===name);
+  selectedOcc     = OCCUPATIONS.find(o=>o.name===name);
+  occChosenSkills = [];
+  occSkillAdded   = {};
+  piSkillAdded    = {};
   document.getElementById('p-occ-title').value = name;
-  occSkillAdded = {};
-  piSkillAdded  = {};
   document.querySelectorAll('.occ-card').forEach(c => c.classList.toggle('selected', c.querySelector('.occ-name')?.textContent===name));
   showOccDetail(selectedOcc);
 }
 
 function showOccDetail(occ) {
-  const box = document.getElementById('occ-detail-box');
-  const pts = calcOccPts();
+  const box  = document.getElementById('occ-detail-box');
+  const pts  = calcOccPts();
+  const validChosen = occChosenSkills.filter(s => occ.chooseFrom.includes(s));
+  const remaining   = occ.chooseN - validChosen.length;
+  const allSkills   = [...occ.skills, ...validChosen];
+
+  let choiceHtml = '';
+  if(occ.chooseN > 0) {
+    const chips = occ.chooseFrom.map(s => {
+      const isSel = validChosen.includes(s);
+      const isDisabled = !isSel && remaining === 0;
+      return `<button class="occ-skill-choice ${isSel?'chosen':''}"
+        onclick="toggleOccSkillChoice('${s.replace(/'/g,"\\'")}')"
+        ${isDisabled?'disabled':''}>${s}${isSel?' ✓':''}</button>`;
+    }).join('');
+    choiceHtml = `
+      <div style="margin-top:10px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--amber);margin-bottom:6px">
+          CHOOSE ${occ.chooseN} ADDITIONAL SKILL${occ.chooseN>1?'S':''}
+          <span style="color:${remaining===0?'var(--teal-bright)':'var(--text3)'}">
+            — ${validChosen.length}/${occ.chooseN} selected
+          </span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">${chips}</div>
+      </div>`;
+  }
+
   box.className = 'occ-detail visible';
   box.innerHTML = `
     <div style="font-family:var(--head);font-size:16px;color:var(--teal-bright);margin-bottom:6px">${occ.name}</div>
     <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${occ.desc}</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:4px">Skill Points: ${occ.pts} = <strong>${pts}</strong> pts &nbsp;|&nbsp; Credit Rating: ${occ.cr[0]}–${occ.cr[1]}%</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px">Skill Points: ${occ.pts} = <strong>${pts}</strong> pts &nbsp;|&nbsp; Credit Rating: ${occ.cr[0]}–${occ.cr[1]}%</div>
     <div style="font-size:12px;color:var(--text2)">
       <strong style="font-family:var(--mono);font-size:10px;color:var(--text3)">OCCUPATION SKILLS:</strong><br>
-      ${occ.skills.join(', ')}${occ.chooseN>0?`<br><em>+ choose ${occ.chooseN} from: ${occ.chooseFrom.join(', ')}</em>`:''}
-    </div>`;
+      ${allSkills.join(', ')}
+    </div>
+    ${choiceHtml}`;
+}
+
+function toggleOccSkillChoice(skillName) {
+  if(!selectedOcc || !selectedOcc.chooseFrom.includes(skillName)) return;
+  const validChosen = occChosenSkills.filter(s => selectedOcc.chooseFrom.includes(s));
+  const idx = occChosenSkills.indexOf(skillName);
+  if(idx >= 0) {
+    occChosenSkills.splice(idx, 1);
+  } else if(validChosen.length < selectedOcc.chooseN) {
+    occChosenSkills.push(skillName);
+  }
+  showOccDetail(selectedOcc);
 }
 
 // ══════════════════════════════════════════════════════
@@ -1035,7 +1079,9 @@ function renderSkills() {
     <div class="pool-box"><div class="pool-label">OCCUPATION POINTS</div><div class="pool-val occ-pool ${remOcc<0?'exhausted':''}">${remOcc}</div><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">of ${occPts} remaining</div></div>
     <div class="pool-box"><div class="pool-label">PERSONAL INTEREST</div><div class="pool-val ${remPI<0?'exhausted':''}">${remPI}</div><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">of ${piPts} (INT×2) remaining</div></div>`;
 
-  const occSkills = selectedOcc ? [...selectedOcc.skills] : [];
+  const occSkills = selectedOcc
+    ? [...selectedOcc.skills, ...occChosenSkills.filter(s => selectedOcc.chooseFrom.includes(s))]
+    : [];
   const eraSkills = getEraSkills().filter(s => !s.special);
   // Sort: occ skills first, then alpha
   const sorted = [...eraSkills].sort((a,b) => {
@@ -1533,8 +1579,9 @@ function buildCharData() {
     },
     stats, luck, creditRating,
     selectedOcc: selectedOcc?.name || null,
-    occSkillAdded: {...occSkillAdded},
-    piSkillAdded:  {...piSkillAdded},
+    occSkillAdded:   {...occSkillAdded},
+    piSkillAdded:    {...piSkillAdded},
+    occChosenSkills: [...occChosenSkills],
     charWeapons:   charWeapons.map(w=>({...w})),
     equipment,
     portraitData
@@ -1548,8 +1595,9 @@ function applyCharData(c) {
   creditRating  = c.creditRating || 0;
   selectedOcc   = c.selectedOcc ? OCCUPATIONS.find(o=>o.name===c.selectedOcc)||null : null;
   occSkillAdded = {...(c.occSkillAdded||{})};
-  piSkillAdded  = {...(c.piSkillAdded||{})};
-  charWeapons   = (c.charWeapons||[]).map(w=>({...w}));
+  piSkillAdded    = {...(c.piSkillAdded||{})};
+  occChosenSkills = [...(c.occChosenSkills||[])];
+  charWeapons     = (c.charWeapons||[]).map(w=>({...w}));
   equipment     = c.equipment || '';
   portraitData  = c.portraitData || null;
   renderPortraitPreview();
@@ -1697,7 +1745,7 @@ function newInvestigator() {
   if(!confirm('Start a new investigator? Unsaved changes will be lost.')) return;
   stats = { STR:0, CON:0, SIZ:0, DEX:0, APP:0, INT:0, POW:0, EDU:0 };
   luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {};
-  creditRating = 0; charWeapons = []; equipment = ''; portraitData = null; isEditMode = false; selectedEra = '1920s';
+  creditRating = 0; occChosenSkills = []; charWeapons = []; equipment = ''; portraitData = null; isEditMode = false; selectedEra = '1920s';
   renderPortraitPreview();
   ['p-name','p-occ-title','p-residence','p-birthplace','p-age','p-height','p-weight','p-hair','p-eyes','p-skin','p-desc'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value='';
