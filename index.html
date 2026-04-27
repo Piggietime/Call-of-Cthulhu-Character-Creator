@@ -233,6 +233,19 @@
   .occ-skill-choice.chosen { border-color:var(--teal-bright); color:var(--teal-bright); background:var(--teal-dim); }
   .occ-skill-choice[disabled] { opacity:0.35; cursor:not-allowed; }
 
+  /* ── Pulp Cthulhu ── */
+  .pulp-toggle-wrap { margin-top:1.5rem; padding:14px 18px; border:1px solid var(--border2); background:var(--bg2); display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+  .pulp-toggle-label { font-family:var(--head); font-size:17px; letter-spacing:2px; color:var(--text); }
+  .pulp-toggle-label span { font-family:var(--mono); font-size:10px; color:var(--text3); letter-spacing:1px; display:block; margin-top:2px; }
+  .pulp-toggle-btn { background:none; border:1px solid var(--border2); color:var(--text2); font-family:var(--mono); font-size:10px; letter-spacing:2px; padding:6px 18px; cursor:pointer; transition:all .15s; }
+  .pulp-toggle-btn.on { border-color:var(--amber); color:var(--amber); background:rgba(200,160,64,0.1); }
+  .pulp-section-sep { border-top:1px solid var(--amber); margin-top:1.5rem; padding-top:6px; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+  .pulp-section-sep-label { font-family:var(--mono); font-size:10px; letter-spacing:2px; color:var(--amber); }
+  .talent-chip { background:none; border:1px solid var(--border2); color:var(--text2); font-family:var(--mono); font-size:10px; padding:3px 10px; cursor:pointer; transition:all .1s; }
+  .talent-chip:hover:not([disabled]) { border-color:var(--amber); color:var(--amber); }
+  .talent-chip.chosen { border-color:var(--amber); color:var(--amber); background:rgba(200,160,64,0.12); }
+  .talent-chip[disabled] { opacity:0.35; cursor:not-allowed; }
+
   /* ── Skills Step ── */
   .skill-pools { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1rem; }
   .pool-box { background: var(--bg3); border: 1px solid var(--border); padding: 12px; text-align: center; }
@@ -481,6 +494,14 @@
         <div class="era-card-desc">The height of empire. Gaslight and fog, hansom cabs and telegram. Science and superstition clash as explorers bring back more than specimens from distant lands.</div>
       </div>
     </div>
+    <div class="pulp-toggle-wrap">
+      <div style="flex:1">
+        <div class="pulp-toggle-label">Pulp Cthulhu
+          <span>Optional supplement — heroic investigators with archetypes and special talents</span>
+        </div>
+      </div>
+      <button class="pulp-toggle-btn" id="pulp-toggle-btn" onclick="togglePulp()">DISABLED</button>
+    </div>
     <div class="nav-btns">
       <button class="nav-btn primary" onclick="goStep(1)">NEXT: PERSONAL INFO →</button>
     </div>
@@ -578,6 +599,13 @@
     <div class="nav-btns">
       <button class="nav-btn" onclick="goStep(1)">← PERSONAL</button>
       <button class="nav-btn primary" onclick="goStep(3)">NEXT: CHARACTERISTICS →</button>
+    </div>
+    <!-- Pulp archetype section — shown only when Pulp mode is on -->
+    <div id="pulp-section" style="display:none">
+      <div class="pulp-section-sep"><span class="pulp-section-sep-label">★ PULP ARCHETYPE</span></div>
+      <div class="section-sub" style="margin-bottom:0.75rem">Select an archetype. Each grants a +10 bonus to a characteristic and two talents.</div>
+      <div class="occ-grid" id="archetype-grid"></div>
+      <div id="archetype-detail-box" class="occ-detail"></div>
     </div>
   </div>
 
@@ -763,6 +791,72 @@ const OCCUPATIONS = [
   {name:'Explorer',        eras:['all'], pts:'EDU×2+STR×2', cr:[30,70], skills:['Climb','Firearms (Rifle/Shotgun)','History','Jump','Navigate','Natural World','Persuade','Survival'], chooseN:0, chooseFrom:[],                                                      desc:'Adventurer and discoverer of lost worlds.'},
 ];
 
+// ══════════════════════════════════════════════════════
+// PULP CTHULHU DATA  (verify against Pulp Cthulhu supplement)
+// ══════════════════════════════════════════════════════
+const PULP_ARCHETYPES = [
+  { name:'Adventurer',   bonusStat:'Any',  desc:'Bold explorer who leaps before looking. Thrives on danger.',            picks:2, talents:['Rapid Attack','Hard to Kill','Resilient','Nimble','Lucky','Guardian Angel'] },
+  { name:'Bon Vivant',   bonusStat:'APP',  desc:'Charming socialite who moves effortlessly through elite circles.',       picks:2, talents:['Animal Magnetism','Smooth Talker','Fast Talker','Lucky','Natural Leader'] },
+  { name:'Cold Blooded', bonusStat:'Any',  desc:'Ruthless and calculating — nothing clouds their judgment.',              picks:2, talents:['Hard to Kill','Tough','Rapid Attack','Two Fisted','Guardian Angel'] },
+  { name:'Dreamer',      bonusStat:'POW',  desc:'Gifted with unusual sensitivity to hidden and dreamlike worlds.',        picks:2, talents:['Skilled Dreamer','Psychic Defense','Psychometry','Lucky','Strong Willed'] },
+  { name:'Egghead',      bonusStat:'EDU',  desc:'Brilliant academic with encyclopedic knowledge and quick wit.',          picks:2, talents:['Quick Study','Jack of All Trades','Scholar','Weird Science Expert','Natural Leader'] },
+  { name:'Explorer',     bonusStat:'CON',  desc:'Seasoned traveler of remote and dangerous places.',                      picks:2, talents:['Resilient','Hard to Kill','Rugged','Lucky','Tough','Natural Leader'] },
+  { name:'Femme Fatale', bonusStat:'APP',  desc:'Uses charm and beauty as weapons as sharp as any blade.',                picks:2, talents:['Animal Magnetism','Smooth Talker','Fast Talker','Nimble','Guardian Angel'] },
+  { name:'Grease Monkey',bonusStat:'DEX',  desc:'Mechanical genius who can fix — or build — almost anything.',           picks:2, talents:['Weird Science Expert','Quick Study','Jury Rig','Jack of All Trades'] },
+  { name:'Hard Boiled',  bonusStat:'CON',  desc:'Seen too much and still standing. Cynical, tough, unbreakable.',         picks:2, talents:['Hard to Kill','Tough','Iron Fist','Resilient','Guardian Angel'] },
+  { name:'Harlequin',    bonusStat:'APP',  desc:'Trickster and performer whose humor masks a razor-sharp mind.',           picks:2, talents:['Fast Talker','Animal Magnetism','Nimble','Lucky','Smooth Talker'] },
+  { name:'Hunter',       bonusStat:'CON',  desc:'Patient and skilled tracker of man and beast alike.',                    picks:2, talents:['Crack Shot','Resilient','Rugged','Nimble','Tough'] },
+  { name:'Intellectual', bonusStat:'INT',  desc:'Razor-sharp analyst who reads people and situations instinctively.',     picks:2, talents:['Jack of All Trades','Natural Leader','Quick Study','Scholar','Strong Willed'] },
+  { name:'Junglesman',   bonusStat:'STR',  desc:'Child of the wilderness; comfortable where civilization is not.',        picks:2, talents:['Iron Fist','Rugged','Resilient','Tough','Nimble','Hard to Kill'] },
+  { name:'Magician',     bonusStat:'DEX',  desc:"Stage illusionist whose tricks aren't always illusory.",                 picks:2, talents:['Fast Talker','Nimble','Lucky','Animal Magnetism','Psychometry'] },
+  { name:'Missionary',   bonusStat:'POW',  desc:'Person of faith driven to help others, often in perilous places.',       picks:2, talents:['Strong Willed','Natural Leader','Hard to Kill','Resilient','Lucky'] },
+  { name:'Mystic',       bonusStat:'POW',  desc:'Touched by the strange; seeks truth beyond the mundane world.',          picks:2, talents:['Psychic Defense','Strong Willed','Skilled Dreamer','Psychometry','Third Eye'] },
+  { name:'Occultist',    bonusStat:'EDU',  desc:'Scholar of the forbidden arts burdened with dangerous knowledge.',       picks:2, talents:['Strong Willed','Psychic Defense','Scholar','Jack of All Trades','Third Eye'] },
+  { name:'Outsider',     bonusStat:'INT',  desc:'Unique alien perspective allows them to see what others overlook.',      picks:2, talents:['Lucky','Strong Willed','Nimble','Resilient','Jack of All Trades'] },
+  { name:'Pilot',        bonusStat:'DEX',  desc:'Ace aviator equally at home in the cockpit as on the ground.',           picks:2, talents:['Crack Shot','Fast Load','Nimble','Rapid Attack','Lucky'] },
+  { name:'Primitive',    bonusStat:'STR',  desc:'From a society untouched by modern civilization, ancient in wisdom.',    picks:2, talents:['Iron Fist','Rugged','Tough','Resilient','Nimble','Hard to Kill'] },
+  { name:'Professor',    bonusStat:'EDU',  desc:'Distinguished academic who repeatedly stumbles into the extraordinary.', picks:2, talents:['Quick Study','Scholar','Jack of All Trades','Natural Leader','Strong Willed'] },
+  { name:'Psyker',       bonusStat:'POW',  desc:'Possesses genuine psychic ability far beyond normal understanding.',     picks:2, talents:['Clairvoyant','Mind Reader','Psychometry','Telekinesis','Third Eye','Animal Magnetism','Psychic Defense'] },
+  { name:'Rogue',        bonusStat:'DEX',  desc:'Lives by wit and guile, usually outside the law.',                      picks:2, talents:['Nimble','Lucky','Fast Talker','Smooth Talker','Rapid Attack','Iron Fist'] },
+  { name:'Seeker',       bonusStat:'INT',  desc:"Driven investigator who won't stop until the truth is exposed.",         picks:2, talents:['Quick Study','Jack of All Trades','Natural Leader','Lucky','Scholar'] },
+  { name:'Sidekick',     bonusStat:'Any',  desc:"Loyal companion whose support makes the whole team greater.",            picks:2, talents:['Lucky','Natural Leader','Hard to Kill','Resilient','Guardian Angel'] },
+  { name:'Soldier',      bonusStat:'STR',  desc:'Trained warrior tempered and hardened by real combat.',                  picks:2, talents:['Rapid Attack','Two Fisted','Iron Fist','Hard to Kill','Crack Shot','Fast Load','Guardian Angel'] },
+  { name:'Swashbuckler', bonusStat:'DEX',  desc:'Dashing and daring with blade or fist, fighting with style.',            picks:2, talents:['Rapid Attack','Two Fisted','Nimble','Lucky','Guardian Angel'] },
+  { name:'Tough Guy',    bonusStat:'STR',  desc:'Built like a tank and hits like one. Muscle and resilience personified.',picks:2, talents:['Iron Fist','Two Fisted','Tough','Hard to Kill','Resilient','Rugged','Rapid Attack'] },
+];
+
+const PULP_TALENTS = [
+  { name:'Animal Magnetism', cat:'Social',       desc:'Once per session, automatically succeed a Charm or Persuade roll.' },
+  { name:'Clairvoyant',      cat:'Psychic',      desc:'Once per session, gain a brief vision of a distant or hidden location.' },
+  { name:'Crack Shot',       cat:'Combat',       desc:'Ignore all penalty dice for range when using firearms.' },
+  { name:'Fast Load',        cat:'Combat',       desc:'Reload any firearm as a free action, not costing a round.' },
+  { name:'Fast Talker',      cat:'Social',       desc:'May substitute Fast Talk for Persuade in any social situation.' },
+  { name:'Guardian Angel',   cat:'Physical',     desc:'Once per session, a lethal blow is reduced — investigator survives with 1 HP.' },
+  { name:'Hard to Kill',     cat:'Physical',     desc:'Once per session, survive a killing blow with 1 HP on a successful CON roll.' },
+  { name:'Iron Fist',        cat:'Combat',       desc:'+1D6 bonus damage on all unarmed attacks.' },
+  { name:'Jack of All Trades',cat:'Intellectual',desc:'Once per session, use any skill without a penalty die for lack of training.' },
+  { name:'Jury Rig',         cat:'Technical',    desc:'Improvise or repair mechanical/electrical devices from available parts.' },
+  { name:'Lucky',            cat:'Physical',     desc:'Once per session, re-roll any one failed die roll.' },
+  { name:'Mind Reader',      cat:'Psychic',      desc:'Once per session, read surface thoughts of one person (opposed POW roll).' },
+  { name:'Natural Leader',   cat:'Social',       desc:'+1 bonus die when giving orders or coordinating group actions.' },
+  { name:'Nimble',           cat:'Physical',     desc:'+1 bonus die to all Dodge rolls.' },
+  { name:'Psychic Defense',  cat:'Psychic',      desc:'+1 bonus die to POW rolls to resist psychic or supernatural attacks.' },
+  { name:'Psychometry',      cat:'Psychic',      desc:'Once per session, hold an object and sense strong impressions of its history.' },
+  { name:'Quick Study',      cat:'Intellectual', desc:'Halve the time needed to read tomes and comprehend spells.' },
+  { name:'Rapid Attack',     cat:'Combat',       desc:'Spend 10 skill points to make one additional attack in a round.' },
+  { name:'Resilient',        cat:'Physical',     desc:'Spend 2 Luck points to reduce Sanity loss by 1 point.' },
+  { name:'Rugged',           cat:'Physical',     desc:'Reduce all physical impairment penalties by one step.' },
+  { name:'Scholar',          cat:'Intellectual', desc:'+10 bonus points to distribute among any two academic skills.' },
+  { name:'Skilled Dreamer',  cat:'Psychic',      desc:'+1 bonus die to all Dreaming rolls; can enter the Dreamlands at will.' },
+  { name:'Smooth Talker',    cat:'Social',       desc:'+1 bonus die to Persuade when making a reasoned or considered argument.' },
+  { name:'Strong Willed',    cat:'Psychic',      desc:'+1 bonus die to POW rolls to resist spells and mental domination.' },
+  { name:'Telekinesis',      cat:'Psychic',      desc:'Once per session, move or manipulate a small object without touching it.' },
+  { name:'Third Eye',        cat:'Psychic',      desc:'Sense the presence of supernatural entities or active magic within 10 yards.' },
+  { name:'Tough',            cat:'Physical',     desc:'Gain +3 bonus HP.' },
+  { name:'Two Fisted',       cat:'Combat',       desc:'Attack with both hands simultaneously in a single round without penalty.' },
+  { name:'Weird Science Expert',cat:'Technical', desc:'Build strange devices combining advanced science and occult theory.' },
+];
+
 // Build/Damage Bonus table (STR+SIZ)
 function getBuildAndDB(str, siz) {
   const total = (str||0) + (siz||0);
@@ -791,6 +885,9 @@ let luck           = 0;
 let selectedOcc    = null;
 let occSkillAdded  = {};  // skill name → points from occupation pool
 let piSkillAdded   = {};  // skill name → points from personal interest pool
+let usePulp          = false;
+let selectedArchetype = null;
+let selectedTalents  = [];
 let creditRating     = 0;
 let occChosenSkills  = []; // skills chosen from occupation's chooseFrom list
 let charWeapons    = []; // [{name,skillPct,damage,range,attacks,ammo,mal}]
@@ -1000,6 +1097,11 @@ function renderOccupations(filterEra) {
   ).join('');
 
   if(selectedOcc) showOccDetail(selectedOcc);
+
+  // Pulp archetype section
+  const pulpSec = document.getElementById('pulp-section');
+  if(pulpSec) pulpSec.style.display = usePulp ? 'block' : 'none';
+  if(usePulp) renderArchetypes();
 }
 
 function selectOcc(name) {
@@ -1062,6 +1164,85 @@ function toggleOccSkillChoice(skillName) {
     occChosenSkills.push(skillName);
   }
   showOccDetail(selectedOcc);
+}
+
+// ══════════════════════════════════════════════════════
+// PULP CTHULHU
+// ══════════════════════════════════════════════════════
+function togglePulp() {
+  usePulp = !usePulp;
+  if(!usePulp) { selectedArchetype = null; selectedTalents = []; }
+  const btn = document.getElementById('pulp-toggle-btn');
+  if(btn) { btn.textContent = usePulp ? 'ENABLED' : 'DISABLED'; btn.classList.toggle('on', usePulp); }
+  const section = document.getElementById('pulp-section');
+  if(section) section.style.display = usePulp ? 'block' : 'none';
+  if(usePulp) renderArchetypes();
+}
+
+function renderArchetypes() {
+  const grid = document.getElementById('archetype-grid');
+  if(!grid) return;
+  grid.innerHTML = PULP_ARCHETYPES.map(a => `
+    <div class="occ-card ${selectedArchetype?.name===a.name?'selected':''}" onclick='selectArchetype(${JSON.stringify(a.name)})'>
+      <div class="occ-name">${a.name}</div>
+      <div class="occ-pts">Bonus: +10 ${a.bonusStat} &nbsp;|&nbsp; Picks: ${a.picks} talents</div>
+      <div class="occ-skills-preview">${a.desc}</div>
+    </div>`).join('');
+  if(selectedArchetype) showArchetypeDetail(selectedArchetype);
+}
+
+function selectArchetype(name) {
+  selectedArchetype = PULP_ARCHETYPES.find(a=>a.name===name);
+  selectedTalents   = [];
+  document.querySelectorAll('#archetype-grid .occ-card').forEach(c =>
+    c.classList.toggle('selected', c.querySelector('.occ-name')?.textContent===name));
+  showArchetypeDetail(selectedArchetype);
+}
+
+function showArchetypeDetail(arch) {
+  const box = document.getElementById('archetype-detail-box');
+  if(!box) return;
+  const chosen    = selectedTalents.filter(t => arch.talents.includes(t));
+  const remaining = arch.picks - chosen.length;
+
+  const chips = arch.talents.map(tName => {
+    const talentObj  = PULP_TALENTS.find(t=>t.name===tName);
+    const isSel      = chosen.includes(tName);
+    const isDisabled = !isSel && remaining === 0;
+    return `<button class="talent-chip ${isSel?'chosen':''}"
+      onclick="toggleTalent('${tName.replace(/'/g,"\\'")}')"
+      ${isDisabled?'disabled':''}
+      title="${talentObj ? talentObj.desc.replace(/"/g,'&quot;') : ''}"
+      >${tName}${isSel?' ✓':''}</button>`;
+  }).join('');
+
+  const talentDescs = chosen.map(tName => {
+    const t = PULP_TALENTS.find(x=>x.name===tName);
+    return t ? `<div style="margin-bottom:4px"><strong>${t.name}</strong> <span style="color:var(--text3);font-size:10px">[${t.cat}]</span> — ${t.desc}</div>` : '';
+  }).join('');
+
+  box.className = 'occ-detail visible';
+  box.innerHTML = `
+    <div style="font-family:var(--head);font-size:16px;color:var(--amber);margin-bottom:4px">${arch.name}</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${arch.desc}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:8px">
+      Bonus: +10 to <strong>${arch.bonusStat}</strong> &nbsp;|&nbsp; Choose <strong>${arch.picks}</strong> talent${arch.picks>1?'s':''}
+      <span style="color:${remaining===0?'var(--teal-bright)':'var(--text3)'}"> — ${chosen.length}/${arch.picks} selected</span>
+    </div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px">SELECT TALENTS (hover for description):</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:${talentDescs?'10px':'0'}">${chips}</div>
+    ${talentDescs ? `<div style="font-size:11px;color:var(--text2);margin-top:6px;border-top:1px solid var(--border);padding-top:8px">${talentDescs}</div>` : ''}`;
+}
+
+function toggleTalent(tName) {
+  if(!selectedArchetype || !selectedArchetype.talents.includes(tName)) return;
+  const idx = selectedTalents.indexOf(tName);
+  if(idx >= 0) {
+    selectedTalents.splice(idx, 1);
+  } else if(selectedTalents.filter(t=>selectedArchetype.talents.includes(t)).length < selectedArchetype.picks) {
+    selectedTalents.push(tName);
+  }
+  showArchetypeDetail(selectedArchetype);
 }
 
 // ══════════════════════════════════════════════════════
@@ -1236,6 +1417,21 @@ function renderSheet() {
         </div>
       </div>
     </div>
+
+    ${usePulp && selectedArchetype ? `
+    <div class="sheet-section">
+      <div class="sheet-section-hdr">Pulp Cthulhu — Archetype &amp; Talents</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;padding:8px 14px;font-size:12px;color:#333">
+        <div><strong style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#555;letter-spacing:1px">ARCHETYPE</strong><br>${selectedArchetype.name}</div>
+        <div style="flex:1"><strong style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#555;letter-spacing:1px">BONUS CHARACTERISTIC</strong><br>+10 to ${selectedArchetype.bonusStat}</div>
+        <div style="flex:2"><strong style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#555;letter-spacing:1px">TALENTS</strong><br>
+          ${selectedTalents.length ? selectedTalents.map(t=>{
+            const td=PULP_TALENTS.find(x=>x.name===t);
+            return `<span style="margin-right:12px"><strong>${t}</strong>${td?' — '+td.desc:''}</span>`;
+          }).join('<br>') : '—'}
+        </div>
+      </div>
+    </div>` : ''}
 
     <div class="sheet-section">
       <div class="sheet-section-hdr">02 — Characteristics</div>
@@ -1581,7 +1777,10 @@ function buildCharData() {
     selectedOcc: selectedOcc?.name || null,
     occSkillAdded:   {...occSkillAdded},
     piSkillAdded:    {...piSkillAdded},
-    occChosenSkills: [...occChosenSkills],
+    occChosenSkills:   [...occChosenSkills],
+    usePulp,
+    selectedArchetype: selectedArchetype?.name || null,
+    selectedTalents:   [...selectedTalents],
     charWeapons:   charWeapons.map(w=>({...w})),
     equipment,
     portraitData
@@ -1596,8 +1795,14 @@ function applyCharData(c) {
   selectedOcc   = c.selectedOcc ? OCCUPATIONS.find(o=>o.name===c.selectedOcc)||null : null;
   occSkillAdded = {...(c.occSkillAdded||{})};
   piSkillAdded    = {...(c.piSkillAdded||{})};
-  occChosenSkills = [...(c.occChosenSkills||[])];
-  charWeapons     = (c.charWeapons||[]).map(w=>({...w}));
+  occChosenSkills   = [...(c.occChosenSkills||[])];
+  usePulp           = c.usePulp || false;
+  selectedArchetype = c.selectedArchetype ? PULP_ARCHETYPES.find(a=>a.name===c.selectedArchetype)||null : null;
+  selectedTalents   = [...(c.selectedTalents||[])];
+  charWeapons       = (c.charWeapons||[]).map(w=>({...w}));
+  // Sync pulp toggle button
+  const btn = document.getElementById('pulp-toggle-btn');
+  if(btn) { btn.textContent = usePulp ? 'ENABLED' : 'DISABLED'; btn.classList.toggle('on', usePulp); }
   equipment     = c.equipment || '';
   portraitData  = c.portraitData || null;
   renderPortraitPreview();
@@ -1745,7 +1950,11 @@ function newInvestigator() {
   if(!confirm('Start a new investigator? Unsaved changes will be lost.')) return;
   stats = { STR:0, CON:0, SIZ:0, DEX:0, APP:0, INT:0, POW:0, EDU:0 };
   luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {};
-  creditRating = 0; occChosenSkills = []; charWeapons = []; equipment = ''; portraitData = null; isEditMode = false; selectedEra = '1920s';
+  creditRating = 0; occChosenSkills = []; usePulp = false; selectedArchetype = null; selectedTalents = []; charWeapons = []; equipment = '';
+  const pBtn = document.getElementById('pulp-toggle-btn');
+  if(pBtn) { pBtn.textContent='DISABLED'; pBtn.classList.remove('on'); }
+  const pSec = document.getElementById('pulp-section');
+  if(pSec) pSec.style.display = 'none'; portraitData = null; isEditMode = false; selectedEra = '1920s';
   renderPortraitPreview();
   ['p-name','p-occ-title','p-residence','p-birthplace','p-age','p-height','p-weight','p-hair','p-eyes','p-skin','p-desc'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value='';
