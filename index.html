@@ -449,8 +449,8 @@
   <div class="step-nav">
     <button class="step-btn active" id="step-btn-0" onclick="goStep(0)"><span class="step-num">01</span>Era</button>
     <button class="step-btn" id="step-btn-1" onclick="goStep(1)"><span class="step-num">02</span>Personal</button>
-    <button class="step-btn" id="step-btn-2" onclick="goStep(2)"><span class="step-num">03</span>Characteristics</button>
-    <button class="step-btn" id="step-btn-3" onclick="goStep(3)"><span class="step-num">04</span>Occupation</button>
+    <button class="step-btn" id="step-btn-2" onclick="goStep(2)"><span class="step-num">03</span>Occupation</button>
+    <button class="step-btn" id="step-btn-3" onclick="goStep(3)"><span class="step-num">04</span>Characteristics</button>
     <button class="step-btn" id="step-btn-4" onclick="goStep(4)"><span class="step-num">05</span>Skills</button>
     <button class="step-btn" id="step-btn-5" onclick="goStep(5)"><span class="step-num">06</span>Equipment</button>
     <button class="step-btn" id="step-btn-6" onclick="goStep(6)"><span class="step-num">07</span>Sheet</button>
@@ -560,12 +560,25 @@
     </div>
     <div class="nav-btns">
       <button class="nav-btn" onclick="goStep(0)">← ERA</button>
-      <button class="nav-btn primary" onclick="goStep(2)">NEXT: CHARACTERISTICS →</button>
+      <button class="nav-btn primary" onclick="goStep(2)">NEXT: OCCUPATION →</button>
     </div>
   </div>
 
-  <!-- PANEL 2: Characteristics -->
+  <!-- PANEL 2: Occupation -->
   <div class="panel" id="panel2">
+    <div class="section-title">Occupation</div>
+    <div class="section-sub">Select your investigator's occupation. This determines your skill point pool and Credit Rating range.</div>
+    <div class="occ-filter" id="occ-filter"></div>
+    <div id="occ-detail-box" class="occ-detail"></div>
+    <div class="occ-grid" id="occ-grid"></div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goStep(1)">← PERSONAL</button>
+      <button class="nav-btn primary" onclick="goStep(3)">NEXT: CHARACTERISTICS →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 3: Characteristics -->
+  <div class="panel" id="panel3">
     <div class="section-title">Characteristics</div>
     <div class="section-sub">Roll or assign your investigator's eight primary characteristics.</div>
     <div class="array-btns">
@@ -586,20 +599,7 @@
     </div>
     <div class="derived-grid" id="derived-grid"></div>
     <div class="nav-btns">
-      <button class="nav-btn" onclick="goStep(1)">← PERSONAL</button>
-      <button class="nav-btn primary" onclick="goStep(3)">NEXT: OCCUPATION →</button>
-    </div>
-  </div>
-
-  <!-- PANEL 3: Occupation -->
-  <div class="panel" id="panel3">
-    <div class="section-title">Occupation</div>
-    <div class="section-sub">Select your investigator's occupation. This determines your skill point pool and Credit Rating range.</div>
-    <div class="occ-filter" id="occ-filter"></div>
-    <div id="occ-detail-box" class="occ-detail"></div>
-    <div class="occ-grid" id="occ-grid"></div>
-    <div class="nav-btns">
-      <button class="nav-btn" onclick="goStep(2)">← CHARACTERISTICS</button>
+      <button class="nav-btn" onclick="goStep(2)">← OCCUPATION</button>
       <button class="nav-btn primary" onclick="goStep(4)">NEXT: SKILLS →</button>
     </div>
   </div>
@@ -614,7 +614,7 @@
     </div>
     <div id="skills-list"></div>
     <div class="nav-btns">
-      <button class="nav-btn" onclick="goStep(3)">← OCCUPATION</button>
+      <button class="nav-btn" onclick="goStep(3)">← CHARACTERISTICS</button>
       <button class="nav-btn primary" onclick="goStep(5)">NEXT: EQUIPMENT →</button>
     </div>
   </div>
@@ -800,8 +800,8 @@ let pendingSharedChar = null;
 function goStep(n) {
   document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===n));
   document.querySelectorAll('.step-btn').forEach((b,i) => b.classList.toggle('active', i===n));
-  if(n===2) renderStatsGrid();
-  if(n===3) renderOccupations();
+  if(n===2) renderOccupations();
+  if(n===3) renderStatsGrid();
   if(n===4) renderSkills();
   if(n===5) renderEquipPanel();
   if(n===6) renderSheet();
@@ -987,7 +987,7 @@ function renderOccupations(filterEra) {
   const list = filterEra==='all' ? OCCUPATIONS : OCCUPATIONS.filter(o=>o.eras.includes('all')||o.eras.includes(filterEra));
 
   document.getElementById('occ-grid').innerHTML = list.map(o => `
-    <div class="occ-card ${selectedOcc?.name===o.name?'selected':''}" onclick="selectOcc(${JSON.stringify(o.name)})">
+    <div class="occ-card ${selectedOcc?.name===o.name?'selected':''}" onclick='selectOcc(${JSON.stringify(o.name)})'>
       <div class="occ-name">${o.name}</div>
       <div class="occ-pts">Skill pts: ${o.pts} &nbsp;|&nbsp; CR: ${o.cr[0]}–${o.cr[1]}%</div>
       <div class="occ-skills-preview">${[...o.skills,...(o.chooseN>0?['+ choose '+o.chooseN]:[])].join(', ')}</div>
