@@ -264,6 +264,26 @@
   .sheet-cell-val { font-size: 13px; color: #222; font-weight: 600; min-height: 18px; }
   .sheet-personal-layout { display: flex; }
   .sheet-personal-fields { flex: 1; }
+  /* ── Portrait upload (wizard) ── */
+  .portrait-upload-area {
+    width: 110px; height: 110px;
+    border: 1px dashed var(--border2);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text3);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 1px;
+    text-align: center; line-height: 1.6;
+    position: relative; overflow: hidden; flex-shrink: 0;
+  }
+  .portrait-upload-area:hover { border-color: var(--teal-bright); color: var(--teal-bright); }
+  .portrait-upload-area img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+  .portrait-clear-btn {
+    background: none; border: 1px solid var(--border2); color: var(--text3);
+    font-family: var(--mono); font-size: 10px; letter-spacing: 1px;
+    padding: 4px 8px; cursor: pointer; text-transform: uppercase;
+  }
+  .portrait-clear-btn:hover { border-color: var(--red); color: var(--red); }
+
   .sheet-portrait-box { width: 120px; border-left: 1px solid #ccc; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; gap: 6px; flex-shrink: 0; }
   .sheet-portrait-upload { font-size: 9px; font-family: 'Share Tech Mono',monospace; color: #999; cursor: pointer; border: 1px dashed #ccc; padding: 3px 6px; }
   .sheet-portrait-img { max-width: 100px; max-height: 110px; object-fit: cover; }
@@ -501,6 +521,22 @@
     <div class="form-group full" style="margin-bottom:12px">
       <label class="form-label">Description / Distinguishing Features</label>
       <textarea class="form-input" id="p-desc" rows="2" placeholder="Physical description or notable features…"></textarea>
+    </div>
+    <div style="margin-bottom:16px">
+      <div class="form-label" style="margin-bottom:6px">Investigator Portrait <span style="color:var(--text3);font-size:10px;letter-spacing:1px">(optional)</span></div>
+      <div style="display:flex;align-items:flex-start;gap:1rem">
+        <div id="portrait-upload-area" class="portrait-upload-area" onclick="document.getElementById('portrait-input').click()" title="Click to upload image">+ UPLOAD<br>PORTRAIT</div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;padding-top:4px">
+          <button class="portrait-clear-btn" onclick="copyAIPrompt(this)" style="border-color:var(--teal-bright);color:var(--teal-bright)" title="Assembles a portrait prompt from your physical description and copies it to clipboard — paste into Ideogram to generate an image.">⧉ COPY AI PORTRAIT PROMPT</button>
+          <a href="https://ideogram.ai" target="_blank" rel="noopener"
+             class="portrait-clear-btn"
+             style="text-decoration:none;border-color:var(--teal-bright);color:var(--teal-bright);display:inline-block"
+             title="Generate a portrait on Ideogram (free AI image generator) — download the result, then upload it here.">✦ GENERATE WITH AI ↗</a>
+          <button id="portrait-clear-btn" class="portrait-clear-btn" onclick="clearPortrait()" style="display:none">✕ Remove</button>
+          <p style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1px;line-height:1.6;margin:0">Appears on<br>character sheet.<br>Not included<br>in shared URLs.</p>
+        </div>
+      </div>
+      <input type="file" id="portrait-input" accept="image/*" style="display:none" onchange="loadPortrait(this)">
     </div>
     <div class="nav-btns">
       <button class="nav-btn" onclick="goStep(0)">← ERA</button>
@@ -1202,12 +1238,87 @@ function renderSheet() {
   </div>`;
 }
 
-// Portrait upload
+// ── Portrait ──────────────────────────
+function loadPortrait(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    portraitData = e.target.result;
+    renderPortraitPreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderPortraitPreview() {
+  const area = document.getElementById('portrait-upload-area');
+  const clearBtn = document.getElementById('portrait-clear-btn');
+  if(!area) return;
+  if(portraitData) {
+    area.innerHTML = `<img src="${portraitData}" alt="Portrait">`;
+    if(clearBtn) clearBtn.style.display = 'inline-block';
+  } else {
+    area.innerHTML = '+ UPLOAD<br>PORTRAIT';
+    if(clearBtn) clearBtn.style.display = 'none';
+  }
+}
+
+function clearPortrait() {
+  portraitData = null;
+  const input = document.getElementById('portrait-input');
+  if(input) input.value = '';
+  renderPortraitPreview();
+}
+
+// Legacy handler used by sheet inline upload
 function uploadPortrait(input) {
   const file = input.files[0]; if(!file) return;
   const reader = new FileReader();
   reader.onload = e => { portraitData = e.target.result; renderSheet(); };
   reader.readAsDataURL(file);
+}
+
+// ── AI Portrait Prompt Builder ──────────────
+function copyAIPrompt(btn) {
+  const age    = document.getElementById('p-age')?.value || '';
+  const sex    = document.getElementById('p-sex')?.value || '';
+  const height = document.getElementById('p-height')?.value || '';
+  const weight = document.getElementById('p-weight')?.value || '';
+  const hair   = document.getElementById('p-hair')?.value || '';
+  const eyes   = document.getElementById('p-eyes')?.value || '';
+  const skin   = document.getElementById('p-skin')?.value || '';
+  const desc   = document.getElementById('p-desc')?.value || '';
+
+  const eraBackdrops = {
+    modern:    'contemporary urban setting, present day, realistic cinematic lighting',
+    '1920s':   '1920s Jazz Age setting, prohibition era United States, period clothing, atmospheric speakeasy lighting',
+    victorian: 'nighttime London streets, Victorian gas lamp light, 1890s fog, period Victorian clothing'
+  };
+  const backdrop = eraBackdrops[selectedEra] || eraBackdrops.modern;
+
+  const parts = [];
+  if(age || sex) {
+    let who = '';
+    if(age) who += age.split('/')[0].trim() + '-year-old ';
+    if(sex) who += sex === 'F' ? 'woman' : sex === 'M' ? 'man' : 'person';
+    parts.push(who.trim());
+  }
+  if(height) parts.push(height);
+  if(weight) parts.push(weight);
+  if(hair) parts.push(hair + ' hair');
+  if(eyes) parts.push(eyes + ' eyes');
+  if(skin) parts.push(skin + ' complexion');
+  if(desc) parts.push(desc);
+
+  const subject = parts.length ? 'Portrait photograph of a ' + parts.join(', ') : 'Portrait photograph of a person';
+  const prompt = subject + '. ' + backdrop + '. Realistic, detailed face.';
+
+  navigator.clipboard.writeText(prompt).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied! Paste into Ideogram.';
+    setTimeout(() => { btn.textContent = orig; }, 3000);
+  }).catch(() => {
+    window.prompt('Copy this prompt and paste it into Ideogram:', prompt);
+  });
 }
 
 // ══════════════════════════════════════════════════════
@@ -1247,6 +1358,7 @@ function applyCharData(c) {
   occSkillAdded = {...(c.occSkillAdded||{})};
   piSkillAdded  = {...(c.piSkillAdded||{})};
   portraitData  = c.portraitData || null;
+  renderPortraitPreview();
   if(c.personal) {
     const p = c.personal;
     const set = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
@@ -1392,6 +1504,7 @@ function newInvestigator() {
   stats = { STR:0, CON:0, SIZ:0, DEX:0, APP:0, INT:0, POW:0, EDU:0 };
   luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {};
   creditRating = 0; portraitData = null; isEditMode = false; selectedEra = '1920s';
+  renderPortraitPreview();
   ['p-name','p-occ-title','p-residence','p-birthplace','p-age','p-height','p-weight','p-hair','p-eyes','p-skin','p-desc'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value='';
   });
