@@ -128,19 +128,19 @@
   .coc-logo { font-family: var(--head); font-size: 42px; font-weight: 600; letter-spacing: 8px; color: var(--teal-bright); text-shadow: 0 0 40px rgba(80,168,168,0.3); margin-bottom: 4px; }
   .coc-subtitle { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 4px; }
   .coc-class { font-family: var(--mono); font-size: 10px; color: var(--amber); letter-spacing: 3px; margin-top: 6px; }
-  .header-btns { position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; align-items: center; }
-  .new-char-btn { background: transparent; border: 1px solid var(--text3); color: var(--text3); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 5px 12px; cursor: pointer; text-transform: uppercase; }
+  .header-btns { position: absolute; right: 0; top: 0.75rem; display: flex; gap: 8px; align-items: center; }
+  .new-char-btn { background: transparent; border: 1px solid var(--text3); color: var(--text3); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 6px 14px; cursor: pointer; text-transform: uppercase; }
   .new-char-btn:hover { border-color: var(--teal-bright); color: var(--teal-bright); }
-  .load-btn { background: transparent; border: 1px solid var(--amber); color: var(--amber); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 5px 12px; cursor: pointer; text-transform: uppercase; }
+  .load-btn { background: transparent; border: 1px solid var(--amber); color: var(--amber); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 6px 14px; cursor: pointer; text-transform: uppercase; }
   .load-btn:hover { background: rgba(200,168,64,0.1); }
 
   /* ── Step Nav ── */
   .step-nav { display: flex; gap: 2px; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 2px; flex-wrap: wrap; }
-  .step-btn { background: none; border: none; color: var(--text3); font-family: var(--mono); font-size: 10px; letter-spacing: 1px; padding: 8px 12px; cursor: pointer; text-transform: uppercase; position: relative; transition: color .15s; white-space: nowrap; }
+  .step-btn { background: none; border: none; color: var(--text3); font-family: var(--mono); font-size: 12px; letter-spacing: 1px; padding: 10px 16px; cursor: pointer; text-transform: uppercase; position: relative; transition: color .15s; white-space: nowrap; }
   .step-btn:hover { color: var(--text); }
   .step-btn.active { color: var(--teal-bright); }
   .step-btn.active::after { content: ''; position: absolute; bottom: -4px; left: 0; right: 0; height: 2px; background: var(--teal); }
-  .step-num { display: block; font-size: 8px; color: var(--text3); margin-bottom: 2px; }
+  .step-num { display: block; font-size: 10px; color: var(--text3); margin-bottom: 2px; }
   .step-btn.active .step-num { color: var(--teal); }
 
   /* ── Panels ── */
@@ -664,8 +664,8 @@ const ALL_SKILLS = [
   {name:'Occult',           base:5,  eras:['all']},
   {name:'Operate Heavy Machinery',base:1,eras:['all']},
   {name:'Persuade',         base:10, eras:['all']},
-  {name:'Photography',      base:5,  eras:['modern','1920s']},
-  {name:'Pilot',            base:1,  eras:['all'], specialty:true},
+  {name:'Photography',      base:5,  eras:['all']},
+  {name:'Pilot',            base:1,  eras:['modern','1920s'], specialty:true},
   {name:'Psychology',       base:10, eras:['all']},
   {name:'Psychoanalysis',   base:1,  eras:['all']},
   {name:'Ride',             base:5,  eras:['all']},
@@ -686,9 +686,9 @@ const OCCUPATIONS = [
   {name:'Clergy',          eras:['all'], pts:'EDU×4', cr:[9,60], skills:['Accounting','History','Library Use','Listen','Persuade','Psychology'],                        chooseN:2, chooseFrom:['Language (Other)','Art/Craft','Medicine','Natural World','Occult'],  desc:'Minister, priest, rabbi or other religious leader.'},
   {name:'Criminal',        eras:['all'], pts:'EDU×2+DEX×2', cr:[5,65], skills:['Appraise','Disguise','Fast Talk','Fighting (Brawl)','Firearms (Handgun)','Locksmith','Sleight of Hand','Stealth'], chooseN:0, chooseFrom:[], desc:'Career criminal — burglar, grifter, or gangster.'},
   {name:'Doctor of Medicine',eras:['all'], pts:'EDU×4', cr:[30,80], skills:['First Aid','Language (Other)','Library Use','Medicine','Psychology','Science'],              chooseN:2, chooseFrom:['Accounting','Language (Other)','Persuade','Psychoanalysis'],       desc:'Trained physician and surgeon.'},
-  {name:'Engineer',        eras:['modern','1920s'], pts:'EDU×4', cr:[30,70], skills:['Accounting','Electrical Repair','Library Use','Mechanical Repair','Operate Heavy Machinery','Science'], chooseN:2, chooseFrom:['Art/Craft','Electronics','Law','Navigate','Pilot'], desc:'Civil, mechanical or electrical engineer.'},
+  {name:'Engineer',        eras:['all'], pts:'EDU×4', cr:[30,70], skills:['Accounting','Electrical Repair','Library Use','Mechanical Repair','Operate Heavy Machinery','Science'], chooseN:2, chooseFrom:['Art/Craft','Electronics','Law','Navigate','Pilot'], desc:'Civil, mechanical or electrical engineer.'},
   {name:'Entertainer',     eras:['all'], pts:'EDU×2+APP×2', cr:[9,70], skills:['Art/Craft','Charm','Disguise','Fast Talk','Listen','Psychology','Sleight of Hand'],     chooseN:1, chooseFrom:['Language (Other)','Accounting','Jump','Stealth'],                  desc:'Actor, musician, comedian or performer.'},
-  {name:'Farmer/Labourer', eras:['all'], pts:'EDU×2+STR×2', cr:[9,30], skills:['Animal Handling','Drive Auto','Fighting (Brawl)','Mechanical Repair','Natural World','Operate Heavy Machinery','Track'], chooseN:1, chooseFrom:['Accounting','First Aid','Ride','Survival'], desc:'Rural worker, farmer or manual labourer.'},
+  {name:'Farmer/Labourer', eras:['all'], pts:'EDU×2+STR×2', cr:[9,30], skills:['Animal Handling','Fighting (Brawl)','Mechanical Repair','Natural World','Operate Heavy Machinery','Ride','Track'], chooseN:1, chooseFrom:['Accounting','Drive Auto','First Aid','Survival'], desc:'Rural worker, farmer or manual labourer.'},
   {name:'Journalist',      eras:['all'], pts:'EDU×4', cr:[9,30], skills:['Art/Craft','Fast Talk','History','Library Use','Listen','Psychology','Spot Hidden'],           chooseN:1, chooseFrom:['Language (Other)','Accounting','Charm','Persuade'],                 desc:'Reporter for newspaper, radio or magazine.'},
   {name:'Lawyer',          eras:['all'], pts:'EDU×4', cr:[30,80], skills:['Accounting','Fast Talk','History','Intimidate','Law','Library Use','Persuade','Psychology'],  chooseN:0, chooseFrom:[],                                                                   desc:'Solicitor, barrister, or legal counsel.'},
   {name:'Librarian',       eras:['all'], pts:'EDU×4', cr:[9,35], skills:['Accounting','Anthropology','History','Language (Other)','Library Use','Natural World','Occult'], chooseN:1, chooseFrom:['Archaeology','Art/Craft','Science'],                               desc:'Keeper of books and records.'},
@@ -698,9 +698,9 @@ const OCCUPATIONS = [
   {name:'Parapsychologist',eras:['all'], pts:'EDU×4', cr:[9,30], skills:['Anthropology','Art/Craft','History','Library Use','Occult','Psychology','Spot Hidden'],        chooseN:1, chooseFrom:['Language (Other)','Accounting','Charm','Fast Talk'],               desc:'Investigator of paranormal phenomena.'},
   {name:'Police Detective', eras:['all'], pts:'EDU×2+STR×2', cr:[20,50], skills:['Art/Craft','Disguise','Fast Talk','Firearms (Handgun)','Intimidate','Law','Listen','Psychology','Spot Hidden'], chooseN:0, chooseFrom:[],                                          desc:'Plain-clothes detective or investigator.'},
   {name:'Private Investigator',eras:['all'], pts:'EDU×2+DEX×2', cr:[9,30], skills:['Art/Craft','Disguise','Electrical Repair','Fast Talk','Law','Library Use','Psychology','Spot Hidden'], chooseN:0, chooseFrom:[],                                                desc:'Freelance investigator for hire.'},
-  {name:'Professor',       eras:['all'], pts:'EDU×4', cr:[20,70], skills:['Anthropology','History','Language (Other)','Library Use','Occult','Other Language','Psychology'], chooseN:2, chooseFrom:['Accounting','Archaeology','Art/Craft','Natural World','Science'], desc:'University academic and researcher.'},
+  {name:'Professor',       eras:['all'], pts:'EDU×4', cr:[20,70], skills:['Anthropology','History','Language (Other)','Library Use','Occult','Psychology'], chooseN:2, chooseFrom:['Accounting','Archaeology','Art/Craft','Natural World','Science'], desc:'University academic and researcher.'},
   {name:'Scientist',       eras:['all'], pts:'EDU×4', cr:[9,40], skills:['Electrical Repair','First Aid','Library Use','Mechanical Repair','Natural World','Science','Spot Hidden'], chooseN:2, chooseFrom:['Language (Other)','Accounting','Medicine','Navigate'],  desc:'Research scientist in any discipline.'},
-  {name:'Soldier',         eras:['all'], pts:'EDU×2+DEX×2', cr:[9,30], skills:['Climb','Fighting (Brawl)','Firearms (Rifle/Shotgun)','First Aid','Navigate','Stealth','Survival'], chooseN:1, chooseFrom:['Drive Auto','Heavy Weapons','Mechanical Repair','Ride'],   desc:'Enlisted soldier, active or veteran.'},
+  {name:'Soldier',         eras:['all'], pts:'EDU×2+DEX×2', cr:[9,30], skills:['Climb','Fighting (Brawl)','Firearms (Rifle/Shotgun)','First Aid','Navigate','Stealth','Survival'], chooseN:1, chooseFrom:['Drive Auto','Operate Heavy Machinery','Mechanical Repair','Ride'],   desc:'Enlisted soldier, active or veteran.'},
   {name:'Spy',             eras:['all'], pts:'EDU×2+APP×2', cr:[20,60], skills:['Charm','Disguise','Fast Talk','Firearms (Handgun)','Language (Other)','Listen','Psychology','Stealth'], chooseN:0, chooseFrom:[],                                                   desc:'Intelligence operative or agent.'},
   {name:'Student',         eras:['all'], pts:'EDU×4', cr:[5,25], skills:['Language (Other)','Library Use','Listen','Psychology','Spot Hidden'],                         chooseN:3, chooseFrom:['Accounting','Anthropology','Archaeology','Art/Craft','History','Natural World','Occult','Science'], desc:'University student, curious and resourceful.'},
   {name:'Dilettante',      eras:['all'], pts:'APP×4', cr:[50,99], skills:['Appraise','Art/Craft','Firearms (Handgun)','History','Occult','Persuade','Ride'],             chooseN:1, chooseFrom:['Language (Other)','Anthropology','Charm','Fast Talk','Natural World'],  desc:'Wealthy person of leisure — many resources, few responsibilities.'},
