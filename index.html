@@ -289,6 +289,26 @@
   .sheet-portrait-img { max-width: 100px; max-height: 110px; object-fit: cover; }
   .sheet-portrait-empty { width: 100px; height: 110px; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #bbb; font-family: 'Share Tech Mono',monospace; font-size: 9px; letter-spacing: 1px; }
 
+  /* ── Equipment Panel ── */
+  .equip-section-hdr { font-family:var(--mono); font-size:11px; letter-spacing:2px; color:var(--teal-bright); text-transform:uppercase; margin-bottom:8px; padding-bottom:4px; border-bottom:1px solid var(--border); }
+  .my-weapons-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .my-weapons-table th { font-family:var(--mono); font-size:10px; letter-spacing:1px; color:var(--text2); padding:5px 6px; border-bottom:1px solid var(--border2); text-align:left; white-space:nowrap; }
+  .my-weapons-table td { padding:3px 4px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .weap-cell { background:transparent; border:none; color:var(--text); font-family:var(--body); font-size:12px; width:100%; padding:2px 4px; }
+  .weap-cell:focus { outline:1px solid var(--teal); }
+  .weap-cell.weap-num { width:52px; text-align:center; }
+  .weap-empty { font-family:var(--mono); font-size:10px; color:var(--text3); text-align:center; padding:12px; }
+  .weap-remove { background:none; border:none; color:var(--text3); font-size:14px; cursor:pointer; padding:0 4px; line-height:1; }
+  .weap-remove:hover { color:var(--red); }
+  .equip-cat-block { margin-bottom:1rem; }
+  .equip-cat-hdr { font-family:var(--mono); font-size:10px; letter-spacing:1px; color:var(--amber); text-transform:uppercase; margin-bottom:4px; }
+  .equip-cat-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .equip-cat-table th { font-family:var(--mono); font-size:9px; letter-spacing:1px; color:var(--text3); padding:4px 6px; border-bottom:1px solid var(--border); text-align:left; }
+  .equip-cat-table td { padding:4px 6px; border-bottom:1px solid var(--border); color:var(--text); }
+  .equip-cat-table tr:hover td { background:var(--bg3); }
+  .weap-add-btn { background:none; border:1px solid var(--border2); color:var(--text2); font-family:var(--mono); font-size:10px; padding:2px 8px; cursor:pointer; white-space:nowrap; }
+  .weap-add-btn:hover { border-color:var(--teal-bright); color:var(--teal-bright); }
+
   /* Sheet Characteristics */
   .sheet-char-grid { display: grid; grid-template-columns: repeat(8, 1fr); }
   .sheet-char-cell { text-align: center; padding: 8px 4px; border-right: 1px solid #ccc; }
@@ -602,12 +622,8 @@
   <!-- PANEL 5: Equipment -->
   <div class="panel" id="panel5">
     <div class="section-title">Weapons &amp; Equipment</div>
-    <div class="section-sub">Record weapons carried and personal possessions.</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:1rem">Equipment detail coming soon — proceed to sheet to view your investigator.</div>
-    <div class="nav-btns">
-      <button class="nav-btn" onclick="goStep(4)">← SKILLS</button>
-      <button class="nav-btn primary" onclick="goStep(6); renderSheet()">VIEW SHEET →</button>
-    </div>
+    <div class="section-sub">Select era-appropriate weapons from the catalog or add custom entries.</div>
+    <div id="equip-panel-content"></div>
   </div>
 
   <!-- PANEL 6: Sheet -->
@@ -772,6 +788,8 @@ let selectedOcc    = null;
 let occSkillAdded  = {};  // skill name → points from occupation pool
 let piSkillAdded   = {};  // skill name → points from personal interest pool
 let creditRating   = 0;
+let charWeapons    = []; // [{name,skillPct,damage,range,attacks,ammo,mal}]
+let equipment      = '';
 let portraitData   = null;
 let isEditMode     = false;
 let pendingSharedChar = null;
@@ -785,6 +803,7 @@ function goStep(n) {
   if(n===2) renderStatsGrid();
   if(n===3) renderOccupations();
   if(n===4) renderSkills();
+  if(n===5) renderEquipPanel();
   if(n===6) renderSheet();
   window.scrollTo(0,0);
 }
@@ -1221,14 +1240,20 @@ function renderSheet() {
       <table class="sheet-weapon-table">
         <thead><tr><th>Weapon</th><th>Skill%</th><th>Damage</th><th>Range</th><th>Attacks/Round</th><th>Ammo</th><th>Malfunction</th></tr></thead>
         <tbody>
-          ${Array(5).fill('<tr class="sheet-weapon-empty"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>').join('')}
+          ${(() => {
+            const filled = charWeapons.map(w =>
+              `<tr><td>${w.name||'—'}</td><td>${w.skillPct||'—'}</td><td>${w.damage||'—'}</td><td>${w.range||'—'}</td><td>${w.attacks||'—'}</td><td>${w.ammo||'—'}</td><td>${w.mal||'—'}</td></tr>`
+            );
+            const blanks = Array(Math.max(0, 5 - filled.length)).fill('<tr class="sheet-weapon-empty"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+            return [...filled, ...blanks].join('');
+          })()}
         </tbody>
       </table>
     </div>
 
     <div class="sheet-section">
       <div class="sheet-section-hdr">Equipment &amp; Possessions</div>
-      <div style="min-height:80px;padding:10px 14px;font-size:13px;color:#bbb;font-family:'Share Tech Mono',monospace">[Record gear, clues, and possessions here]</div>
+      <div style="min-height:80px;padding:10px 14px;font-size:12px;color:#333;font-family:'Share Tech Mono',monospace;white-space:pre-wrap">${equipment || '[Record gear, clues, and possessions here]'}</div>
     </div>
 
     <div class="sheet-footer">
@@ -1236,6 +1261,171 @@ function renderSheet() {
       <span>${eraLabel.toUpperCase()} ERA</span>
     </div>
   </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// WEAPONS CATALOG
+// ══════════════════════════════════════════════════════
+const WEAPONS = [
+  // ── Brawl & Close Combat (all eras)
+  { cat:'Brawl & Close Combat', name:'Fist/Punch',         skill:'Fighting (Brawl)', damage:'1D3+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Head Butt',          skill:'Fighting (Brawl)', damage:'1D4+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Kick',               skill:'Fighting (Brawl)', damage:'1D6+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Grapple',            skill:'Fighting (Brawl)', damage:'Special',     range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Knife',              skill:'Fighting (Brawl)', damage:'1D4+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Large Knife',        skill:'Fighting (Brawl)', damage:'1D6+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Club / Cane',        skill:'Fighting (Brawl)', damage:'1D6+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Axe',                skill:'Fighting (Brawl)', damage:'1D6+1+DB',    range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Bayonet',            skill:'Fighting (Brawl)', damage:'1D6+2+DB',    range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Baseball Bat',       skill:'Fighting (Brawl)', damage:'1D8+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['modern','1920s'] },
+  // ── Edged Weapons (all eras)
+  { cat:'Edged Weapons',        name:'Sword / Sabre',      skill:'Fighting (Sword)', damage:'1D8+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Edged Weapons',        name:'Sword Cane',         skill:'Fighting (Sword)', damage:'1D6+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['victorian','1920s'] },
+  // ── Thrown Weapons (all eras)
+  { cat:'Thrown Weapons',       name:'Thrown Rock / Bottle', skill:'Throw',          damage:'1D4+DB',      range:'STR×2 yds',    attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Thrown Weapons',       name:'Thrown Knife',       skill:'Throw',            damage:'1D4+DB',      range:'STR yds',      attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Thrown Weapons',       name:'Grenade (Frag)',      skill:'Throw',            damage:'4D6',         range:'STR×2 yds',    attacks:'1', ammo:'1',  mal:'—',   eras:['1920s','modern'] },
+  // ── Handguns — Victorian
+  { cat:'Handguns',             name:'Derringer .41',       skill:'Firearms (Handgun)', damage:'1D6+1',    range:'5 yds',        attacks:'1', ammo:'2',  mal:'100', eras:['victorian','1920s'] },
+  { cat:'Handguns',             name:'Webley Mk VI .455',   skill:'Firearms (Handgun)', damage:'1D10+2',   range:'15 yds',       attacks:'2', ammo:'6',  mal:'100', eras:['victorian','1920s'] },
+  // ── Handguns — 1920s
+  { cat:'Handguns',             name:'Revolver .38',        skill:'Firearms (Handgun)', damage:'1D10',     range:'15 yds',       attacks:'3', ammo:'6',  mal:'100', eras:['1920s','modern'] },
+  { cat:'Handguns',             name:'Revolver .44',        skill:'Firearms (Handgun)', damage:'1D10+2',   range:'15 yds',       attacks:'2', ammo:'6',  mal:'100', eras:['1920s','modern'] },
+  { cat:'Handguns',             name:'Colt 1911 .45 ACP',   skill:'Firearms (Handgun)', damage:'1D10+2',   range:'15 yds',       attacks:'2', ammo:'7',  mal:'96',  eras:['1920s','modern'] },
+  // ── Handguns — Modern
+  { cat:'Handguns',             name:'Glock 17 (9mm)',       skill:'Firearms (Handgun)', damage:'1D10',     range:'15 yds',       attacks:'3', ammo:'17', mal:'99',  eras:['modern'] },
+  { cat:'Handguns',             name:'Beretta 92 (9mm)',     skill:'Firearms (Handgun)', damage:'1D10',     range:'15 yds',       attacks:'3', ammo:'15', mal:'99',  eras:['modern'] },
+  { cat:'Handguns',             name:'Desert Eagle .44 Mag', skill:'Firearms (Handgun)', damage:'1D10+4',   range:'15 yds',       attacks:'2', ammo:'8',  mal:'100', eras:['modern'] },
+  // ── Rifles & Shotguns — Victorian
+  { cat:'Rifles & Shotguns',    name:'Martini-Henry .577',   skill:'Firearms (Rifle)',   damage:'3D6+4',    range:'110 yds',      attacks:'1', ammo:'1',  mal:'100', eras:['victorian'] },
+  { cat:'Rifles & Shotguns',    name:'Lee-Enfield .303',     skill:'Firearms (Rifle)',   damage:'2D6+4',    range:'110 yds',      attacks:'1', ammo:'10', mal:'100', eras:['victorian','1920s'] },
+  // ── Rifles & Shotguns — 1920s
+  { cat:'Rifles & Shotguns',    name:"Springfield '03 Rifle",skill:'Firearms (Rifle)',   damage:'2D6+4',    range:'110 yds',      attacks:'1', ammo:'5',  mal:'96',  eras:['1920s'] },
+  { cat:'Rifles & Shotguns',    name:'Winchester Model 70',  skill:'Firearms (Rifle)',   damage:'2D6+4',    range:'110 yds',      attacks:'1', ammo:'5',  mal:'96',  eras:['1920s','modern'] },
+  { cat:'Rifles & Shotguns',    name:'Shotgun (12g)',         skill:'Firearms (Shotgun)', damage:'4D6/2D6/1D6', range:'10/20/50 yds', attacks:'2', ammo:'2', mal:'100', eras:['all'] },
+  // ── Rifles & Shotguns — Modern
+  { cat:'Rifles & Shotguns',    name:'Hunting Rifle (bolt)', skill:'Firearms (Rifle)',   damage:'2D6+4',    range:'110 yds',      attacks:'1', ammo:'5',  mal:'99',  eras:['modern'] },
+  { cat:'Rifles & Shotguns',    name:'AR-15 (5.56mm)',        skill:'Firearms (Rifle)',   damage:'2D6+4',    range:'110 yds',      attacks:'3', ammo:'30', mal:'99',  eras:['modern'] },
+  // ── Submachine Guns
+  { cat:'Submachine Guns',      name:'Thompson SMG .45',      skill:'Firearms (SMG)',     damage:'1D10+2',   range:'20 yds',       attacks:'3', ammo:'20', mal:'96',  eras:['1920s','modern'] },
+  { cat:'Submachine Guns',      name:'MP5 (9mm)',              skill:'Firearms (SMG)',     damage:'1D10',     range:'20 yds',       attacks:'3', ammo:'30', mal:'99',  eras:['modern'] },
+];
+
+// ── Equipment panel ──────────────────────────────────
+let _catalogWeapons = []; // era-filtered snapshot for index-based add
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderEquipPanel() {
+  const era = selectedEra;
+  _catalogWeapons = WEAPONS.filter(w => w.eras.includes('all') || w.eras.includes(era));
+
+  // Group by category
+  const cats = {};
+  for(const w of _catalogWeapons) {
+    if(!cats[w.cat]) cats[w.cat] = [];
+    cats[w.cat].push(w);
+  }
+
+  // My Weapons rows
+  const myRows = charWeapons.length
+    ? charWeapons.map((w, i) => `
+      <tr>
+        <td><input class="weap-cell" value="${esc(w.name)}" oninput="charWeapons[${i}].name=this.value" placeholder="Weapon name"></td>
+        <td><input class="weap-cell weap-num" value="${esc(w.skillPct)}" oninput="charWeapons[${i}].skillPct=this.value" placeholder="—"></td>
+        <td><input class="weap-cell" value="${esc(w.damage)}" oninput="charWeapons[${i}].damage=this.value" placeholder="—"></td>
+        <td><input class="weap-cell" value="${esc(w.range)}" oninput="charWeapons[${i}].range=this.value" placeholder="—"></td>
+        <td><input class="weap-cell weap-num" value="${esc(w.attacks)}" oninput="charWeapons[${i}].attacks=this.value" placeholder="—"></td>
+        <td><input class="weap-cell weap-num" value="${esc(w.ammo)}" oninput="charWeapons[${i}].ammo=this.value" placeholder="—"></td>
+        <td><input class="weap-cell weap-num" value="${esc(w.mal)}" oninput="charWeapons[${i}].mal=this.value" placeholder="—"></td>
+        <td><button class="weap-remove" onclick="removeWeapon(${i})" title="Remove">✕</button></td>
+      </tr>`).join('')
+    : `<tr><td colspan="8" class="weap-empty">No weapons added — use the catalog below or add a custom row.</td></tr>`;
+
+  // Catalog rows
+  const catalogHtml = Object.entries(cats).map(([cat, weapons]) => {
+    const rows = weapons.map(w => {
+      const idx = _catalogWeapons.indexOf(w);
+      return `<tr>
+        <td>${esc(w.name)}</td>
+        <td style="color:var(--text3);font-size:10px">${esc(w.skill)}</td>
+        <td>${esc(w.damage)}</td>
+        <td style="white-space:nowrap">${esc(w.range)}</td>
+        <td style="text-align:center">${esc(w.attacks)}</td>
+        <td style="text-align:center">${esc(w.ammo)}</td>
+        <td style="text-align:center">${esc(w.mal)}</td>
+        <td><button class="weap-add-btn" onclick="addWeaponFromCatalog(${idx})">+ Add</button></td>
+      </tr>`;
+    }).join('');
+    return `<div class="equip-cat-block">
+      <div class="equip-cat-hdr">${esc(cat)}</div>
+      <table class="equip-cat-table">
+        <thead><tr><th>Name</th><th>Skill</th><th>Damage</th><th>Range</th><th>Att</th><th>Ammo</th><th>Mal</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+
+  document.getElementById('equip-panel-content').innerHTML = `
+    <div style="margin-bottom:1.5rem">
+      <div class="equip-section-hdr">My Weapons</div>
+      <div style="overflow-x:auto">
+        <table class="my-weapons-table">
+          <thead><tr><th>Weapon</th><th>Skill%</th><th>Damage</th><th>Range</th><th>Att/Rd</th><th>Ammo</th><th>Mal</th><th></th></tr></thead>
+          <tbody>${myRows}</tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
+        <button class="array-btn" onclick="addCustomWeapon()">+ Custom Row</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1.5rem">
+      <div class="equip-section-hdr" style="cursor:pointer;user-select:none" onclick="toggleWeaponCatalog()">
+        Weapons Catalog
+        <span id="catalog-toggle" style="font-size:10px;color:var(--text3);margin-left:6px">▸ Expand</span>
+      </div>
+      <div id="weapons-catalog" style="display:none">${catalogHtml}</div>
+    </div>
+
+    <div style="margin-bottom:1.5rem">
+      <div class="equip-section-hdr">Equipment &amp; Possessions</div>
+      <textarea class="form-input" id="p-equipment" rows="4"
+        placeholder="Cash, documents, tools, clothing, personal items…"
+        oninput="equipment=this.value">${esc(equipment)}</textarea>
+    </div>
+
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goStep(4)">← SKILLS</button>
+      <button class="nav-btn primary" onclick="goStep(6); renderSheet()">VIEW SHEET →</button>
+    </div>`;
+}
+
+function addWeaponFromCatalog(idx) {
+  const w = _catalogWeapons[idx];
+  if(!w) return;
+  const skillPct = getSkillTotal(w.skill) || '';
+  charWeapons.push({ name:w.name, skillPct:skillPct ? String(skillPct) : '', damage:w.damage, range:w.range, attacks:w.attacks, ammo:w.ammo, mal:w.mal });
+  renderEquipPanel();
+  document.getElementById('equip-panel-content').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function addCustomWeapon() {
+  charWeapons.push({ name:'', skillPct:'', damage:'', range:'', attacks:'', ammo:'', mal:'' });
+  renderEquipPanel();
+}
+
+function removeWeapon(i) {
+  charWeapons.splice(i, 1);
+  renderEquipPanel();
+}
+
+function toggleWeaponCatalog() {
+  const el  = document.getElementById('weapons-catalog');
+  const tog = document.getElementById('catalog-toggle');
+  const open = el.style.display === 'none';
+  el.style.display = open ? 'block' : 'none';
+  tog.textContent  = open ? '▾ Collapse' : '▸ Expand';
 }
 
 // ── Portrait ──────────────────────────
@@ -1345,6 +1535,8 @@ function buildCharData() {
     selectedOcc: selectedOcc?.name || null,
     occSkillAdded: {...occSkillAdded},
     piSkillAdded:  {...piSkillAdded},
+    charWeapons:   charWeapons.map(w=>({...w})),
+    equipment,
     portraitData
   };
 }
@@ -1357,6 +1549,8 @@ function applyCharData(c) {
   selectedOcc   = c.selectedOcc ? OCCUPATIONS.find(o=>o.name===c.selectedOcc)||null : null;
   occSkillAdded = {...(c.occSkillAdded||{})};
   piSkillAdded  = {...(c.piSkillAdded||{})};
+  charWeapons   = (c.charWeapons||[]).map(w=>({...w}));
+  equipment     = c.equipment || '';
   portraitData  = c.portraitData || null;
   renderPortraitPreview();
   if(c.personal) {
@@ -1503,7 +1697,7 @@ function newInvestigator() {
   if(!confirm('Start a new investigator? Unsaved changes will be lost.')) return;
   stats = { STR:0, CON:0, SIZ:0, DEX:0, APP:0, INT:0, POW:0, EDU:0 };
   luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {};
-  creditRating = 0; portraitData = null; isEditMode = false; selectedEra = '1920s';
+  creditRating = 0; charWeapons = []; equipment = ''; portraitData = null; isEditMode = false; selectedEra = '1920s';
   renderPortraitPreview();
   ['p-name','p-occ-title','p-residence','p-birthplace','p-age','p-height','p-weight','p-hair','p-eyes','p-skin','p-desc'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value='';
