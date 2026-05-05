@@ -1,5 +1,5 @@
 # Project: Call of Cthulhu Character Creator
-Last updated: 2026-04-27 by Claude Code
+Last updated: 2026-05-05 by Claude Code
 
 ## What this project is
 A browser-based character creation tool for the Call of Cthulhu 7th Edition tabletop RPG.
@@ -69,7 +69,7 @@ distributes occupation skill points → distributes personal interest points →
 adds equipment → views investigator sheet → saves/shares
 
 ## Where we left off
-Last commit: 7dc1b81 — 2026-04-27 — Reconcile skills with Roll20 official CoC 7e sheet
+Last commit: 5064091 — Victorian era: full skill list, 23 occupations, era-aware base values
 In progress: none
 Branch: master
 
@@ -77,9 +77,9 @@ Branch: master
 
 ### Phase 1 — Core wizard
 - [ ] Browser test all three era themes end-to-end
-- [ ] Equipment step — weapons table and gear checklist (placeholder currently)
 - [ ] Occupation skill list audit against Roll20 source for accuracy
 - [ ] Additional skills from Roll20 review (Demolitions, Hypnosis, Read Lips, Artillery — verify eras/bases)
+- [ ] Verify Pulp Cthulhu archetype/talent mappings against physical book
 
 ### Phase 2 — Sheet & Print
 - [ ] Investigator sheet render (all sections)
@@ -118,4 +118,6 @@ Branch: master
 - 2026-04-27 — Skills reconciled against Roll20 official sheet (coc_7th_ed.html)
 
 ## Change log
+- 2026-05-05 — Victorian era: full skill list, 23 occupations, era-aware base values (getSkillBase tokens, calcOccPts pipe syntax) — Source: Claude Code
+- 2026-04-28 — AI portrait; weapons catalog (35 weapons, era-filtered); step order swap; occupation onclick fix; sanity formula fix; choose-from skill picker; Pulp Cthulhu mode (28 archetypes, 29 talents) — Source: Claude Code
 - 2026-04-27 — Era-specific visual themes (Modern/1920s/Victorian); Dodge fix; Firearms SMG; Listen era-aware; initial project — Source: Claude Code

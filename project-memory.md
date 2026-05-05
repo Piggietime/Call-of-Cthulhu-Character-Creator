@@ -1,8 +1,67 @@
 # Project Memory
-Last updated: 2026-04-27
+Last updated: 2026-04-28
 
 This file captures decisions, reasoning, and session context that
 project-context.md doesn't hold. It is Claude's memory between sessions.
+
+---
+
+## Session — 2026-05-05
+
+**Focus:** Victorian era implementation — full skill list, 23 occupations, era-aware base values sourced from Cthulhu by Gaslight PDF (pages 69–88).
+
+**Decisions made:**
+- Victorian era uses identical core CoC 7e mechanics (same stat rolls, derived stat formulas) — only skill list and occupation set differ from Modern/1920s
+- Era-specific base values use string token sentinels in `getSkillBase()`: ACCOUNTING (5 modern+1920s / 10 victorian), ELEC_REPAIR (10/1), MECH_REPAIR (10/20), RIDE_BASE (5/20), SWIM_BASE (20/30)
+- REASSURE is Victorian-only with base = APP÷5 — handled by REASSURE sentinel in `getSkillBase()`
+- Occupation formulas needing "higher of two stats" use pipe syntax: `(STR|DEX)×2`; `calcOccPts()` extended with regex `\(([A-Z|]+)\)×(\d+)` to extract and max the listed stats
+- Three-tier occupation structure: `eras:['all']` (8 universal), `eras:['modern','1920s']` (17), `eras:['victorian']` (23)
+- 23 Victorian occupations sourced from Cthulhu by Gaslight pages 77–88 (user-provided PDF)
+- Victorian rules validation is now complete — this item resolved
+
+**Left unresolved:**
+- Browser test all three era themes end-to-end
+- Verify Pulp Cthulhu archetype/talent mappings against physical book
+- Additional skills audit (Demolitions, Hypnosis, Read Lips, Artillery — eras/bases)
+- Engineer occupation chooseFrom still includes Electronics (Modern-only) — Victorian engineers have fewer valid choices
+
+**Files changed this session:**
+ index.html | 232 +++++++++++++++++++++++++++++++++--------------------
+ 1 commit: 5064091 Victorian era: full skill list, 23 occupations, era-aware base values
+
+---
+
+## Session — 2026-04-28
+
+**Focus:** AI portrait feature, weapons & equipment panel, step order flip, occupation selection bug, derived stats fix, occupation choose-from skill picker, Pulp Cthulhu mode.
+
+**Decisions made:**
+- Confirmed 3 eras (Modern, 1920s, Victorian); Victorian PDF pending for rules validation — noted in project memory
+- AI portrait: era-specific backdrop language in assembled prompt (Modern = contemporary urban; 1920s = Jazz Age/prohibition; Victorian = gas-lit London fog)
+- Portrait upload widget added to Personal Info step, mirroring Delta Green implementation
+- Weapons catalog: 35 weapons across 6 categories (Brawl, Edged, Thrown, Handguns, Rifles/Shotguns, SMGs), era-filtered at render time; catalog collapses until expanded
+- Step order swapped: Occupation now before Characteristics — matches CoC rulebook flow (pick concept first, then roll stats)
+- Occupation onclick bug root cause: `JSON.stringify(name)` wraps names in double quotes inside a double-quoted HTML `onclick="..."` attribute, silently breaking every click — fixed by switching to single-quoted HTML attribute
+- Sanity formula corrected: was `POW × 5` (gave values like 300 when POW=60); correct CoC 7e rule is Sanity = POW directly (POW is already stored as a percentage value from 3D6×5 roll)
+- Occupation choose-from skills: interactive chip buttons in occupation detail box, capped at `chooseN` selections, chosen skills feed into Skills step as occupation skills (highlighted, point-assignable)
+- CoC 7e has no "preferred stat" bonus mechanic like Delta Green — the occupation's skill point formula (EDU×4, EDU×2+APP×2, etc.) is the only mechanism encoding which stats matter
+- Pulp Cthulhu: global toggle on Era step; 28 archetypes each with name, bonus characteristic, and talent pool; 29 talents each with category and rule description; archetype+talent section renders on printed sheet
+- Pulp data from training knowledge (not from linked GitHub repo, which was personal sci-fi campaign material unrelated to the supplement)
+
+**Problems solved:**
+- Occupation cards not selectable: double-quote collision in onclick attribute — single-quoted attribute fix
+- Sanity displaying values like 300: POW×5 when POW is already a percentage — corrected to = POW
+- GitHub repo markjlyon/cocpulp linked by user contained sci-fi campaign characters, not Pulp Cthulhu rulebook data — implemented from training knowledge instead
+
+**Left unresolved:**
+- Victorian rules validation: pending PDF reference from user
+- Engineer occupation `chooseFrom` still includes Electronics (Modern-only) and Pilot (Modern/1920s) — leaves Victorian engineers with fewer valid choices; revisit after Victorian PDF arrives
+- Pulp Cthulhu archetype/talent pool mappings need verification against the physical Pulp Cthulhu book
+- Browser test all three eras end-to-end not done
+- Additional skills from Roll20 (Demolitions, Hypnosis, Read Lips, Artillery) not yet reviewed
+
+**Files changed this session:**
+ index.html | 600+ insertions across 6 commits (portrait, weapons, step swap, occ fix, sanity fix, pulp)
 
 ---
 
