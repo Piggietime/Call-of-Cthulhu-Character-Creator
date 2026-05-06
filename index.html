@@ -246,6 +246,10 @@
   .talent-chip.chosen { border-color:var(--amber); color:var(--amber); background:rgba(200,160,64,0.12); }
   .talent-chip.forced { border-color:var(--amber); color:var(--amber); background:rgba(200,160,64,0.18); cursor:not-allowed; }
   .talent-chip[disabled] { opacity:0.35; cursor:not-allowed; }
+  .step-btn.pulp-tab-off { opacity:0.35; }
+  .pulp-disabled-msg { text-align:center; padding:3rem 1rem; color:var(--text3); font-family:var(--mono); font-size:11px; letter-spacing:1px; }
+  .pulp-disabled-msg .pulp-hint { color:var(--amber); display:block; margin-bottom:0.5rem; font-size:13px; }
+  .pulp-disabled-msg .pulp-hint-sub { display:block; margin-bottom:1.5rem; }
 
   /* ── Skills Step ── */
   .skill-pools { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1rem; }
@@ -468,10 +472,11 @@
     <button class="step-btn active" id="step-btn-0" onclick="goStep(0)"><span class="step-num">01</span>Era</button>
     <button class="step-btn" id="step-btn-1" onclick="goStep(1)"><span class="step-num">02</span>Personal</button>
     <button class="step-btn" id="step-btn-2" onclick="goStep(2)"><span class="step-num">03</span>Occupation</button>
-    <button class="step-btn" id="step-btn-3" onclick="goStep(3)"><span class="step-num">04</span>Characteristics</button>
-    <button class="step-btn" id="step-btn-4" onclick="goStep(4)"><span class="step-num">05</span>Skills</button>
-    <button class="step-btn" id="step-btn-5" onclick="goStep(5)"><span class="step-num">06</span>Equipment</button>
-    <button class="step-btn" id="step-btn-6" onclick="goStep(6)"><span class="step-num">07</span>Sheet</button>
+    <button class="step-btn pulp-tab-off" id="step-btn-3" onclick="goStep(3)"><span class="step-num">04</span>Pulp</button>
+    <button class="step-btn" id="step-btn-4" onclick="goStep(4)"><span class="step-num">05</span>Characteristics</button>
+    <button class="step-btn" id="step-btn-5" onclick="goStep(5)"><span class="step-num">06</span>Skills</button>
+    <button class="step-btn" id="step-btn-6" onclick="goStep(6)"><span class="step-num">07</span>Equipment</button>
+    <button class="step-btn" id="step-btn-7" onclick="goStep(7)"><span class="step-num">08</span>Sheet</button>
   </div>
 
   <!-- PANEL 0: Era -->
@@ -599,18 +604,28 @@
     <div class="occ-grid" id="occ-grid"></div>
     <div class="nav-btns">
       <button class="nav-btn" onclick="goStep(1)">← PERSONAL</button>
-      <button class="nav-btn primary" onclick="goStep(3)">NEXT: CHARACTERISTICS →</button>
-    </div>
-    <!-- Pulp archetype section — shown only when Pulp mode is on -->
-    <div id="pulp-section" style="display:none">
-      <div class="pulp-section-sep"><span class="pulp-section-sep-label">★ PULP ARCHETYPE</span></div>
-      <div class="section-sub" style="margin-bottom:0.75rem">Select an archetype. Each grants a +10 bonus to a characteristic and two talents.</div>
-      <div class="occ-grid" id="archetype-grid"></div>
-      <div id="archetype-detail-box" class="occ-detail"></div>
+      <button class="nav-btn primary" onclick="goStep(3)">NEXT: PULP / CHARACTERISTICS →</button>
     </div>
   </div>
 
-  <!-- PANEL 3: Characteristics -->
+  <!-- PANEL 3: Pulp Archetype & Talents -->
+  <div class="panel" id="panel3">
+    <div class="section-title">★ Pulp Archetype &amp; Talents</div>
+    <div class="section-sub">Select an archetype, then choose 2 talents from the full list (or 1 if your archetype forces a talent).</div>
+    <div id="pulp-disabled-msg" class="pulp-disabled-msg" style="display:none">
+      <span class="pulp-hint">Pulp Cthulhu mode is disabled.</span>
+      <span class="pulp-hint-sub">Enable Pulp mode on the Era step to use archetypes and talents.</span>
+      <button class="nav-btn primary" onclick="goStep(4)">SKIP TO CHARACTERISTICS →</button>
+    </div>
+    <div id="archetype-grid" class="occ-grid"></div>
+    <div id="archetype-detail-box" class="occ-detail"></div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goStep(2)">← OCCUPATION</button>
+      <button class="nav-btn primary" onclick="goStep(4)">NEXT: CHARACTERISTICS →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 4: Characteristics -->
   <div class="panel" id="panel3">
     <div class="section-title">Characteristics</div>
     <div class="section-sub">Roll or assign your investigator's eight primary characteristics.</div>
@@ -632,8 +647,8 @@
     </div>
     <div class="derived-grid" id="derived-grid"></div>
     <div class="nav-btns">
-      <button class="nav-btn" onclick="goStep(2)">← OCCUPATION</button>
-      <button class="nav-btn primary" onclick="goStep(4)">NEXT: SKILLS →</button>
+      <button class="nav-btn" onclick="goStep(3)">← PULP / OCCUPATION</button>
+      <button class="nav-btn primary" onclick="goStep(5)">NEXT: SKILLS →</button>
     </div>
   </div>
 
@@ -647,8 +662,8 @@
     </div>
     <div id="skills-list"></div>
     <div class="nav-btns">
-      <button class="nav-btn" onclick="goStep(3)">← CHARACTERISTICS</button>
-      <button class="nav-btn primary" onclick="goStep(5)">NEXT: EQUIPMENT →</button>
+      <button class="nav-btn" onclick="goStep(4)">← CHARACTERISTICS</button>
+      <button class="nav-btn primary" onclick="goStep(6)">NEXT: EQUIPMENT →</button>
     </div>
   </div>
 
@@ -990,10 +1005,11 @@ function goStep(n) {
   document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===n));
   document.querySelectorAll('.step-btn').forEach((b,i) => b.classList.toggle('active', i===n));
   if(n===2) renderOccupations();
-  if(n===3) renderStatsGrid();
-  if(n===4) renderSkills();
-  if(n===5) renderEquipPanel();
-  if(n===6) renderSheet();
+  if(n===3) renderPulpStep();
+  if(n===4) renderStatsGrid();
+  if(n===5) renderSkills();
+  if(n===6) renderEquipPanel();
+  if(n===7) renderSheet();
   window.scrollTo(0,0);
 }
 
@@ -1214,10 +1230,6 @@ function renderOccupations(filterEra) {
 
   if(selectedOcc) showOccDetail(selectedOcc);
 
-  // Pulp archetype section
-  const pulpSec = document.getElementById('pulp-section');
-  if(pulpSec) pulpSec.style.display = usePulp ? 'block' : 'none';
-  if(usePulp) renderArchetypes();
 }
 
 function selectOcc(name) {
@@ -1290,9 +1302,24 @@ function togglePulp() {
   if(!usePulp) { selectedArchetype = null; selectedTalents = []; archSkillAdded = {}; }
   const btn = document.getElementById('pulp-toggle-btn');
   if(btn) { btn.textContent = usePulp ? 'ENABLED' : 'DISABLED'; btn.classList.toggle('on', usePulp); }
-  const section = document.getElementById('pulp-section');
-  if(section) section.style.display = usePulp ? 'block' : 'none';
-  if(usePulp) renderArchetypes();
+  const tabBtn = document.getElementById('step-btn-3');
+  if(tabBtn) tabBtn.classList.toggle('pulp-tab-off', !usePulp);
+}
+
+function renderPulpStep() {
+  const msg  = document.getElementById('pulp-disabled-msg');
+  const grid = document.getElementById('archetype-grid');
+  const box  = document.getElementById('archetype-detail-box');
+  if(!usePulp) {
+    if(msg)  msg.style.display  = 'block';
+    if(grid) grid.style.display = 'none';
+    if(box)  { box.innerHTML = ''; box.style.display = 'none'; }
+    return;
+  }
+  if(msg)  msg.style.display  = 'none';
+  if(grid) grid.style.display = '';
+  if(box)  box.style.display  = '';
+  renderArchetypes();
 }
 
 function renderArchetypes() {
@@ -1794,8 +1821,8 @@ function renderEquipPanel() {
     </div>
 
     <div class="nav-btns">
-      <button class="nav-btn" onclick="goStep(4)">← SKILLS</button>
-      <button class="nav-btn primary" onclick="goStep(6); renderSheet()">VIEW SHEET →</button>
+      <button class="nav-btn" onclick="goStep(5)">← SKILLS</button>
+      <button class="nav-btn primary" onclick="goStep(7); renderSheet()">VIEW SHEET →</button>
     </div>`;
 }
 
@@ -1956,9 +1983,11 @@ function applyCharData(c) {
   selectedArchetype = c.selectedArchetype ? PULP_ARCHETYPES.find(a=>a.name===c.selectedArchetype)||null : null;
   selectedTalents   = [...(c.selectedTalents||[])];
   charWeapons       = (c.charWeapons||[]).map(w=>({...w}));
-  // Sync pulp toggle button
+  // Sync pulp toggle button and tab
   const btn = document.getElementById('pulp-toggle-btn');
   if(btn) { btn.textContent = usePulp ? 'ENABLED' : 'DISABLED'; btn.classList.toggle('on', usePulp); }
+  const tabBtn = document.getElementById('step-btn-3');
+  if(tabBtn) tabBtn.classList.toggle('pulp-tab-off', !usePulp);
   equipment     = c.equipment || '';
   portraitData  = c.portraitData || null;
   renderPortraitPreview();
@@ -2020,7 +2049,7 @@ function loadInvestigator(name) {
   applyCharData(c);
   isEditMode = true;
   closeLoadModal();
-  goStep(6);
+  goStep(7);
 }
 
 function deleteInvestigator(name) {
@@ -2055,7 +2084,7 @@ function importFromJSON(input) {
       isEditMode = true;
       input.value = '';
       closeLoadModal();
-      goStep(6);
+      goStep(7);
     } catch { alert('Could not read file — make sure it is a valid investigator JSON.'); }
   };
   reader.readAsText(file);
@@ -2091,7 +2120,7 @@ function importSharedChar() {
   applyCharData(pendingSharedChar);
   isEditMode = true;
   dismissImportBanner();
-  goStep(6);
+  goStep(7);
 }
 
 function dismissImportBanner() {
@@ -2109,8 +2138,9 @@ function newInvestigator() {
   creditRating = 0; occChosenSkills = []; usePulp = false; selectedArchetype = null; selectedTalents = []; charWeapons = []; equipment = '';
   const pBtn = document.getElementById('pulp-toggle-btn');
   if(pBtn) { pBtn.textContent='DISABLED'; pBtn.classList.remove('on'); }
-  const pSec = document.getElementById('pulp-section');
-  if(pSec) pSec.style.display = 'none'; portraitData = null; isEditMode = false; selectedEra = '1920s';
+  const tabBtn3 = document.getElementById('step-btn-3');
+  if(tabBtn3) tabBtn3.classList.add('pulp-tab-off');
+  portraitData = null; isEditMode = false; selectedEra = '1920s';
   renderPortraitPreview();
   ['p-name','p-occ-title','p-residence','p-birthplace','p-age','p-height','p-weight','p-hair','p-eyes','p-skin','p-desc'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value='';
