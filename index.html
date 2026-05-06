@@ -971,6 +971,7 @@ let luck           = 0;
 let selectedOcc    = null;
 let occSkillAdded  = {};  // skill name → points from occupation pool
 let piSkillAdded   = {};  // skill name → points from personal interest pool
+let archSkillAdded = {};  // skill name → points from archetype bonus pool (Pulp only)
 let usePulp          = false;
 let selectedArchetype = null;
 let selectedTalents  = [];
@@ -1056,7 +1057,7 @@ function updateDerived() {
   });
   luck = parseInt(document.getElementById('stat-LUCK')?.value)||0;
 
-  const hp  = stats.CON && stats.SIZ ? Math.floor((stats.CON+stats.SIZ)/10) : '—';
+  const hp  = stats.CON && stats.SIZ ? Math.floor((stats.CON+stats.SIZ)/(usePulp?5:10)) : '—';
   const san = stats.POW ? stats.POW : '—';
   const mp  = stats.POW ? Math.floor(stats.POW/5) : '—';
   const { build, db } = getBuildAndDB(stats.STR, stats.SIZ);
@@ -1065,7 +1066,7 @@ function updateDerived() {
   const grid = document.getElementById('derived-grid');
   if(!grid) return;
   grid.innerHTML = [
-    { k:'HIT POINTS',    v: hp,   note:`(CON+SIZ)÷10` },
+    { k:'HIT POINTS',    v: hp,   note:`(CON+SIZ)÷${usePulp?5:10}${usePulp?' ★':''}` },
     { k:'SANITY',        v: san,  note:`= POW` },
     { k:'MAGIC POINTS',  v: mp,   note:`POW÷5` },
     { k:'BUILD',         v: stats.STR&&stats.SIZ ? build : '—', note:`STR+SIZ table` },
@@ -1133,9 +1134,10 @@ function getSkillTotal(skillName) {
   const s = ALL_SKILLS.find(x=>x.name===skillName);
   if(!s) return 0;
   const base = getSkillBase(s);
-  const occ  = occSkillAdded[skillName] || 0;
-  const pi   = piSkillAdded[skillName]  || 0;
-  return Math.min(99, base + occ + pi);
+  const occ  = occSkillAdded[skillName]  || 0;
+  const pi   = piSkillAdded[skillName]   || 0;
+  const arch = archSkillAdded[skillName] || 0;
+  return Math.min(99, base + occ + pi + arch);
 }
 
 function getEraSkills() {
@@ -1172,8 +1174,22 @@ function calcPIPts() {
   return (stats.INT || 0) * 2;
 }
 
-function usedOccPts() { return Object.values(occSkillAdded).reduce((a,b)=>a+b,0); }
-function usedPIPts()  { return Object.values(piSkillAdded).reduce((a,b)=>a+b,0); }
+function usedOccPts()  { return Object.values(occSkillAdded).reduce((a,b)=>a+b,0); }
+function usedPIPts()   { return Object.values(piSkillAdded).reduce((a,b)=>a+b,0); }
+function calcArchPts() { return (usePulp && selectedArchetype) ? 100 : 0; }
+function usedArchPts() { return Object.values(archSkillAdded).reduce((a,b)=>a+b,0); }
+
+function isArchetypeSkill(skillName) {
+  if(!selectedArchetype) return false;
+  return selectedArchetype.skills.some(as => {
+    if(as === skillName) return true;
+    if(as.includes('(any)')) {
+      const prefix = as.replace(/\s*\(any\)/, '').trim();
+      return skillName.startsWith(prefix);
+    }
+    return false;
+  });
+}
 
 // ══════════════════════════════════════════════════════
 // RENDER: OCCUPATIONS
@@ -1271,7 +1287,7 @@ function toggleOccSkillChoice(skillName) {
 // ══════════════════════════════════════════════════════
 function togglePulp() {
   usePulp = !usePulp;
-  if(!usePulp) { selectedArchetype = null; selectedTalents = []; }
+  if(!usePulp) { selectedArchetype = null; selectedTalents = []; archSkillAdded = {}; }
   const btn = document.getElementById('pulp-toggle-btn');
   if(btn) { btn.textContent = usePulp ? 'ENABLED' : 'DISABLED'; btn.classList.toggle('on', usePulp); }
   const section = document.getElementById('pulp-section');
@@ -1294,6 +1310,7 @@ function renderArchetypes() {
 function selectArchetype(name) {
   selectedArchetype = PULP_ARCHETYPES.find(a=>a.name===name);
   selectedTalents   = selectedArchetype?.forced ? [selectedArchetype.forced] : [];
+  archSkillAdded    = {};
   document.querySelectorAll('#archetype-grid .occ-card').forEach(c =>
     c.classList.toggle('selected', c.querySelector('.occ-name')?.textContent===name));
   showArchetypeDetail(selectedArchetype);
@@ -1372,14 +1389,21 @@ function toggleTalent(tName) {
 function renderSkills() {
   const occPts   = calcOccPts();
   const piPts    = calcPIPts();
+  const archPts  = calcArchPts();
   const usedOcc  = usedOccPts();
   const usedPI   = usedPIPts();
-  const remOcc   = occPts - usedOcc;
-  const remPI    = piPts  - usedPI;
+  const usedArch = usedArchPts();
+  const remOcc   = occPts  - usedOcc;
+  const remPI    = piPts   - usedPI;
+  const remArch  = archPts - usedArch;
+
+  const archPoolBox = archPts > 0 ? `
+    <div class="pool-box"><div class="pool-label" style="color:var(--amber)">ARCHETYPE BONUS</div><div class="pool-val arch-pool ${remArch<0?'exhausted':''}" style="color:var(--amber)">${remArch}</div><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">of 100 remaining</div></div>` : '';
 
   document.getElementById('skill-pools').innerHTML = `
     <div class="pool-box"><div class="pool-label">OCCUPATION POINTS</div><div class="pool-val occ-pool ${remOcc<0?'exhausted':''}">${remOcc}</div><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">of ${occPts} remaining</div></div>
-    <div class="pool-box"><div class="pool-label">PERSONAL INTEREST</div><div class="pool-val ${remPI<0?'exhausted':''}">${remPI}</div><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">of ${piPts} (INT×2) remaining</div></div>`;
+    <div class="pool-box"><div class="pool-label">PERSONAL INTEREST</div><div class="pool-val ${remPI<0?'exhausted':''}">${remPI}</div><div style="font-family:var(--mono);font-size:9px;color:var(--text3)">of ${piPts} (INT×2) remaining</div></div>
+    ${archPoolBox}`;
 
   const occSkills = selectedOcc
     ? [...selectedOcc.skills, ...occChosenSkills.filter(s => selectedOcc.chooseFrom.includes(s))]
@@ -1406,13 +1430,19 @@ function renderSkills() {
 
   rows += sorted.map(s => {
     const isOcc  = occSkills.includes(s.name);
+    const isArch = isArchetypeSkill(s.name);
     const base   = getSkillBase(s);
     const oAdd   = occSkillAdded[s.name]||0;
     const piAdd  = piSkillAdded[s.name]||0;
-    const total  = Math.min(99, base+oAdd+piAdd);
+    const aAdd   = archSkillAdded[s.name]||0;
+    const total  = Math.min(99, base+oAdd+piAdd+aAdd);
     const hard   = Math.floor(total/2);
     const fifth  = Math.floor(total/5);
-    return `<div class="skill-row ${isOcc?'occ-skill':''}">
+    const archInput = archPts > 0 ? `
+        <input class="skill-add-input" type="number" min="0" max="99" value="${aAdd||''}" placeholder="Arch"
+          title="Archetype bonus points" ${!isArch?'disabled style="opacity:0.25"':'style="border-color:var(--amber);color:var(--amber)"'}
+          oninput="setSkillPts('arch','${s.name}',parseInt(this.value)||0)">` : '';
+    return `<div class="skill-row ${isOcc?'occ-skill':''}${isArch?' arch-skill':''}">
       <span class="skill-name">${s.name}${s.specialty?' <em style="font-size:10px;color:var(--text3)">(specialty)</em>':''}</span>
       <span class="skill-base-val">${base}%</span>
       <span class="skill-half">${hard}%</span>
@@ -1422,6 +1452,7 @@ function renderSkills() {
           title="Occupation points" oninput="setSkillPts('occ','${s.name}',parseInt(this.value)||0)">
         <input class="skill-add-input pi-input" type="number" min="0" max="99" value="${piAdd||''}" placeholder="PI"
           title="Personal interest points" oninput="setSkillPts('pi','${s.name}',parseInt(this.value)||0)">
+        ${archInput}
       </div>
     </div>`;
   }).join('');
@@ -1430,17 +1461,21 @@ function renderSkills() {
 }
 
 function setSkillPts(pool, skill, val) {
-  if(pool==='occ') occSkillAdded[skill] = val; else piSkillAdded[skill] = val;
-  if(!val) { delete (pool==='occ'?occSkillAdded:piSkillAdded)[skill]; }
+  if(pool==='occ')       { occSkillAdded[skill]  = val; if(!val) delete occSkillAdded[skill];  }
+  else if(pool==='pi')   { piSkillAdded[skill]   = val; if(!val) delete piSkillAdded[skill];   }
+  else if(pool==='arch') { archSkillAdded[skill]  = val; if(!val) delete archSkillAdded[skill]; }
   // Update pool display only
-  const occPts = calcOccPts(), piPts = calcPIPts();
-  const remOcc = occPts - usedOccPts(), remPI = piPts - usedPIPts();
+  const remOcc  = calcOccPts()  - usedOccPts();
+  const remPI   = calcPIPts()   - usedPIPts();
+  const remArch = calcArchPts() - usedArchPts();
   const pools = document.getElementById('skill-pools');
   if(pools) {
-    pools.querySelector('.occ-pool').textContent = remOcc;
-    pools.querySelector('.occ-pool').className = `pool-val occ-pool${remOcc<0?' exhausted':''}`;
-    const piVal = pools.querySelectorAll('.pool-val')[1];
-    if(piVal) { piVal.textContent = remPI; piVal.className = `pool-val${remPI<0?' exhausted':''}`; }
+    const occEl = pools.querySelector('.occ-pool');
+    if(occEl) { occEl.textContent = remOcc; occEl.className = `pool-val occ-pool${remOcc<0?' exhausted':''}`; }
+    const piEl = pools.querySelectorAll('.pool-val')[1];
+    if(piEl)  { piEl.textContent  = remPI;  piEl.className  = `pool-val${remPI<0?' exhausted':''}`; }
+    const archEl = pools.querySelector('.arch-pool');
+    if(archEl) { archEl.textContent = remArch; archEl.className = `pool-val arch-pool${remArch<0?' exhausted':''}` + ';color:var(--amber)'; }
   }
 }
 
@@ -2070,7 +2105,7 @@ function dismissImportBanner() {
 function newInvestigator() {
   if(!confirm('Start a new investigator? Unsaved changes will be lost.')) return;
   stats = { STR:0, CON:0, SIZ:0, DEX:0, APP:0, INT:0, POW:0, EDU:0 };
-  luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {};
+  luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {}; archSkillAdded = {};
   creditRating = 0; occChosenSkills = []; usePulp = false; selectedArchetype = null; selectedTalents = []; charWeapons = []; equipment = '';
   const pBtn = document.getElementById('pulp-toggle-btn');
   if(pBtn) { pBtn.textContent='DISABLED'; pBtn.classList.remove('on'); }
