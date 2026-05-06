@@ -244,6 +244,7 @@
   .talent-chip { background:none; border:1px solid var(--border2); color:var(--text2); font-family:var(--mono); font-size:10px; padding:3px 10px; cursor:pointer; transition:all .1s; }
   .talent-chip:hover:not([disabled]) { border-color:var(--amber); color:var(--amber); }
   .talent-chip.chosen { border-color:var(--amber); color:var(--amber); background:rgba(200,160,64,0.12); }
+  .talent-chip.forced { border-color:var(--amber); color:var(--amber); background:rgba(200,160,64,0.18); cursor:not-allowed; }
   .talent-chip[disabled] { opacity:0.35; cursor:not-allowed; }
 
   /* ── Skills Step ── */
@@ -843,66 +844,103 @@ const OCCUPATIONS = [
 // PULP CTHULHU DATA  (verify against Pulp Cthulhu supplement)
 // ══════════════════════════════════════════════════════
 const PULP_ARCHETYPES = [
-  { name:'Adventurer',   bonusStat:'Any',  desc:'Bold explorer who leaps before looking. Thrives on danger.',            picks:2, talents:['Rapid Attack','Hard to Kill','Resilient','Nimble','Lucky','Guardian Angel'] },
-  { name:'Bon Vivant',   bonusStat:'APP',  desc:'Charming socialite who moves effortlessly through elite circles.',       picks:2, talents:['Animal Magnetism','Smooth Talker','Fast Talker','Lucky','Natural Leader'] },
-  { name:'Cold Blooded', bonusStat:'Any',  desc:'Ruthless and calculating — nothing clouds their judgment.',              picks:2, talents:['Hard to Kill','Tough','Rapid Attack','Two Fisted','Guardian Angel'] },
-  { name:'Dreamer',      bonusStat:'POW',  desc:'Gifted with unusual sensitivity to hidden and dreamlike worlds.',        picks:2, talents:['Skilled Dreamer','Psychic Defense','Psychometry','Lucky','Strong Willed'] },
-  { name:'Egghead',      bonusStat:'EDU',  desc:'Brilliant academic with encyclopedic knowledge and quick wit.',          picks:2, talents:['Quick Study','Jack of All Trades','Scholar','Weird Science Expert','Natural Leader'] },
-  { name:'Explorer',     bonusStat:'CON',  desc:'Seasoned traveler of remote and dangerous places.',                      picks:2, talents:['Resilient','Hard to Kill','Rugged','Lucky','Tough','Natural Leader'] },
-  { name:'Femme Fatale', bonusStat:'APP',  desc:'Uses charm and beauty as weapons as sharp as any blade.',                picks:2, talents:['Animal Magnetism','Smooth Talker','Fast Talker','Nimble','Guardian Angel'] },
-  { name:'Grease Monkey',bonusStat:'DEX',  desc:'Mechanical genius who can fix — or build — almost anything.',           picks:2, talents:['Weird Science Expert','Quick Study','Jury Rig','Jack of All Trades'] },
-  { name:'Hard Boiled',  bonusStat:'CON',  desc:'Seen too much and still standing. Cynical, tough, unbreakable.',         picks:2, talents:['Hard to Kill','Tough','Iron Fist','Resilient','Guardian Angel'] },
-  { name:'Harlequin',    bonusStat:'APP',  desc:'Trickster and performer whose humor masks a razor-sharp mind.',           picks:2, talents:['Fast Talker','Animal Magnetism','Nimble','Lucky','Smooth Talker'] },
-  { name:'Hunter',       bonusStat:'CON',  desc:'Patient and skilled tracker of man and beast alike.',                    picks:2, talents:['Crack Shot','Resilient','Rugged','Nimble','Tough'] },
-  { name:'Intellectual', bonusStat:'INT',  desc:'Razor-sharp analyst who reads people and situations instinctively.',     picks:2, talents:['Jack of All Trades','Natural Leader','Quick Study','Scholar','Strong Willed'] },
-  { name:'Junglesman',   bonusStat:'STR',  desc:'Child of the wilderness; comfortable where civilization is not.',        picks:2, talents:['Iron Fist','Rugged','Resilient','Tough','Nimble','Hard to Kill'] },
-  { name:'Magician',     bonusStat:'DEX',  desc:"Stage illusionist whose tricks aren't always illusory.",                 picks:2, talents:['Fast Talker','Nimble','Lucky','Animal Magnetism','Psychometry'] },
-  { name:'Missionary',   bonusStat:'POW',  desc:'Person of faith driven to help others, often in perilous places.',       picks:2, talents:['Strong Willed','Natural Leader','Hard to Kill','Resilient','Lucky'] },
-  { name:'Mystic',       bonusStat:'POW',  desc:'Touched by the strange; seeks truth beyond the mundane world.',          picks:2, talents:['Psychic Defense','Strong Willed','Skilled Dreamer','Psychometry','Third Eye'] },
-  { name:'Occultist',    bonusStat:'EDU',  desc:'Scholar of the forbidden arts burdened with dangerous knowledge.',       picks:2, talents:['Strong Willed','Psychic Defense','Scholar','Jack of All Trades','Third Eye'] },
-  { name:'Outsider',     bonusStat:'INT',  desc:'Unique alien perspective allows them to see what others overlook.',      picks:2, talents:['Lucky','Strong Willed','Nimble','Resilient','Jack of All Trades'] },
-  { name:'Pilot',        bonusStat:'DEX',  desc:'Ace aviator equally at home in the cockpit as on the ground.',           picks:2, talents:['Crack Shot','Fast Load','Nimble','Rapid Attack','Lucky'] },
-  { name:'Primitive',    bonusStat:'STR',  desc:'From a society untouched by modern civilization, ancient in wisdom.',    picks:2, talents:['Iron Fist','Rugged','Tough','Resilient','Nimble','Hard to Kill'] },
-  { name:'Professor',    bonusStat:'EDU',  desc:'Distinguished academic who repeatedly stumbles into the extraordinary.', picks:2, talents:['Quick Study','Scholar','Jack of All Trades','Natural Leader','Strong Willed'] },
-  { name:'Psyker',       bonusStat:'POW',  desc:'Possesses genuine psychic ability far beyond normal understanding.',     picks:2, talents:['Clairvoyant','Mind Reader','Psychometry','Telekinesis','Third Eye','Animal Magnetism','Psychic Defense'] },
-  { name:'Rogue',        bonusStat:'DEX',  desc:'Lives by wit and guile, usually outside the law.',                      picks:2, talents:['Nimble','Lucky','Fast Talker','Smooth Talker','Rapid Attack','Iron Fist'] },
-  { name:'Seeker',       bonusStat:'INT',  desc:"Driven investigator who won't stop until the truth is exposed.",         picks:2, talents:['Quick Study','Jack of All Trades','Natural Leader','Lucky','Scholar'] },
-  { name:'Sidekick',     bonusStat:'Any',  desc:"Loyal companion whose support makes the whole team greater.",            picks:2, talents:['Lucky','Natural Leader','Hard to Kill','Resilient','Guardian Angel'] },
-  { name:'Soldier',      bonusStat:'STR',  desc:'Trained warrior tempered and hardened by real combat.',                  picks:2, talents:['Rapid Attack','Two Fisted','Iron Fist','Hard to Kill','Crack Shot','Fast Load','Guardian Angel'] },
-  { name:'Swashbuckler', bonusStat:'DEX',  desc:'Dashing and daring with blade or fist, fighting with style.',            picks:2, talents:['Rapid Attack','Two Fisted','Nimble','Lucky','Guardian Angel'] },
-  { name:'Tough Guy',    bonusStat:'STR',  desc:'Built like a tank and hits like one. Muscle and resilience personified.',picks:2, talents:['Iron Fist','Two Fisted','Tough','Hard to Kill','Resilient','Rugged','Rapid Attack'] },
+  { name:'Adventurer',    coreStats:['DEX','APP'], desc:'A life without adventure is not worth living. Bold, energetic, always seeking the next thrill.',
+    skills:['Climb','Diving','Drive Auto','First Aid','Fighting (any)','Firearms (any)','Jump','Language Other (any)','Mechanical Repair','Pilot (any)','Ride','Stealth','Survival (any)','Swim'] },
+  { name:'Beefcake',      coreStats:['STR'],        desc:'Physical perfection, muscle and grit. The caring silent type or brazen loud-mouth.',
+    skills:['Climb','Fighting (Brawl)','Intimidate','Listen','Mechanical Repair','Psychology','Swim','Throw'] },
+  { name:'Bon Vivant',    coreStats:['SIZ'],        desc:'One who lives well — enjoying life to the fullest and damn the consequences.',
+    skills:['Appraise','Art/Craft (any)','Charm','Fast Talk','Language Other (any)','Listen','Spot Hidden','Psychology'] },
+  { name:'Cold Blooded',  coreStats:['INT'],        desc:'A ruthless rationalist. Sees life in black and white; capable of anything to get the job done.',
+    skills:['Art/Craft (Acting)','Disguise','Fighting (any)','Firearms (any)','First Aid','History','Intimidate','Law','Listen','Mechanical Repair','Psychology','Stealth','Survival (any)','Track'],
+    forced:'Hardened' },
+  { name:'Dreamer',       coreStats:['POW'],        desc:'Idealist or visionary with a powerful mind. Looks beyond mundane reality, wishing to right wrongs.',
+    skills:['Art/Craft (any)','Charm','History','Language Other (any)','Library Use','Listen','Natural World','Occult'],
+    recommended:'Strong Willed' },
+  { name:'Egghead',       coreStats:['INT','EDU'],  desc:'Practical and hands-on — enjoys figuring out what makes things tick. Absent-minded genius or razor-sharp virtuoso.',
+    skills:['Anthropology','Appraise','Computer Use','Electrical Repair','Language Other (any)','Library Use','Mechanical Repair','Operate Heavy Machinery','Science (any)'] },
+  { name:'Explorer',      coreStats:['DEX','POW'],  desc:'Strong willed, virtually unshakeable. Ever questing for what lies over the horizon.',
+    skills:['Animal Handling','Anthropology','Archaeology','Climb','Fighting (Brawl)','First Aid','Jump','Language Other (any)','Natural World','Navigate','Pilot (any)','Ride','Stealth','Survival (any)','Track'] },
+  { name:'Femme Fatale',  coreStats:['APP','INT'],  desc:'Outward beauty masks a self-centered vigilance. A spider who draws others into their web.',
+    skills:['Art/Craft (Acting)','Appraise','Charm','Disguise','Drive Auto','Fast Talk','Fighting (Brawl)','Firearms (Handgun)','Listen','Psychology','Sleight of Hand','Stealth'],
+    recommended:'Smooth Talker' },
+  { name:'Grease Monkey', coreStats:['INT'],        desc:'Practically minded, able to make and repair all manner of things. "Can do" attitude.',
+    skills:['Appraise','Art/Craft (any)','Fighting (Brawl)','Drive Auto','Electrical Repair','Locksmith','Mechanical Repair','Operate Heavy Machinery','Spot Hidden','Throw'],
+    recommended:'Weird Science' },
+  { name:'Hard Boiled',   coreStats:['CON'],        desc:'Tough and streetwise. Not above breaking the law to get the job done.',
+    skills:['Art/Craft (any)','Fighting (Brawl)','Firearms (any)','Drive Auto','Fast Talk','Intimidate','Law','Listen','Locksmith','Sleight of Hand','Spot Hidden','Stealth','Throw'] },
+  { name:'Harlequin',     coreStats:['APP'],        desc:'Magnetic personality who finds enjoyment in manipulating others to do their bidding. Agent of chaos.',
+    skills:['Art/Craft (Acting)','Charm','Climb','Disguise','Fast Talk','Jump','Language Other (any)','Listen','Persuade','Psychology','Sleight of Hand','Stealth'] },
+  { name:'Hunter',        coreStats:['INT','CON'],  desc:'Relentless in pursuing prey. Calm and calculated, willing to wait for the most opportune moment.',
+    skills:['Animal Handling','Fighting (any)','Firearms (Rifle/Handgun)','First Aid','Listen','Natural World','Navigate','Spot Hidden','Stealth','Survival (any)','Swim','Track'] },
+  { name:'Mystic',        coreStats:['POW'],        desc:'Seeker of the hidden, explorer of the unseen realm. Must take the Psychic Power talent.',
+    skills:['Art/Craft (any)','Science (Astronomy)','Disguise','History','Hypnosis','Language Other (any)','Natural World','Occult','Psychology','Sleight of Hand','Stealth'],
+    recommended:'Psychic Power' },
+  { name:'Outsider',      coreStats:['INT','CON'],  desc:'Stands apart from society. Alien perspective, distinct skills, a different way of approaching things.',
+    skills:['Art/Craft (any)','Animal Handling','Fighting (any)','First Aid','Intimidate','Language Other (any)','Listen','Medicine','Navigate','Stealth','Survival (any)','Track'] },
+  { name:'Rogue',         coreStats:['DEX','APP'],  desc:'Disobeys rules, questions the status quo. Governed by their own unique moral code. Loveable and careless.',
+    skills:['Appraise','Art/Craft (any)','Charm','Disguise','Fast Talk','Law','Locksmith','Psychology','Read Lips','Spot Hidden','Stealth'] },
+  { name:'Scholar',       coreStats:['EDU'],        desc:'Uses intelligence and analysis to understand the world. Bookish; happier in the library than facing reality.',
+    skills:['Accounting','Anthropology','Cryptography','History','Language Other (any)','Library Use','Medicine','Natural World','Occult','Science (any)'],
+    special:'Always begins the game as a non-believer of the Mythos.' },
+  { name:'Seeker',        coreStats:['INT'],        desc:'Puzzles and riddles enthrall the seeker. Always focused on finding the truth, no matter the tribulations.',
+    skills:['Accounting','Appraise','Disguise','History','Law','Library Use','Listen','Occult','Psychology','Science (any)','Spot Hidden','Stealth'] },
+  { name:'Sidekick',      coreStats:['DEX','CON'],  desc:'Not the center of attention. Seeks to learn from a mentor figure. Strong moral code of duty and responsibility.',
+    skills:['Animal Handling','Climb','Electrical Repair','Fast Talk','First Aid','Jump','Library Use','Listen','Navigate','Photography','Science (any)','Stealth','Track'] },
+  { name:'Steadfast',     coreStats:['CON'],        desc:'Moral righteousness runs thickly in the blood. Protects the weak, fights with honor, acts as a role model.',
+    skills:['Accounting','Drive Auto','Fighting (any)','Firearms (Handgun)','First Aid','History','Intimidate','Law','Natural World','Navigate','Persuade','Psychology','Ride','Spot Hidden','Survival (any)'] },
+  { name:'Swashbuckler',  coreStats:['DEX','APP'],  desc:'Passionate and gallant, always heroic. Disdains firearms. Prone to reckless behavior. A romantic at heart.',
+    skills:['Art/Craft (any)','Charm','Climb','Fighting (any)','Jump','Language Other (any)','Mechanical Repair','Navigate','Pilot (any)','Stealth','Swim','Throw'] },
+  { name:'Thrill Seeker', coreStats:['DEX','POW'],  desc:'Moths to a flame — must seek adventure and danger to feel alive. The stakes are never high enough.',
+    skills:['Art/Craft (any)','Charm','Climb','Diving','Drive Auto','Fast Talk','Jump','Mechanical Repair','Navigate','Pilot (any)','Ride','Stealth','Survival (any)','Swim','Throw'] },
+  { name:'Two-Fisted',    coreStats:['STR','SIZ'],  desc:'"Live fast, die hard." Strong, tough, resolves disputes with fists. Quick to anger, contemptuous of authority.',
+    skills:['Drive Auto','Fighting (Brawl)','Firearms (any)','Intimidate','Listen','Mechanical Repair','Spot Hidden','Swim','Throw'] },
 ];
 
 const PULP_TALENTS = [
-  { name:'Animal Magnetism', cat:'Social',       desc:'Once per session, automatically succeed a Charm or Persuade roll.' },
-  { name:'Clairvoyant',      cat:'Psychic',      desc:'Once per session, gain a brief vision of a distant or hidden location.' },
-  { name:'Crack Shot',       cat:'Combat',       desc:'Ignore all penalty dice for range when using firearms.' },
-  { name:'Fast Load',        cat:'Combat',       desc:'Reload any firearm as a free action, not costing a round.' },
-  { name:'Fast Talker',      cat:'Social',       desc:'May substitute Fast Talk for Persuade in any social situation.' },
-  { name:'Guardian Angel',   cat:'Physical',     desc:'Once per session, a lethal blow is reduced — investigator survives with 1 HP.' },
-  { name:'Hard to Kill',     cat:'Physical',     desc:'Once per session, survive a killing blow with 1 HP on a successful CON roll.' },
-  { name:'Iron Fist',        cat:'Combat',       desc:'+1D6 bonus damage on all unarmed attacks.' },
-  { name:'Jack of All Trades',cat:'Intellectual',desc:'Once per session, use any skill without a penalty die for lack of training.' },
-  { name:'Jury Rig',         cat:'Technical',    desc:'Improvise or repair mechanical/electrical devices from available parts.' },
-  { name:'Lucky',            cat:'Physical',     desc:'Once per session, re-roll any one failed die roll.' },
-  { name:'Mind Reader',      cat:'Psychic',      desc:'Once per session, read surface thoughts of one person (opposed POW roll).' },
-  { name:'Natural Leader',   cat:'Social',       desc:'+1 bonus die when giving orders or coordinating group actions.' },
-  { name:'Nimble',           cat:'Physical',     desc:'+1 bonus die to all Dodge rolls.' },
-  { name:'Psychic Defense',  cat:'Psychic',      desc:'+1 bonus die to POW rolls to resist psychic or supernatural attacks.' },
-  { name:'Psychometry',      cat:'Psychic',      desc:'Once per session, hold an object and sense strong impressions of its history.' },
-  { name:'Quick Study',      cat:'Intellectual', desc:'Halve the time needed to read tomes and comprehend spells.' },
-  { name:'Rapid Attack',     cat:'Combat',       desc:'Spend 10 skill points to make one additional attack in a round.' },
-  { name:'Resilient',        cat:'Physical',     desc:'Spend 2 Luck points to reduce Sanity loss by 1 point.' },
-  { name:'Rugged',           cat:'Physical',     desc:'Reduce all physical impairment penalties by one step.' },
-  { name:'Scholar',          cat:'Intellectual', desc:'+10 bonus points to distribute among any two academic skills.' },
-  { name:'Skilled Dreamer',  cat:'Psychic',      desc:'+1 bonus die to all Dreaming rolls; can enter the Dreamlands at will.' },
-  { name:'Smooth Talker',    cat:'Social',       desc:'+1 bonus die to Persuade when making a reasoned or considered argument.' },
-  { name:'Strong Willed',    cat:'Psychic',      desc:'+1 bonus die to POW rolls to resist spells and mental domination.' },
-  { name:'Telekinesis',      cat:'Psychic',      desc:'Once per session, move or manipulate a small object without touching it.' },
-  { name:'Third Eye',        cat:'Psychic',      desc:'Sense the presence of supernatural entities or active magic within 10 yards.' },
-  { name:'Tough',            cat:'Physical',     desc:'Gain +3 bonus HP.' },
-  { name:'Two Fisted',       cat:'Combat',       desc:'Attack with both hands simultaneously in a single round without penalty.' },
-  { name:'Weird Science Expert',cat:'Technical', desc:'Build strange devices combining advanced science and occult theory.' },
+  // Physical
+  { name:'Keen Vision',         cat:'Physical',      desc:'Gain a bonus die to Spot Hidden rolls.' },
+  { name:'Quick Healer',        cat:'Physical',      desc:'Natural healing increased to +3 hit points per day.' },
+  { name:'Night Vision',        cat:'Physical',      desc:'In darkness, reduce difficulty of Spot Hidden rolls and ignore penalty die for shooting in the dark.' },
+  { name:'Endurance',           cat:'Physical',      desc:'Gain a bonus die when making CON rolls (including to determine MOV rate for chases).' },
+  { name:'Power Lifter',        cat:'Physical',      desc:'Gain a bonus die when making STR rolls to lift objects or people.' },
+  { name:'Iron Liver',          cat:'Physical',      desc:'May spend 5 Luck to avoid effects of excessive alcohol (negating penalty applied to skill rolls).' },
+  { name:'Stout Constitution',  cat:'Physical',      desc:'May spend 10 Luck to reduce poison or disease damage and effects by half.' },
+  { name:'Tough Guy',           cat:'Physical',      desc:'May spend 10 Luck to shrug off up to 5 hit points of damage taken in one combat round.' },
+  { name:'Keen Hearing',        cat:'Physical',      desc:'Gain a bonus die to Listen rolls.' },
+  { name:'Smooth Talker',       cat:'Physical',      desc:'Gain a bonus die to Charm rolls.' },
+  // Mental
+  { name:'Hardened',            cat:'Mental',        desc:'Ignores Sanity point loss from attacking other humans, viewing horrific injuries, or the deceased.' },
+  { name:'Resilient',           cat:'Mental',        desc:'May spend Luck points to shrug off points of Sanity loss, on a one-for-one basis.' },
+  { name:'Strong Willed',       cat:'Mental',        desc:'Gains a bonus die when making POW rolls.' },
+  { name:'Quick Study',         cat:'Mental',        desc:'Halve the time required for Initial and Full Reading of Mythos tomes and other books.' },
+  { name:'Linguist',            cat:'Mental',        desc:'Can determine what language is being spoken or written; gains a bonus die to Language rolls.' },
+  { name:'Arcane Insight',      cat:'Mental',        desc:'Halve the time required to learn spells; gains a bonus die to spell casting rolls.' },
+  { name:'Photographic Memory', cat:'Mental',        desc:'Can remember many details; gains a bonus die when making Know rolls.' },
+  { name:'Lore',                cat:'Mental',        desc:'Has knowledge of a lore specialization (e.g. Dream Lore, Vampire Lore, Werewolf Lore). Invest skill points into this skill.' },
+  { name:'Psychic Power',       cat:'Mental',        desc:'Choose one psychic power: Clairvoyance, Divination, Medium, Psychometry, or Telekinesis. Invest skill points into it.' },
+  { name:'Sharp Witted',        cat:'Mental',        desc:'Able to collate facts quickly; gain a bonus die when making Intelligence (but not Idea) rolls.' },
+  // Combat
+  { name:'Alert',               cat:'Combat',        desc:'Never surprised in combat.' },
+  { name:'Heavy Hitter',        cat:'Combat',        desc:'May spend 10 Luck to add an additional damage die in melee (1D3 unarmed, 1D6 sword, etc.).' },
+  { name:'Fast Load',           cat:'Combat',        desc:'Choose a Firearm specialism; ignore penalty die for loading and firing in the same round.' },
+  { name:'Nimble',              cat:'Combat',        desc:'Does not lose next action when "diving for cover" versus firearms.' },
+  { name:'Beady Eye',           cat:'Combat',        desc:'No penalty die when aiming at a small target (Build −2); may also fire into melee without a penalty die.' },
+  { name:'Outmaneuver',         cat:'Combat',        desc:'Considered to have one point higher Build when initiating a combat maneuver.' },
+  { name:'Rapid Attack',        cat:'Combat',        desc:'May spend 10 Luck to gain one further melee attack in a single combat round.' },
+  { name:'Fleet Footed',        cat:'Combat',        desc:'May spend 10 Luck to avoid being "outnumbered" in melee combat for one encounter.' },
+  { name:'Quick Draw',          cat:'Combat',        desc:'Does not need firearm "readied" to gain +50 DEX when determining position in the DEX order for combat.' },
+  { name:'Rapid Fire',          cat:'Combat',        desc:'Ignores penalty die for multiple handgun shots.' },
+  // Miscellaneous
+  { name:'Scary',               cat:'Miscellaneous', desc:'Reduces difficulty by one level or gains bonus die to Intimidate rolls.' },
+  { name:'Gadget',              cat:'Miscellaneous', desc:'Starts game with one weird science gadget.' },
+  { name:'Lucky',               cat:'Miscellaneous', desc:'Regains an additional +1D10 Luck points when Luck Recovery rolls are made.' },
+  { name:'Mythos Knowledge',    cat:'Miscellaneous', desc:'Begins the game with a Cthulhu Mythos skill of 10 points.' },
+  { name:'Weird Science',       cat:'Miscellaneous', desc:'May build and repair weird science devices.' },
+  { name:'Shadow',              cat:'Miscellaneous', desc:'Reduces difficulty or gains bonus die to Stealth; if unseen can make two surprise attacks before location is discovered.' },
+  { name:'Handy',               cat:'Miscellaneous', desc:'Reduces difficulty or gains bonus die to Electrical Repair, Mechanical Repair, and Operate Heavy Machinery rolls.' },
+  { name:'Animal Companion',    cat:'Miscellaneous', desc:'Starts game with a faithful animal companion (e.g. dog, cat, parrot); gains bonus die to Animal Handling rolls.' },
+  { name:'Master of Disguise',  cat:'Miscellaneous', desc:'May spend 10 Luck for bonus die to Disguise or Art/Craft (Acting); includes ventriloquism. Detecting the disguise requires a Hard roll.' },
+  { name:'Resourceful',         cat:'Miscellaneous', desc:'May spend 10 Luck (rather than a Luck roll) to find a needed piece of equipment in their current location.' },
 ];
 
 // Build/Damage Bonus table (STR+SIZ)
@@ -1247,7 +1285,7 @@ function renderArchetypes() {
   grid.innerHTML = PULP_ARCHETYPES.map(a => `
     <div class="occ-card ${selectedArchetype?.name===a.name?'selected':''}" onclick='selectArchetype(${JSON.stringify(a.name)})'>
       <div class="occ-name">${a.name}</div>
-      <div class="occ-pts">Bonus: +10 ${a.bonusStat} &nbsp;|&nbsp; Picks: ${a.picks} talents</div>
+      <div class="occ-pts">Core: ${a.coreStats.join(' or ')} &nbsp;|&nbsp; ${a.forced?'Hardened + 1 talent':'Choose 2 talents'}</div>
       <div class="occ-skills-preview">${a.desc}</div>
     </div>`).join('');
   if(selectedArchetype) showArchetypeDetail(selectedArchetype);
@@ -1255,7 +1293,7 @@ function renderArchetypes() {
 
 function selectArchetype(name) {
   selectedArchetype = PULP_ARCHETYPES.find(a=>a.name===name);
-  selectedTalents   = [];
+  selectedTalents   = selectedArchetype?.forced ? [selectedArchetype.forced] : [];
   document.querySelectorAll('#archetype-grid .occ-card').forEach(c =>
     c.classList.toggle('selected', c.querySelector('.occ-name')?.textContent===name));
   showArchetypeDetail(selectedArchetype);
@@ -1264,47 +1302,68 @@ function selectArchetype(name) {
 function showArchetypeDetail(arch) {
   const box = document.getElementById('archetype-detail-box');
   if(!box) return;
-  const chosen    = selectedTalents.filter(t => arch.talents.includes(t));
-  const remaining = arch.picks - chosen.length;
+  const freePicks  = arch.forced ? 1 : 2;
+  const freeChosen = arch.forced ? selectedTalents.filter(t=>t!==arch.forced) : [...selectedTalents];
+  const remaining  = freePicks - freeChosen.length;
 
-  const chips = arch.talents.map(tName => {
-    const talentObj  = PULP_TALENTS.find(t=>t.name===tName);
-    const isSel      = chosen.includes(tName);
-    const isDisabled = !isSel && remaining === 0;
-    return `<button class="talent-chip ${isSel?'chosen':''}"
-      onclick="toggleTalent('${tName.replace(/'/g,"\\'")}')"
-      ${isDisabled?'disabled':''}
-      title="${talentObj ? talentObj.desc.replace(/"/g,'&quot;') : ''}"
-      >${tName}${isSel?' ✓':''}</button>`;
+  const cats = ['Physical','Mental','Combat','Miscellaneous'];
+  const catChips = cats.map(cat => {
+    const chips = PULP_TALENTS.filter(t=>t.cat===cat).map(t => {
+      const isSel    = selectedTalents.includes(t.name);
+      const isForced = t.name === arch.forced;
+      const isDisabled = !isSel && !isForced && remaining === 0;
+      return `<button class="talent-chip ${isForced?'forced':isSel?'chosen':''}"
+        onclick="toggleTalent('${t.name.replace(/'/g,"\\'")}')"
+        ${isDisabled?'disabled':''}
+        title="${t.desc.replace(/"/g,'&quot;')}"
+        >${t.name}${isSel?' ✓':''}</button>`;
+    }).join('');
+    return `<div style="margin-bottom:8px">
+      <div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">${cat}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px">${chips}</div>
+    </div>`;
   }).join('');
 
-  const talentDescs = chosen.map(tName => {
+  const talentDescs = selectedTalents.map(tName => {
     const t = PULP_TALENTS.find(x=>x.name===tName);
     return t ? `<div style="margin-bottom:4px"><strong>${t.name}</strong> <span style="color:var(--text3);font-size:10px">[${t.cat}]</span> — ${t.desc}</div>` : '';
   }).join('');
 
+  const talentRule = arch.forced
+    ? `Must take <strong>${arch.forced}</strong> + choose 1 other`
+    : 'Choose any 2 talents';
+
   box.className = 'occ-detail visible';
   box.innerHTML = `
     <div style="font-family:var(--head);font-size:16px;color:var(--amber);margin-bottom:4px">${arch.name}</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${arch.desc}</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:8px">
-      Bonus: +10 to <strong>${arch.bonusStat}</strong> &nbsp;|&nbsp; Choose <strong>${arch.picks}</strong> talent${arch.picks>1?'s':''}
-      <span style="color:${remaining===0?'var(--teal-bright)':'var(--text3)'}"> — ${chosen.length}/${arch.picks} selected</span>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:6px">${arch.desc}${arch.special?`<br><em style="color:var(--teal-bright);font-size:11px">${arch.special}</em>`:''}</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:4px">
+      Core: <strong>${arch.coreStats.join(' or ')}</strong> &nbsp;|&nbsp; ${talentRule}
+      <span style="color:${remaining===0?'var(--teal-bright)':'var(--text3)'}"> — ${selectedTalents.length}/2 selected</span>
     </div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text2);margin-bottom:10px">
+      <span style="color:var(--text3)">BONUS SKILLS (100 pts to distribute):</span> ${arch.skills.join(', ')}
+    </div>
+    ${arch.recommended?`<div style="font-family:var(--mono);font-size:10px;color:var(--teal-bright);margin-bottom:6px">&#9733; Recommended: ${arch.recommended}</div>`:''}
     <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px">SELECT TALENTS (hover for description):</div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:${talentDescs?'10px':'0'}">${chips}</div>
-    ${talentDescs ? `<div style="font-size:11px;color:var(--text2);margin-top:6px;border-top:1px solid var(--border);padding-top:8px">${talentDescs}</div>` : ''}`;
+    ${catChips}
+    ${talentDescs?`<div style="font-size:11px;color:var(--text2);margin-top:6px;border-top:1px solid var(--border);padding-top:8px">${talentDescs}</div>`:''}`;
 }
 
 function toggleTalent(tName) {
-  if(!selectedArchetype || !selectedArchetype.talents.includes(tName)) return;
+  if(!selectedArchetype) return;
+  const arch     = selectedArchetype;
+  const isForced = tName === arch.forced;
+  if(isForced) return;
+  const freePicks  = arch.forced ? 1 : 2;
+  const freeChosen = arch.forced ? selectedTalents.filter(t=>t!==arch.forced) : [...selectedTalents];
   const idx = selectedTalents.indexOf(tName);
   if(idx >= 0) {
     selectedTalents.splice(idx, 1);
-  } else if(selectedTalents.filter(t=>selectedArchetype.talents.includes(t)).length < selectedArchetype.picks) {
+  } else if(freeChosen.length < freePicks) {
     selectedTalents.push(tName);
   }
-  showArchetypeDetail(selectedArchetype);
+  showArchetypeDetail(arch);
 }
 
 // ══════════════════════════════════════════════════════
