@@ -1,8 +1,48 @@
 # Project Memory
-Last updated: 2026-04-28
+Last updated: 2026-05-06
 
 This file captures decisions, reasoning, and session context that
 project-context.md doesn't hold. It is Claude's memory between sessions.
+
+---
+
+## Session — 2026-05-06
+
+**Focus:** User found their Pulp Cthulhu PDF and wanted to correct archetype/talent data in the app; also fixed Pulp HP formula and archetype bonus skill points; then split archetype/talent UI into a dedicated Pulp wizard tab.
+
+**Decisions made:**
+- 22 archetypes (not 28 as previously coded from training knowledge) — corrected from PDF pages 15-22
+- 40 talents in 4 tables of 10: Physical, Mental, Combat, Miscellaneous — not 29 as previously coded
+- All archetypes pick "any 2" from the full 40-talent list; Cold Blooded exception: Hardened forced + 1 free
+- `forced` property on Cold Blooded locks Hardened chip (amber styled, cursor:not-allowed)
+- `recommended` property on Dreamer shows Strong Willed with ★ hint (not enforced)
+- Pulp HP formula corrected to (CON+SIZ)÷5 (was ÷10); displayed with ★ note on Characteristics step
+- Archetype bonus skills: 100 pts pool distributed among archetype's listed skills; amber-styled third column in Skills step
+- `archSkillAdded` state variable tracks archetype bonus pts; resets in `selectArchetype()`, `togglePulp()` (disable), and `newInvestigator()`
+- `(any)` wildcard in archetype skill names (e.g. 'Firearms (any)') resolved by prefix stripping: matches 'Firearms (Handgun)', 'Firearms (Rifle)', etc.
+- `isArchetypeSkill()` helper determines eligibility for the archetype bonus pool
+- Pulp archetype/talent section extracted from Occupation panel into dedicated "Pulp" wizard tab (new step 3, between Occupation and Characteristics)
+- Pulp tab is always visible in nav but dims to 35% opacity (`pulp-tab-off` class) when Pulp mode is disabled
+- When Pulp disabled, step 3 shows a "Pulp mode is disabled" message and "SKIP TO CHARACTERISTICS →" button
+- Tab class syncs in `togglePulp`, `applyCharData` (load/share), and `newInvestigator`
+- All downstream step numbers incremented: Characteristics→4, Skills→5, Equipment→6, Sheet→7; all goStep() calls and nav labels updated accordingly
+- Phase 5 (Deployment) added to project-context.md What's next
+
+**Problems solved:**
+- Edit tool failure mid-session: old_string didn't match after earlier edits shifted content — resolved by re-grepping for new line number, re-reading at new offset, retrying
+- `(any)` wildcard matching for archetype skill eligibility — resolved with prefix-strip approach
+
+**Left unresolved:**
+- Browser test all three era themes end-to-end
+- Pulp occupations from PDF (24 listed) not yet implemented in the app
+
+**Files changed this session:**
+ index.html | ~222 insertions/deletions across 3 commits
+ project-context.md | 4 insertions (Phase 5 deployment tasks)
+
+ 30b1955 Pulp Cthulhu: verified archetypes (22), talents (40 in 4 tables) from PDF
+ 02619a5 Pulp Cthulhu: correct archetypes/talents from PDF, Pulp HP formula (÷5), archetype bonus skill pool (100 pts)
+ 05b2209 Add Pulp tab as dedicated wizard step; dims when Pulp mode is disabled
 
 ---
 
