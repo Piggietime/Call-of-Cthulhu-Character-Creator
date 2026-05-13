@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Call of Cthulhu — Investigator Documentation</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@400;500;600&family=Source+Sans+3:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=UnifrakturCook:wght@700&family=Limelight&family=Poiret+One&family=Italiana&family=Cormorant+SC:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Special+Elite&family=Alfa+Slab+One&family=Rye&family=Anton&family=Bungee&family=Bungee+Inline&display=swap');
 
   :root {
     --bg:      #1a1714;
@@ -23,98 +23,163 @@
     --text3:   #5a5048;
     --mono:  'Share Tech Mono', monospace;
     --head:  'Oswald', sans-serif;
-    --body:  'Source Sans 3', sans-serif;
+    --body:  'IBM Plex Sans', sans-serif;
   }
 
   /* ══════════════════════════════════════════════════════
      ERA THEMES
      ══════════════════════════════════════════════════════ */
 
-  /* Modern — cold, clinical, digital */
+  /* Modern — forensic HUD, classified dossier */
   body.era-modern {
-    --bg:         #0e1117;
-    --bg2:        #141820;
-    --bg3:        #1c2230;
-    --border:     #252d40;
-    --border2:    #303d55;
-    --teal:       #0a6080;
-    --teal-dim:   #052040;
-    --teal-bright:#2ab0dc;
-    --amber:      #b0c020;
-    --text:       #c8d8e8;
-    --text2:      #5878a0;
-    --text3:      #384860;
+    --bg:         #0b0c0e;
+    --bg2:        #15171a;
+    --bg3:        rgba(255,255,255,0.03);
+    --border:     rgba(220,230,240,0.12);
+    --border2:    rgba(220,230,240,0.28);
+    --teal:       #3a8a8a;
+    --teal-dim:   rgba(126,212,212,0.08);
+    --teal-bright:#7ed4d4;
+    --amber:      #e6b84a;
+    --red:        #e8533a;
+    --text:       #e7ecf0;
+    --text2:      #8a949c;
+    --text3:      #4a5258;
+    --head:       'Space Grotesk', 'Helvetica Neue', sans-serif;
+    --body:       'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+    --mono:       'JetBrains Mono', 'Menlo', monospace;
   }
-  body.era-modern .coc-logo { letter-spacing: 6px; text-shadow: 0 0 30px rgba(42,176,220,0.35), 0 0 60px rgba(42,176,220,0.1); }
-  body.era-modern .coc-header::after { width: 50%; height: 1px; background: linear-gradient(to right, transparent, var(--teal-bright), transparent); }
+  body.era-modern::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='g' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='rgba(220,230,240,0.07)' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3C/svg%3E");
+    opacity: 0.8;
+  }
+  body.era-modern .coc-logo { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 34px; letter-spacing: -0.02em; color: #e7ecf0; text-shadow: none; font-style: normal; }
+  body.era-modern .coc-subtitle { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.22em; color: #8a949c; text-transform: uppercase; }
+  body.era-modern .coc-class { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #e6b84a; letter-spacing: 0.22em; }
+  body.era-modern .coc-header::after { width: 50%; height: 1px; background: linear-gradient(to right, transparent, #7ed4d4, transparent); }
+  body.era-modern .section-title { font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 22px; color: #e7ecf0; letter-spacing: -0.01em; }
+  body.era-modern .section-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #8a949c; letter-spacing: 0.18em; text-transform: uppercase; }
+  body.era-modern .step-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; }
+  body.era-modern .step-num { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; }
+  body.era-modern .step-btn.active { color: #7ed4d4; }
+  body.era-modern .step-btn.active::after { background: #7ed4d4; }
+  body.era-modern .form-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #7ed4d4; letter-spacing: 0.18em; text-transform: uppercase; }
+  body.era-modern .form-input { font-family: 'IBM Plex Sans', sans-serif; font-size: 16px; }
+  body.era-modern .form-input:focus { border-color: #7ed4d4; }
+  body.era-modern .nav-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.18em; }
+  body.era-modern .nav-btn.primary { background: #7ed4d4; color: #0b0c0e; border-color: #7ed4d4; font-weight: 500; }
+  body.era-modern .nav-btn.primary:hover { background: #9ae0e0; border-color: #9ae0e0; }
+  body.era-modern .occ-name { font-family: 'Space Grotesk', sans-serif; font-weight: 500; letter-spacing: 0.02em; }
 
-  /* 1920s — warm, opulent, Art Deco */
+  /* Jazz Age — Art Deco luxury, gold on lacquer black */
   body.era-1920s {
-    --bg:         #18110a;
-    --bg2:        #221810;
-    --bg3:        #2c2014;
-    --border:     #4a3018;
-    --border2:    #604025;
-    --teal:       #906010;
-    --teal-dim:   #4a2c06;
-    --teal-bright:#d09020;
-    --amber:      #b82820;
-    --red:        #d03020;
-    --text:       #e0d0b0;
-    --text2:      #907860;
-    --text3:      #584838;
-    --head:       'Playfair Display', serif;
+    --bg:         #0a0908;
+    --bg2:        #15110d;
+    --bg3:        #1d1810;
+    --border:     rgba(212,168,74,0.28);
+    --border2:    rgba(212,168,74,0.5);
+    --teal:       #1f6e6b;
+    --teal-dim:   #0f3836;
+    --teal-bright:#3aa39c;
+    --amber:      #d4a84a;
+    --red:        #a82e2a;
+    --text:       #f1e3c2;
+    --text2:      #c9b890;
+    --text3:      #8a6e30;
+    --head:       'Limelight', 'Cinzel', serif;
+    --body:       'Cormorant Garamond', serif;
+    --mono:       'Special Elite', monospace;
   }
-  body.era-1920s::before { background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(180,100,0,0.015) 2px, rgba(180,100,0,0.015) 4px); }
-  body.era-1920s .coc-header::before { content: '— ◆ ✦ ◆ —'; display: block; font-size: 11px; letter-spacing: 6px; color: var(--teal); margin-bottom: 12px; }
-  body.era-1920s .coc-logo { font-family: 'Playfair Display', serif; font-style: italic; font-size: 38px; letter-spacing: 5px; text-shadow: none; }
-  body.era-1920s .coc-subtitle { letter-spacing: 6px; }
-  body.era-1920s .coc-header::after { width: 65%; height: 1px; background: var(--teal-bright); box-shadow: 0 4px 0 var(--teal); }
+  body.era-1920s::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='p' width='60' height='60' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 0 30 L 15 15 L 30 30 L 45 15 L 60 30 M 0 60 L 15 45 L 30 60 L 45 45 L 60 60' stroke='%23d4a84a' fill='none' stroke-width='0.6'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23p)'/%3E%3C/svg%3E");
+    opacity: 0.08;
+  }
+  body.era-1920s .coc-header::before { content: '◆'; display: block; font-size: 14px; letter-spacing: 10px; color: #d4a84a; margin-bottom: 10px; opacity: 0.7; }
+  body.era-1920s .coc-logo { font-family: 'Limelight', serif; font-style: normal; font-size: 48px; letter-spacing: 0.06em; color: #f3cf7a; text-shadow: 0 2px 0 #000, 0 0 30px rgba(212,168,74,0.35); }
+  body.era-1920s .coc-subtitle { font-family: 'Poiret One', sans-serif; font-size: 13px; letter-spacing: 0.38em; color: #f1e3c2; }
+  body.era-1920s .coc-class { font-family: 'Cormorant SC', serif; color: #cc4a3a; letter-spacing: 0.35em; }
+  body.era-1920s .coc-header::after { width: 60%; height: 1px; background: #d4a84a; box-shadow: 0 3px 0 rgba(212,168,74,0.25); }
+  body.era-1920s .section-title { font-family: 'Italiana', serif; font-size: 28px; letter-spacing: 0.08em; color: #f3cf7a; }
+  body.era-1920s .section-sub { font-family: 'Poiret One', sans-serif; letter-spacing: 0.3em; color: #c9b890; }
+  body.era-1920s .step-btn { font-family: 'Cormorant SC', serif; letter-spacing: 0.28em; }
+  body.era-1920s .step-num { font-family: 'Limelight', serif; font-size: 12px; }
+  body.era-1920s .step-btn.active { color: #f3cf7a; }
+  body.era-1920s .step-btn.active::after { background: #d4a84a; }
+  body.era-1920s .form-label { font-family: 'Cormorant SC', serif; color: #f3cf7a; letter-spacing: 0.38em; font-size: 10px; }
+  body.era-1920s .form-input { font-family: 'Cormorant Garamond', serif; font-size: 18px; border-color: rgba(212,168,74,0.35); }
+  body.era-1920s .form-input:focus { border-color: #d4a84a; }
+  body.era-1920s .nav-btn { font-family: 'Cormorant SC', serif; letter-spacing: 0.3em; }
+  body.era-1920s .nav-btn.primary { background: linear-gradient(180deg, #f3cf7a 0%, #d4a84a 60%, #8a6e30 100%); color: #0a0908; border-color: #d4a84a; }
+  body.era-1920s .nav-btn.primary:hover { background: linear-gradient(180deg, #f8dfa0 0%, #e0b85c 60%, #a07a40 100%); }
+  body.era-1920s .occ-name { font-family: 'Limelight', serif; letter-spacing: 0.05em; }
 
-  /* Victorian — dark, gothic, gaslit */
+  /* Victorian — leather-bound casebook, gas-lamp London */
   body.era-victorian {
-    --bg:         #0c1410;
-    --bg2:        #111c16;
-    --bg3:        #172418;
-    --border:     #2a3e28;
-    --border2:    #3a5235;
-    --teal:       #3a6030;
-    --teal-dim:   #1c2e18;
-    --teal-bright:#6ab048;
-    --amber:      #c8a020;
-    --text:       #d0c8a8;
-    --text2:      #807850;
-    --text3:      #504838;
-    --head:       'Cinzel', serif;
+    --bg:         #1a0d0a;
+    --bg2:        #231411;
+    --bg3:        #2c1a14;
+    --border:     rgba(198,154,74,0.4);
+    --border2:    rgba(198,154,74,0.65);
+    --teal:       #8a2a1a;
+    --teal-dim:   #5a1a10;
+    --teal-bright:#b8401d;
+    --amber:      #c69a4a;
+    --red:        #8a2a1a;
+    --text:       #e9dcb8;
+    --text2:      #a89472;
+    --text3:      #6b5942;
+    --head:       'Cinzel', 'Cormorant Garamond', serif;
+    --body:       'Cormorant Garamond', serif;
+    --mono:       'IM Fell English SC', 'Cormorant SC', serif;
   }
-  body.era-victorian::before { background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,60,20,0.025) 3px, rgba(0,60,20,0.025) 6px); }
-  body.era-victorian .coc-header::before { content: '✦'; display: block; font-size: 18px; color: var(--teal); margin-bottom: 10px; }
-  body.era-victorian .coc-logo { font-family: 'Cinzel', serif; font-size: 36px; letter-spacing: 5px; text-shadow: none; }
-  body.era-victorian .coc-subtitle { letter-spacing: 3px; font-style: italic; }
-  body.era-victorian .coc-header::after { width: 160px; height: 1px; background: var(--teal-bright); }
+  body.era-victorian::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+  }
+  body.era-victorian .coc-header::before { content: '—— ✦ ——'; display: block; font-size: 12px; letter-spacing: 8px; color: #c69a4a; margin-bottom: 12px; opacity: 0.7; }
+  body.era-victorian .coc-logo { font-family: 'Cinzel', serif; font-weight: 500; font-size: 40px; letter-spacing: 0.14em; color: #e6c074; text-shadow: 0 1px 0 #000; font-style: normal; text-transform: uppercase; }
+  body.era-victorian .coc-subtitle { font-family: 'IM Fell English', serif; font-style: italic; font-size: 14px; letter-spacing: 0.02em; color: #a89472; }
+  body.era-victorian .coc-class { font-family: 'IM Fell English SC', serif; color: #8a2a1a; letter-spacing: 0.3em; font-size: 11px; }
+  body.era-victorian .coc-header::after { width: 200px; height: 1px; background: rgba(198,154,74,0.6); box-shadow: none; }
+  body.era-victorian .section-title { font-family: 'Cinzel', serif; font-size: 24px; font-weight: 400; letter-spacing: 0.14em; color: #e6c074; text-transform: uppercase; }
+  body.era-victorian .section-sub { font-family: 'IM Fell English', serif; font-style: italic; font-size: 15px; color: #a89472; letter-spacing: 0.02em; }
+  body.era-victorian .step-btn { font-family: 'IM Fell English SC', serif; letter-spacing: 0.04em; }
+  body.era-victorian .step-num { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.1em; }
+  body.era-victorian .step-btn.active { color: #e6c074; }
+  body.era-victorian .step-btn.active::after { background: #b8401d; }
+  body.era-victorian .form-label { font-family: 'IM Fell English', serif; font-style: italic; font-size: 13px; color: #a89472; letter-spacing: 0.04em; text-transform: none; }
+  body.era-victorian .form-input { font-family: 'Cormorant Garamond', serif; font-size: 20px; border-color: rgba(198,154,74,0.35); }
+  body.era-victorian .form-input:focus { border-color: #c69a4a; }
+  body.era-victorian .nav-btn { font-family: 'IM Fell English SC', serif; letter-spacing: 0.25em; }
+  body.era-victorian .nav-btn.primary { background: linear-gradient(180deg, #8a2a1a 0%, #6a1f12 100%); color: #f4e2c4; border-color: rgba(184,64,29,0.7); }
+  body.era-victorian .nav-btn.primary:hover { background: linear-gradient(180deg, #a03020 0%, #7a2518 100%); }
+  body.era-victorian .occ-name { font-family: 'Cinzel', serif; letter-spacing: 0.08em; font-weight: 400; }
 
   /* Sheet accent colors per era */
-  body.era-modern .sheet-top-bar { background: #1a4570 !important; }
-  body.era-modern .sheet-char-v { color: #1a6090 !important; }
-  body.era-modern .sheet-skill-name.occ-s { color: #1a6090 !important; }
-  body.era-modern .sheet-derived-v { color: #6a7800 !important; }
-  body.era-modern .sheet-luck-cell { border-color: #a0b018 !important; }
+  body.era-modern .sheet-top-bar { background: #1a2030 !important; color: #7ed4d4 !important; font-family: 'Space Grotesk', sans-serif !important; font-weight: 500 !important; letter-spacing: 0.06em !important; }
+  body.era-modern .sheet-section-hdr { background: #f4f6f8 !important; color: #1a2030 !important; font-family: 'JetBrains Mono', monospace !important; letter-spacing: 0.12em !important; }
+  body.era-modern .sheet-char-v { color: #0c7a7a !important; font-family: 'Space Grotesk', sans-serif !important; font-weight: 600 !important; }
+  body.era-modern .sheet-skill-name.occ-s { color: #0c7a7a !important; }
+  body.era-modern .sheet-derived-cell { background: #f4f6f8 !important; }
+  body.era-modern .sheet-derived-v { color: #0c7a7a !important; font-family: 'Space Grotesk', sans-serif !important; font-weight: 600 !important; }
+  body.era-modern .sheet-luck-cell { border-color: #0c7a7a !important; background: #eef6f6 !important; }
 
-  body.era-1920s .sheet-top-bar { background: #5a2e0c !important; color: #e0c078 !important; }
-  body.era-1920s .sheet-section-hdr { background: #f5eedd !important; }
-  body.era-1920s .sheet-char-v { color: #7a5010 !important; }
-  body.era-1920s .sheet-skill-name.occ-s { color: #7a5010 !important; }
-  body.era-1920s .sheet-derived-cell { background: #f8f0e0 !important; }
-  body.era-1920s .sheet-derived-v { color: #902018 !important; }
-  body.era-1920s .sheet-luck-cell { border-color: #c08010 !important; background: #fdf5e0 !important; }
+  body.era-1920s .sheet-top-bar { background: #1b5b58 !important; color: #f3e8cc !important; font-family: 'Limelight', serif !important; letter-spacing: 0.08em !important; }
+  body.era-1920s .sheet-section-hdr { background: #f3e8cc !important; color: #1b5b58 !important; font-family: 'Limelight', serif !important; letter-spacing: 0.06em !important; }
+  body.era-1920s .sheet-char-v { color: #a07a2c !important; font-family: 'Limelight', serif !important; }
+  body.era-1920s .sheet-skill-name.occ-s { color: #a07a2c !important; }
+  body.era-1920s .sheet-derived-cell { background: #f3e8cc !important; }
+  body.era-1920s .sheet-derived-v { color: #a8281e !important; font-family: 'Limelight', serif !important; }
+  body.era-1920s .sheet-luck-cell { border-color: #a07a2c !important; background: #f9f0dd !important; }
 
-  body.era-victorian .sheet-top-bar { background: #1a3a18 !important; color: #a0c888 !important; }
-  body.era-victorian .sheet-section-hdr { background: #e8ece5 !important; }
-  body.era-victorian .sheet-char-v { color: #2a5a28 !important; }
-  body.era-victorian .sheet-skill-name.occ-s { color: #2a5a28 !important; }
-  body.era-victorian .sheet-derived-cell { background: #eef0e8 !important; }
-  body.era-victorian .sheet-derived-v { color: #7a6808 !important; }
-  body.era-victorian .sheet-luck-cell { border-color: #a89018 !important; background: #f0efe0 !important; }
+  body.era-victorian .sheet-top-bar { background: #7a1f12 !important; color: #f4ead0 !important; font-family: 'Cinzel', serif !important; letter-spacing: 0.12em !important; }
+  body.era-victorian .sheet-section-hdr { background: #f4ead0 !important; color: #7a1f12 !important; font-family: 'IM Fell English SC', serif !important; letter-spacing: 0.12em !important; }
+  body.era-victorian .sheet-char-v { color: #a87c2e !important; font-family: 'Cinzel', serif !important; }
+  body.era-victorian .sheet-skill-name.occ-s { color: #a87c2e !important; }
+  body.era-victorian .sheet-derived-cell { background: #f4ead0 !important; }
+  body.era-victorian .sheet-derived-v { color: #7a1f12 !important; font-family: 'Cinzel', serif !important; }
+  body.era-victorian .sheet-luck-cell { border-color: #a87c2e !important; background: #faf3e0 !important; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; font-variant-numeric: slashed-zero; }
   body { background: var(--bg); color: var(--text); font-family: var(--body); font-size: 14px; min-height: 100vh; line-height: 1.5; }
@@ -133,6 +198,105 @@
   .new-char-btn:hover { border-color: var(--teal-bright); color: var(--teal-bright); }
   .load-btn { background: transparent; border: 1px solid var(--amber); color: var(--amber); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 6px 14px; cursor: pointer; text-transform: uppercase; }
   .load-btn:hover { background: rgba(200,168,64,0.1); }
+  .play-btn { background: transparent; border: 1px solid var(--teal-bright); color: var(--teal-bright); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 6px 14px; cursor: pointer; text-transform: uppercase; }
+  .play-btn:hover { background: rgba(80,168,168,0.1); }
+  .play-btn.active { background: rgba(80,168,168,0.15); }
+
+  /* ── Play Overlay ── */
+  .play-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82); z-index: 2000; overflow-y: auto; padding: 2rem 1rem; }
+  .play-overlay.open { display: block; }
+  .play-panel { max-width: 860px; margin: 0 auto; background: var(--bg2); border: 1px solid var(--border2); padding: 0; }
+  .play-panel-hdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border2); }
+  .play-panel-title { font-family: var(--head); font-size: 18px; letter-spacing: 4px; color: var(--teal-bright); text-transform: uppercase; }
+  .play-close-btn { background: transparent; border: 1px solid var(--border2); color: var(--text3); font-family: var(--mono); font-size: 12px; padding: 4px 12px; cursor: pointer; }
+  .play-close-btn:hover { border-color: var(--text2); color: var(--text2); }
+  .play-section { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  /* Stat trackers */
+  .play-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); }
+  .play-stat-box { background: var(--bg2); padding: 14px 16px; text-align: center; }
+  .play-stat-label { font-family: var(--mono); font-size: 9px; letter-spacing: 2px; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
+  .play-stat-ctrl { display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .play-stat-btn { background: transparent; border: 1px solid var(--border2); color: var(--text2); font-family: var(--mono); font-size: 16px; width: 28px; height: 28px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; padding: 0; }
+  .play-stat-btn:hover { border-color: var(--teal-bright); color: var(--teal-bright); }
+  .play-stat-val { font-family: var(--head); font-size: 32px; color: var(--teal-bright); min-width: 48px; display: inline-block; text-align: center; }
+  .play-stat-max { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 4px; letter-spacing: 1px; }
+  .play-stat-val.danger { color: var(--red); }
+  /* API key */
+  .play-api-section { padding: 10px 20px; border-bottom: 1px solid var(--border); }
+  .play-api-hdr { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--text3); cursor: pointer; user-select: none; }
+  .play-api-hdr:hover { color: var(--text2); }
+  .play-api-body { display: none; margin-top: 10px; }
+  .play-api-body.open { display: block; }
+  .play-api-hint { font-family: var(--mono); font-size: 10px; color: var(--text3); line-height: 1.5; }
+  /* Skills */
+  .play-skill-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border: 1px solid var(--border2); color: var(--text2); font-family: var(--mono); font-size: 10px; cursor: pointer; user-select: none; transition: all .1s; }
+  .play-skill-chip:hover { border-color: var(--teal-bright); color: var(--teal-bright); }
+  .play-skill-chip.checked { border-color: var(--teal-bright); color: var(--teal-bright); background: rgba(80,168,168,0.12); }
+  .play-skill-chip.occ-skill { border-color: var(--amber); color: var(--amber); }
+  .play-skill-chip.occ-skill.checked { background: rgba(200,168,64,0.12); }
+  .play-check-box { font-size: 9px; opacity: 0.6; min-width: 8px; }
+  /* Notes */
+  .play-notes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .play-notes-col { padding: 16px 20px; border-right: 1px solid var(--border); }
+  .play-notes-col:last-child { border-right: none; }
+  .play-notes-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; }
+  .play-notes-textarea { width: 100%; height: 120px; background: var(--bg); border: 1px solid var(--border2); color: var(--text); font-family: var(--body); font-size: 12px; padding: 8px; resize: vertical; margin-top: 6px; line-height: 1.5; }
+  .play-notes-textarea:focus { outline: none; border-color: var(--teal-bright); }
+  .play-organize-btn { background: transparent; border: 1px solid var(--border2); color: var(--text3); font-family: var(--mono); font-size: 10px; letter-spacing: 1px; padding: 4px 12px; cursor: pointer; margin-top: 6px; }
+  .play-organize-btn:hover:not([disabled]) { border-color: var(--teal-bright); color: var(--teal-bright); }
+  .play-organize-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .play-organize-status { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-left: 8px; }
+  .play-organized-output { margin-top: 8px; font-family: var(--mono); font-size: 11px; color: var(--text2); white-space: pre-wrap; line-height: 1.6; max-height: 200px; overflow-y: auto; border: 1px solid var(--border); padding: 8px; display: none; }
+  .play-organized-output.has-content { display: block; }
+  /* Weapon table inside Play panel */
+  .play-weapon-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 10px; letter-spacing: 0.5px; }
+  .play-weapon-table th { text-align: left; color: var(--text3); border-bottom: 1px solid var(--border2); padding: 3px 10px 3px 0; font-weight: normal; text-transform: uppercase; letter-spacing: 1px; }
+  .play-weapon-table td { padding: 5px 10px 5px 0; color: var(--text2); border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .play-weapon-table td.wn { color: var(--text); font-size: 11px; }
+  .play-weapon-table td.ws { color: var(--amber); font-weight: 500; }
+  body.era-modern .play-weapon-table td.ws { color: var(--teal-bright); }
+
+  /* ── New Player Guide button ── */
+  .guide-btn { background: transparent; border: 1px solid var(--text3); color: var(--text3); font-family: var(--mono); font-size: 10px; letter-spacing: 2px; padding: 6px 14px; cursor: pointer; text-transform: uppercase; transition: all .2s; }
+  .guide-btn:hover { border-color: var(--amber); color: var(--amber); background: rgba(200,168,64,0.08); }
+  .guide-btn.active { border-color: var(--amber); color: var(--amber); background: rgba(200,168,64,0.1); }
+
+  /* ── New Player Help Panels ── */
+  .help-panel { display: none; background: rgba(200,168,64,0.05); border: 1px solid rgba(200,168,64,0.22); border-left: 3px solid rgba(200,168,64,0.5); padding: 14px 18px; margin-bottom: 1.5rem; }
+  .help-panel.visible { display: block; }
+  .help-panel-hdr { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+  .help-panel-title { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--amber); text-transform: uppercase; }
+  .help-panel-toggle { font-family: var(--mono); font-size: 10px; color: var(--text3); opacity: 0.7; }
+  .help-panel-body { font-family: var(--body); font-size: 13px; color: var(--text2); line-height: 1.65; margin-top: 12px; }
+  .help-panel-body p { margin-bottom: 8px; }
+  .help-panel-body p:last-child { margin-bottom: 0; }
+  .help-panel-body strong { color: var(--text); font-weight: 600; }
+  .help-panel-body .help-rule { display: flex; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(200,168,64,0.1); }
+  .help-panel-body .help-rule:last-child { border-bottom: none; }
+  .help-rule-lbl { font-family: var(--mono); font-size: 10px; color: var(--amber); min-width: 80px; letter-spacing: 1px; padding-top: 2px; }
+  .help-rule-val { font-size: 13px; color: var(--text2); }
+  .help-panel.collapsed .help-panel-body { display: none; }
+  .help-panel.collapsed .help-panel-toggle::before { content: '▸ EXPAND'; }
+  .help-panel:not(.collapsed) .help-panel-toggle::before { content: '▾ COLLAPSE'; }
+  /* Era tweaks */
+  body.era-victorian .help-panel { border-left-color: rgba(198,154,74,0.6); background: rgba(198,154,74,0.04); }
+  body.era-victorian .help-panel-title { font-family: 'IM Fell English SC', serif; letter-spacing: 0.15em; }
+  body.era-modern .help-panel { border-left-color: rgba(126,212,212,0.5); background: rgba(126,212,212,0.04); border-color: rgba(126,212,212,0.18); }
+  body.era-modern .help-panel-title { color: var(--teal-bright); }
+  body.era-modern .help-rule-lbl { color: var(--teal-bright); }
+
+  /* Era accent tweaks */
+  body.era-1920s .play-btn { border-color: var(--amber); color: var(--amber); }
+  body.era-1920s .play-btn:hover, body.era-1920s .play-btn.active { background: rgba(212,168,74,0.12); }
+  body.era-1920s .play-panel-title { color: var(--amber); }
+  body.era-1920s .play-stat-val { color: var(--amber); }
+  body.era-1920s .play-stat-val.danger { color: var(--red); }
+  body.era-1920s .play-stat-btn:hover { border-color: var(--amber); color: var(--amber); }
+  body.era-victorian .play-btn { border-color: var(--amber); color: var(--amber); }
+  body.era-victorian .play-btn:hover, body.era-victorian .play-btn.active { background: rgba(198,154,74,0.12); }
+  body.era-victorian .play-panel-title { color: var(--amber); font-family: 'Cinzel', serif; letter-spacing: 6px; }
+  body.era-victorian .play-stat-val { color: var(--amber); font-family: 'Cinzel', serif; }
+  body.era-victorian .play-stat-val.danger { color: var(--red); }
 
   /* ── Step Nav ── */
   .step-nav { display: flex; gap: 2px; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 2px; flex-wrap: wrap; }
@@ -166,23 +330,23 @@
   .era-card-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
 
   /* ── Era Card Identity (static — per-card colors/ornaments before selection) ── */
-  #era-modern { background: #12141e; }
-  #era-modern::before { content: '◈'; display: block; font-size: 22px; color: #28a8dc; margin-bottom: 8px; opacity: 0.75; }
-  #era-modern .era-card-name { color: #28a8dc; }
-  #era-modern .era-card-year { color: #9ab018; }
-  #era-modern.selected { background: rgba(10,80,130,0.3); }
+  #era-modern { background: #0b0c0e; }
+  #era-modern::before { content: '[ ]'; display: block; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #7ed4d4; margin-bottom: 8px; letter-spacing: 0.15em; }
+  #era-modern .era-card-name { color: #e7ecf0; font-family: 'Space Grotesk', sans-serif; font-weight: 500; letter-spacing: 0.02em; }
+  #era-modern .era-card-year { color: #7ed4d4; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.15em; }
+  #era-modern.selected { background: rgba(18,22,28,0.9); border-color: #7ed4d4; }
 
-  #era-1920s { background: #1c1408; }
-  #era-1920s::before { content: '— ❖ —'; display: block; font-size: 12px; letter-spacing: 5px; color: #b08818; margin-bottom: 8px; }
-  #era-1920s .era-card-name { color: #d09020; font-family: 'Playfair Display', serif; font-style: italic; }
-  #era-1920s .era-card-year { color: #b02818; }
-  #era-1920s.selected { background: rgba(90,50,0,0.35); }
+  #era-1920s { background: #0f0c08; }
+  #era-1920s::before { content: '◆ ◇ ◆'; display: block; font-size: 12px; letter-spacing: 8px; color: #d4a84a; margin-bottom: 8px; opacity: 0.8; }
+  #era-1920s .era-card-name { color: #f3cf7a; font-family: 'Limelight', serif; font-style: normal; letter-spacing: 0.06em; }
+  #era-1920s .era-card-year { color: #cc4a3a; font-family: 'Cormorant SC', serif; letter-spacing: 0.3em; font-size: 10px; }
+  #era-1920s.selected { background: rgba(60,40,10,0.5); border-color: #d4a84a; }
 
-  #era-victorian { background: #0e1610; }
-  #era-victorian::before { content: '❦'; display: block; font-size: 26px; color: #5a9830; margin-bottom: 4px; opacity: 0.8; line-height: 1.2; }
-  #era-victorian .era-card-name { color: #6ab048; font-family: 'Cinzel', serif; }
-  #era-victorian .era-card-year { color: #b09018; }
-  #era-victorian.selected { background: rgba(25,65,20,0.4); }
+  #era-victorian { background: #120a08; }
+  #era-victorian::before { content: '✦'; display: block; font-size: 20px; color: #c69a4a; margin-bottom: 8px; opacity: 0.75; }
+  #era-victorian .era-card-name { color: #e6c074; font-family: 'Cinzel', serif; font-style: normal; letter-spacing: 0.1em; }
+  #era-victorian .era-card-year { color: #8a2a1a; font-family: 'IM Fell English SC', serif; letter-spacing: 0.2em; font-size: 10px; }
+  #era-victorian.selected { background: rgba(40,18,12,0.7); border-color: #c69a4a; }
 
   /* ── Form Fields ── */
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -250,6 +414,28 @@
   .pulp-disabled-msg { text-align:center; padding:3rem 1rem; color:var(--text3); font-family:var(--mono); font-size:11px; letter-spacing:1px; }
   .pulp-disabled-msg .pulp-hint { color:var(--amber); display:block; margin-bottom:0.5rem; font-size:13px; }
   .pulp-disabled-msg .pulp-hint-sub { display:block; margin-bottom:1.5rem; }
+
+  /* ── Pulp Cthulhu magazine aesthetic (Jazz Age era, Step 04) ── */
+  body.era-1920s .pulp-panel .section-title { font-family:'Alfa Slab One',serif; font-size:36px; color:#c8341e; text-shadow:3px 2px 0 rgba(229,72,42,0.65); letter-spacing:0.02em; text-transform:uppercase; }
+  body.era-1920s .pulp-panel .section-sub  { font-family:'Special Elite',monospace; font-size:13px; color:#3d2a1c; letter-spacing:0.08em; }
+  body.era-1920s .pulp-panel #archetype-grid,
+  body.era-1920s .pulp-panel #archetype-detail-box { background:radial-gradient(circle at center,rgba(29,19,11,0.3) 0.9px,transparent 1.2px),linear-gradient(180deg,#efdf9e 0%,#e3cf86 40%,#c4ad60 100%); background-size:5px 5px,100% 100%; border:1px solid #a8915a; padding:16px; color:#1d130b; }
+  body.era-1920s .pulp-panel .occ-card  { background:transparent; border:2px solid #1d130b; box-shadow:3px 3px 0 #1d130b; color:#1d130b; transform:rotate(0.2deg); }
+  body.era-1920s .pulp-panel .occ-card:hover { border-color:#1d130b; background:rgba(239,223,158,0.5); }
+  body.era-1920s .pulp-panel .occ-card.selected { background:#efdf9e; box-shadow:4px 4px 0 #c8341e,6px 6px 0 #1d130b; transform:rotate(-0.4deg); }
+  body.era-1920s .pulp-panel .occ-name  { font-family:'Rye',serif; font-size:18px; color:#1d130b; letter-spacing:0.02em; }
+  body.era-1920s .pulp-panel .occ-pts   { font-family:'Special Elite',monospace; color:#8a1a0a; }
+  body.era-1920s .pulp-panel .occ-cr, body.era-1920s .pulp-panel .occ-skills-preview { font-family:'Special Elite',monospace; color:#3d2a1c; font-size:11px; }
+  body.era-1920s .pulp-panel .occ-detail { background:#f5e8b4; border-color:#1d130b; color:#1d130b; }
+  body.era-1920s .pulp-panel .pulp-section-sep { border-color:#1d130b; }
+  body.era-1920s .pulp-panel .pulp-section-sep-label { font-family:'Anton',sans-serif; font-size:11px; letter-spacing:0.18em; color:#8a1a0a; }
+  body.era-1920s .pulp-panel .talent-chip { background:transparent; border:2px solid #1d130b; color:#1d130b; font-family:'Anton',sans-serif; font-size:12px; letter-spacing:0.1em; }
+  body.era-1920s .pulp-panel .talent-chip:hover:not([disabled]) { background:rgba(200,52,30,0.12); border-color:#c8341e; color:#c8341e; }
+  body.era-1920s .pulp-panel .talent-chip.chosen,.era-1920s .pulp-panel .talent-chip.forced { background:#c8341e; color:#efdf9e; border-color:#1d130b; box-shadow:2px 2px 0 #1d130b; }
+  body.era-1920s .pulp-panel .occ-skill-choice { border-color:#1d130b; color:#1d130b; background:transparent; font-family:'Special Elite',monospace; }
+  body.era-1920s .pulp-panel .occ-skill-choice.chosen { background:#c8341e; color:#efdf9e; border-color:#1d130b; }
+  body.era-1920s .pulp-panel .nav-btn { font-family:'Anton',sans-serif; letter-spacing:0.12em; }
+  body.era-1920s .pulp-panel .nav-btn.primary { background:#c8341e; color:#efdf9e; border-color:#1d130b; box-shadow:3px 3px 0 rgba(29,19,11,0.4); }
 
   /* ── Skills Step ── */
   .skill-pools { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1rem; }
@@ -330,6 +516,13 @@
   .equip-cat-table tr:hover td { background:var(--bg3); }
   .weap-add-btn { background:none; border:1px solid var(--border2); color:var(--text2); font-family:var(--mono); font-size:10px; padding:2px 8px; cursor:pointer; white-space:nowrap; }
   .weap-add-btn:hover { border-color:var(--teal-bright); color:var(--teal-bright); }
+  /* Gear checklist */
+  .gear-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:5px 1.5rem; margin-bottom:0.75rem; }
+  .gear-item { display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px; color:var(--text2); cursor:pointer; user-select:none; }
+  .gear-item input[type=checkbox] { accent-color:var(--amber); width:13px; height:13px; cursor:pointer; flex-shrink:0; }
+  .gear-item:hover { color:var(--text); }
+  body.era-modern .gear-item input[type=checkbox] { accent-color:var(--teal-bright); }
+  @media (max-width:640px) { .gear-grid { grid-template-columns:repeat(2,1fr); } }
 
   /* Sheet Characteristics */
   .sheet-char-grid { display: grid; grid-template-columns: repeat(8, 1fr); }
@@ -442,6 +635,53 @@
     .sheet-footer { background: #eaeae5 !important; }
     .sheet-portrait-box { border-left: 1px solid #ccc !important; }
   }
+
+  /* ── Hover Tooltips ── */
+  #tt {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    max-width: 280px;
+    padding: 10px 14px;
+    border: 1px solid var(--border2);
+    background: var(--bg);
+    color: var(--text2);
+    font-family: var(--body);
+    font-size: 12px;
+    line-height: 1.55;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .12s ease, transform .12s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.55);
+  }
+  #tt.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #tt .tt-name {
+    font-family: var(--head);
+    font-size: 13px;
+    color: var(--amber);
+    margin-bottom: 5px;
+    letter-spacing: 0.04em;
+  }
+  #tt .tt-body {
+    color: var(--text2);
+  }
+  #tt .tt-meta {
+    margin-top: 5px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.05em;
+  }
+  /* era accent tweaks */
+  body.era-victorian #tt { border-color: rgba(198,154,74,0.5); }
+  body.era-victorian #tt .tt-name { font-family: 'Cinzel', serif; }
+  body.era-victorian #tt .tt-meta { font-family: 'IM Fell English SC', serif; }
+  body.era-1920s #tt { border-color: rgba(212,168,74,0.5); }
+  body.era-modern  #tt { border-color: rgba(126,212,212,0.3); }
+  body.era-modern  #tt .tt-name { color: var(--teal-bright); }
 </style>
 </head>
 <body>
@@ -462,8 +702,10 @@
     <div class="coc-subtitle">INVESTIGATOR DOCUMENTATION SYSTEM</div>
     <div class="coc-class">7TH EDITION — KEEPER'S REFERENCE</div>
     <div class="header-btns">
+      <button class="guide-btn" id="guide-btn" onclick="toggleGuide()">? New Player Guide</button>
       <button class="new-char-btn" onclick="newInvestigator()">✦ New Investigator</button>
       <button class="load-btn" onclick="openLoadModal()">⬆ Load Investigator</button>
+      <button class="play-btn" id="play-btn" onclick="togglePlayPanel()">▶ Play</button>
     </div>
   </div>
 
@@ -481,6 +723,19 @@
 
   <!-- PANEL 0: Era -->
   <div class="panel active" id="panel0">
+    <div class="help-panel" id="help0">
+      <div class="help-panel-hdr" onclick="toggleHelpCollapse(this)">
+        <span class="help-panel-title">Step 1 — Choose Your Era</span>
+        <span class="help-panel-toggle"></span>
+      </div>
+      <div class="help-panel-body">
+        <p><strong>Welcome to Call of Cthulhu.</strong> You play an ordinary person — a librarian, a doctor, a soldier — drawn into contact with cosmic horrors beyond human comprehension. Your investigator will likely lose sanity, and may not survive. That's the game.</p>
+        <p>The era you choose shapes the world your investigator lives in: available skills, occupations, and the overall tone.</p>
+        <div class="help-rule"><span class="help-rule-lbl">1920S</span><span class="help-rule-val">The classic experience. Jazz Age New England, Arkham, and the Miskatonic University. Inspired by Lovecraft's original stories. Most published adventures are set here.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">VICTORIAN</span><span class="help-rule-val">1890s London. Gaslight, empire, and gothic dread. A world of séances, opium dens, and things that should not be. Different skills, no automobiles, a grittier tone.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">MODERN</span><span class="help-rule-val">Present day. Computers, mobile phones, and the internet — but the Mythos doesn't care. Easier to research; harder to explain away.</span></div>
+      </div>
+    </div>
     <div class="section-title">Select Era</div>
     <div class="section-sub">Choose the time period for your investigation.</div>
     <div class="era-grid">
@@ -515,6 +770,17 @@
 
   <!-- PANEL 1: Personal Info -->
   <div class="panel" id="panel1">
+    <div class="help-panel" id="help1">
+      <div class="help-panel-hdr" onclick="toggleHelpCollapse(this)">
+        <span class="help-panel-title">Step 2 — Investigator Details</span>
+        <span class="help-panel-toggle"></span>
+      </div>
+      <div class="help-panel-body">
+        <p><strong>Investigators are not heroes.</strong> They are ordinary people — architects, nurses, journalists, academics — who stumble into contact with something that was never meant to be known. The more "normal" they are, the more effective the horror when the Mythos touches them.</p>
+        <p>Fill in the basics: name, age, and physical description. These fields don't affect game mechanics, but they matter enormously at the table. A well-sketched investigator is someone your Keeper can describe vividly and someone you'll feel genuinely worried about losing.</p>
+        <p>The <strong>Personal Description</strong> field is especially useful — jot down a line or two about how your investigator carries themselves, what they dress like, a tell or a habit. This is what the Keeper reads aloud when another character meets them for the first time.</p>
+      </div>
+    </div>
     <div class="section-title">Investigator Details</div>
     <div class="section-sub">Record the personal history of your investigator.</div>
     <div class="form-grid" style="margin-bottom:12px">
@@ -597,6 +863,19 @@
 
   <!-- PANEL 2: Occupation -->
   <div class="panel" id="panel2">
+    <div class="help-panel" id="help2">
+      <div class="help-panel-hdr" onclick="toggleHelpCollapse(this)">
+        <span class="help-panel-title">Step 3 — Occupation</span>
+        <span class="help-panel-toggle"></span>
+      </div>
+      <div class="help-panel-body">
+        <p><strong>Your occupation gives you your skill points.</strong> Each occupation specifies a formula — usually <strong>EDU×4</strong> — and a set of occupation skills. You'll distribute those points among the listed skills in Step 6.</p>
+        <p><strong>Occupation skills</strong> are highlighted in gold on the Skills step. You can spend occupation points <em>only</em> on those skills. Any remaining points go to waste — choose an occupation whose skills match the investigator you want to play.</p>
+        <div class="help-rule"><span class="help-rule-lbl">SKILL POOL</span><span class="help-rule-val">The formula (e.g. EDU×4) is calculated from your final characteristics. Pump EDU if you want more skill points overall.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">CREDIT RATING</span><span class="help-rule-val">Reflects social standing and wealth. Higher CR means you can afford better equipment and are taken more seriously. The range shown is the allowed minimum and maximum for your occupation.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">EXTRA SKILLS</span><span class="help-rule-val">Many occupations let you choose N additional skills from a list. These count as occupation skills for point allocation purposes.</span></div>
+      </div>
+    </div>
     <div class="section-title">Occupation</div>
     <div class="section-sub">Select your investigator's occupation. This determines your skill point pool and Credit Rating range.</div>
     <div class="occ-filter" id="occ-filter"></div>
@@ -609,7 +888,20 @@
   </div>
 
   <!-- PANEL 3: Pulp Archetype & Talents -->
-  <div class="panel" id="panel3">
+  <div class="panel pulp-panel" id="panel3">
+    <div class="help-panel" id="help3p">
+      <div class="help-panel-hdr" onclick="toggleHelpCollapse(this)">
+        <span class="help-panel-title">Step 4 — Pulp Cthulhu (Optional)</span>
+        <span class="help-panel-toggle"></span>
+      </div>
+      <div class="help-panel-body">
+        <p><strong>Pulp Cthulhu is an optional variant</strong> inspired by the two-fisted heroes of 1930s pulp magazines — Doc Savage, The Shadow, Indiana Jones. Investigators are tougher, more capable, and less likely to die in the first session.</p>
+        <p>If your Keeper is running standard Call of Cthulhu, leave this step disabled. If they've confirmed Pulp mode, enable it here.</p>
+        <div class="help-rule"><span class="help-rule-lbl">HIT POINTS</span><span class="help-rule-val">Pulp HP = (CON+SIZ)÷5, doubled from the standard formula. Your investigator is significantly harder to kill.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">ARCHETYPE</span><span class="help-rule-val">A broad role that defines your investigator's niche. Choose one that matches your concept — it grants bonus skills (100 points to distribute) and restricts or guides talent selection.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">TALENTS</span><span class="help-rule-val">Special abilities that bend the rules in your favour — bonus dice on certain rolls, extra actions, resistance to harm. Most archetypes let you choose 2 freely; hover each talent to read its effect before choosing.</span></div>
+      </div>
+    </div>
     <div class="section-title">★ Pulp Archetype &amp; Talents</div>
     <div class="section-sub">Select an archetype, then choose 2 talents from the full list (or 1 if your archetype forces a talent).</div>
     <div id="pulp-disabled-msg" class="pulp-disabled-msg" style="display:none">
@@ -627,6 +919,21 @@
 
   <!-- PANEL 4: Characteristics -->
   <div class="panel" id="panel3">
+    <div class="help-panel" id="help4">
+      <div class="help-panel-hdr" onclick="toggleHelpCollapse(this)">
+        <span class="help-panel-title">Step 5 — Characteristics</span>
+        <span class="help-panel-toggle"></span>
+      </div>
+      <div class="help-panel-body">
+        <p><strong>Eight characteristics define your investigator's raw potential.</strong> Most are rolled as 3D6×5 (range 15–90); SIZ, INT, and EDU use 2D6+6×5 (range 40–90). Click <em>Roll All</em> for a full random set, or enter numbers manually.</p>
+        <div class="help-rule"><span class="help-rule-lbl">STR / CON</span><span class="help-rule-val">Strength and Constitution. Affect Hit Points (CON+SIZ÷10), Build, and Damage Bonus. High CON helps you survive.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">SIZ / DEX</span><span class="help-rule-val">Size affects HP and Build. Dexterity affects your Dodge skill and acts as a tiebreaker. Lower SIZ with high DEX is a common nimble-investigator build.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">APP</span><span class="help-rule-val">Appearance. Affects social interactions. Base for Persuade and Charm in some situations. Often overlooked but useful.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">INT / EDU</span><span class="help-rule-val"><strong>These matter most.</strong> EDU×4 is the most common occupation skill formula. INT×2 gives Personal Interest points. Maximise both for a scholar/investigator build.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">POW</span><span class="help-rule-val">Willpower and psychic resistance. Your starting Sanity = POW×5. High POW means more sanity to lose before going mad.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">LUCK</span><span class="help-rule-val">Rolled separately (3D6×5). Luck is spent during play to improve rolls — it doesn't recover easily, so spend it wisely.</span></div>
+      </div>
+    </div>
     <div class="section-title">Characteristics</div>
     <div class="section-sub">Roll or assign your investigator's eight primary characteristics.</div>
     <div class="array-btns">
@@ -654,6 +961,20 @@
 
   <!-- PANEL 4: Skills -->
   <div class="panel" id="panel4">
+    <div class="help-panel" id="help5">
+      <div class="help-panel-hdr" onclick="toggleHelpCollapse(this)">
+        <span class="help-panel-title">Step 6 — Skills</span>
+        <span class="help-panel-toggle"></span>
+      </div>
+      <div class="help-panel-body">
+        <p><strong>Skills are percentages.</strong> To use a skill, roll 1D100 — roll equal to or under the skill to succeed. Half the skill is a <em>Hard success</em>; one-fifth is an <em>Extreme success</em>. Higher is always better.</p>
+        <p>You have two point pools to spend: <strong>Occupation points</strong> (highlighted gold in the skill list) can only go on your occupation's skills. <strong>Personal Interest points</strong> (INT×2) can go on any skill at all. A few points in Library Use, Spot Hidden, and Psychology will serve almost any investigator well.</p>
+        <div class="help-rule"><span class="help-rule-lbl">CAP</span><span class="help-rule-val">No skill may exceed 90% during character creation. The 99% ceiling exists but is only reached through advancement in play.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">SPOT HIDDEN</span><span class="help-rule-val">The single most-used skill in the game. Governs noticing clues, ambushes, and things in the dark. Invest here.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">LIBRARY USE</span><span class="help-rule-val">Research — finding tomes, newspaper archives, academic records. Almost every adventure requires it at some point.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">PSYCHOLOGY</span><span class="help-rule-val">Detecting lies and reading emotional states. Surprisingly useful when NPCs are trying to hide something — which they usually are.</span></div>
+      </div>
+    </div>
     <div class="section-title">Skills</div>
     <div class="section-sub" id="skills-sub">Distribute occupation and personal interest points. Occupation skills are highlighted.</div>
     <div class="skill-pools" id="skill-pools"></div>
@@ -669,6 +990,19 @@
 
   <!-- PANEL 5: Equipment -->
   <div class="panel" id="panel5">
+    <div class="help-panel" id="help6">
+      <div class="help-panel-hdr" onclick="toggleHelpCollapse(this)">
+        <span class="help-panel-title">Step 7 — Weapons &amp; Equipment</span>
+        <span class="help-panel-toggle"></span>
+      </div>
+      <div class="help-panel-body">
+        <p><strong>Call of Cthulhu is not a combat game.</strong> Fighting is dangerous and often suicidal — the horrors investigators face are rarely killable by conventional weapons. Firearms cause noise, attract authorities, and many monsters simply don't care about bullets.</p>
+        <p>That said, investigators should be equipped for the situations they're likely to face. A handgun for self-defence, a knife for getting into locked crates, a camera for evidence, a medical kit for the inevitable aftermath.</p>
+        <div class="help-rule"><span class="help-rule-lbl">ERA FIT</span><span class="help-rule-val">Stick to weapons and tools appropriate to your era and Credit Rating. A Victorian investigator won't have a submachine gun; a Modern one won't be carrying a sword as their primary weapon.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">SKILL MATCH</span><span class="help-rule-val">Only equip weapons where you have a meaningful skill (40%+). A handgun with Firearms (Handgun) at 20% is a liability in a firefight.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">NON-COMBAT</span><span class="help-rule-val">Torches, rope, first aid kits, and cameras often matter more than weapons. Think about what your investigator would actually carry on their person.</span></div>
+      </div>
+    </div>
     <div class="section-title">Weapons &amp; Equipment</div>
     <div class="section-sub">Select era-appropriate weapons from the catalog or add custom entries.</div>
     <div id="equip-panel-content"></div>
@@ -703,6 +1037,124 @@
   </div>
 </div>
 
+<!-- Play Panel Overlay -->
+<div id="play-overlay" class="play-overlay" onclick="if(event.target===this)togglePlayPanel()">
+  <div class="play-panel">
+
+    <div class="play-panel-hdr">
+      <span class="play-panel-title" id="play-panel-title">PLAY MODE</span>
+      <button class="play-close-btn" onclick="togglePlayPanel()">✕ CLOSE</button>
+    </div>
+
+    <!-- API Key -->
+    <div class="play-api-section">
+      <div class="play-api-hdr" onclick="toggleApiKey()">
+        <span id="play-api-indicator">○</span>
+        <span>GEMINI API KEY</span>
+        <span id="play-api-toggle-lbl" style="margin-left:auto;font-size:9px">▸ CONFIGURE</span>
+      </div>
+      <div class="play-api-body" id="play-api-body">
+        <div style="display:flex;gap:0.5rem;align-items:center;margin-top:8px">
+          <input type="password" id="play-api-key" placeholder="Paste your Gemini API key here…"
+            style="flex:1;background:var(--bg);border:1px solid var(--border2);color:var(--text);font-family:var(--mono);font-size:11px;padding:5px 8px">
+          <button class="play-organize-btn" onclick="playToggleApiVis()" id="play-api-show-btn">SHOW</button>
+          <button class="play-organize-btn" onclick="playSaveApiKey()" style="border-color:var(--teal-bright);color:var(--teal-bright)">SAVE</button>
+          <button class="play-organize-btn" id="play-api-test-btn" onclick="playTestApiKey()" style="display:none">TEST</button>
+          <button class="play-organize-btn" id="play-api-clear-btn" onclick="playClearApiKey()" style="display:none">CLEAR</button>
+        </div>
+        <div class="play-api-hint" style="margin-top:6px">
+          Free key at <strong>aistudio.google.com</strong> → Get API Key. Stored in your browser only.
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat Trackers -->
+    <div class="play-stats">
+      <div class="play-stat-box">
+        <div class="play-stat-label">Hit Points</div>
+        <div class="play-stat-ctrl">
+          <button class="play-stat-btn" onclick="playAdjust('hp',-1)">−</button>
+          <span class="play-stat-val" id="play-hp">—</span>
+          <button class="play-stat-btn" onclick="playAdjust('hp',1)">+</button>
+        </div>
+        <div class="play-stat-max" id="play-hp-max"></div>
+      </div>
+      <div class="play-stat-box">
+        <div class="play-stat-label">Sanity</div>
+        <div class="play-stat-ctrl">
+          <button class="play-stat-btn" onclick="playAdjust('san',-1)">−</button>
+          <span class="play-stat-val" id="play-san">—</span>
+          <button class="play-stat-btn" onclick="playAdjust('san',1)">+</button>
+        </div>
+        <div class="play-stat-max" id="play-san-max"></div>
+      </div>
+      <div class="play-stat-box">
+        <div class="play-stat-label">Magic Points</div>
+        <div class="play-stat-ctrl">
+          <button class="play-stat-btn" onclick="playAdjust('mp',-1)">−</button>
+          <span class="play-stat-val" id="play-mp">—</span>
+          <button class="play-stat-btn" onclick="playAdjust('mp',1)">+</button>
+        </div>
+        <div class="play-stat-max" id="play-mp-max"></div>
+      </div>
+      <div class="play-stat-box">
+        <div class="play-stat-label">Luck</div>
+        <div class="play-stat-ctrl">
+          <button class="play-stat-btn" onclick="playAdjust('luck',-1)">−</button>
+          <span class="play-stat-val" id="play-luck">—</span>
+          <button class="play-stat-btn" onclick="playAdjust('luck',1)">+</button>
+        </div>
+        <div class="play-stat-max" id="play-luck-max"></div>
+      </div>
+    </div>
+
+    <!-- Skills above base -->
+    <div class="play-section">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text2)">SKILLS ABOVE BASE</div>
+        <button id="play-base-skills-btn" class="play-organize-btn" onclick="playToggleBaseSkills()" style="margin-top:0">▸ BASE SKILLS</button>
+      </div>
+      <div id="play-skills-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      <div id="play-base-skills-list" style="display:none;flex-wrap:wrap;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)"></div>
+    </div>
+
+    <!-- Weapons -->
+    <div class="play-section">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--text2);margin-bottom:8px">WEAPONS</div>
+      <div id="play-weapons-list"></div>
+    </div>
+
+    <!-- Notes -->
+    <div class="play-notes-grid">
+      <div class="play-notes-col">
+        <div class="play-notes-label">Field Notes</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">NPCs, clues, locations, events. AI will sort into categories.</div>
+        <textarea class="play-notes-textarea" id="play-field-notes"
+          placeholder="Spoke to Professor Armitage — he was agitated about something in the Restricted Collection. Smell of fish near the harbour. Strange symbol in the margin of the Necronomicon page…"
+          oninput="savePlayNotes()"></textarea>
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
+          <button class="play-organize-btn" id="org-field-btn" onclick="organizePlayNotes('field')">✦ Organize by Category</button>
+          <span class="play-organize-status" id="org-field-status"></span>
+        </div>
+        <div class="play-organized-output" id="play-field-organized"></div>
+      </div>
+      <div class="play-notes-col">
+        <div class="play-notes-label">Session Log</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">Notes per session. Mark sessions with "Session 1", "Session 2", or a date.</div>
+        <textarea class="play-notes-textarea" id="play-session-notes"
+          placeholder="Session 1 — arrived in Arkham. Library closed. Session 2 — found the letter. Something is wrong with Whateley farm…"
+          oninput="savePlayNotes()"></textarea>
+        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap">
+          <button class="play-organize-btn" id="org-session-btn" onclick="organizePlayNotes('session')">✦ Organize by Session</button>
+          <span class="play-organize-status" id="org-session-status"></span>
+        </div>
+        <div class="play-organized-output" id="play-session-organized"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════════════════════════
 // DATA
@@ -727,74 +1179,74 @@ function rollStat(key) {
 // Era-specific bases: ACCOUNTING(5/10), ELEC_REPAIR(10/1), MECH_REPAIR(10/20),
 //                     RIDE_BASE(5/20), SWIM_BASE(20/30) — modern+1920s / victorian
 const ALL_SKILLS = [
-  {name:'Accounting',              base:'ACCOUNTING',  eras:['all']},
-  {name:'Alienism',               base:1,   eras:['victorian']},
-  {name:'Animal Handling',        base:5,   eras:['all']},
-  {name:'Anthropology',           base:1,   eras:['all']},
-  {name:'Appraise',               base:5,   eras:['all']},
-  {name:'Archaeology',            base:1,   eras:['all']},
-  {name:'Art/Craft',              base:5,   eras:['all'], specialty:true},
-  {name:'Artillery (Rocket)',     base:1,   eras:['victorian','1920s']},
-  {name:'Charm',                  base:15,  eras:['all']},
-  {name:'Climb',                  base:20,  eras:['all']},
-  {name:'Computer Use',           base:5,   eras:['modern']},
-  {name:'Credit Rating',          base:0,   eras:['all'], special:'credit'},
-  {name:'Cthulhu Mythos',         base:0,   eras:['all'], special:'mythos'},
-  {name:'Demolitions',            base:1,   eras:['all']},
-  {name:'Disguise',               base:5,   eras:['all']},
-  {name:'Diving',                 base:1,   eras:['all']},
-  {name:'Dodge',                  base:'DODGE', eras:['all']},
-  {name:'Drive Auto',             base:20,  eras:['modern','1920s']},
-  {name:'Drive Carriage',         base:20,  eras:['victorian']},
-  {name:'Electrical Repair',      base:'ELEC_REPAIR', eras:['all']},
-  {name:'Electronics',            base:1,   eras:['modern']},
-  {name:'Fast Talk',              base:5,   eras:['all']},
-  {name:'Fighting (Axe)',         base:15,  eras:['victorian']},
-  {name:'Fighting (Brawl)',       base:25,  eras:['all']},
-  {name:'Fighting (Flail)',       base:10,  eras:['victorian']},
-  {name:'Fighting (Garrote)',     base:15,  eras:['victorian']},
-  {name:'Fighting (Sword)',       base:20,  eras:['victorian','1920s']},
-  {name:'Fighting (Whip)',        base:5,   eras:['victorian']},
-  {name:'Firearms (Bow)',         base:15,  eras:['victorian']},
-  {name:'Firearms (Handgun)',     base:20,  eras:['all']},
-  {name:'Firearms (Rifle/Shotgun)',base:25, eras:['all']},
-  {name:'Firearms (SMG)',         base:15,  eras:['modern']},
-  {name:'First Aid',              base:30,  eras:['all']},
-  {name:'History',                base:5,   eras:['all']},
-  {name:'Hypnosis',               base:1,   eras:['modern','1920s']},
-  {name:'Intimidate',             base:15,  eras:['all']},
-  {name:'Jump',                   base:20,  eras:['all']},
-  {name:'Language (Other)',       base:1,   eras:['all'], specialty:true},
-  {name:'Language (Own)',         base:'EDU5', eras:['all']},
-  {name:'Law',                    base:5,   eras:['all']},
-  {name:'Library Use',            base:20,  eras:['all']},
-  {name:'Listen',                 base:'LISTEN', eras:['all']},
-  {name:'Locksmith',              base:1,   eras:['all']},
-  {name:'Lore',                   base:1,   eras:['victorian'], specialty:true},
-  {name:'Mechanical Repair',      base:'MECH_REPAIR', eras:['all']},
-  {name:'Medicine',               base:1,   eras:['all']},
-  {name:'Mesmerism',              base:1,   eras:['victorian']},
-  {name:'Natural World',          base:10,  eras:['all']},
-  {name:'Navigate',               base:10,  eras:['all']},
-  {name:'Occult',                 base:5,   eras:['all']},
-  {name:'Operate Heavy Machinery',base:1,   eras:['all']},
-  {name:'Persuade',               base:10,  eras:['all']},
-  {name:'Photography',            base:5,   eras:['modern','1920s']},
-  {name:'Pilot',                  base:1,   eras:['all'], specialty:true},
-  {name:'Psychology',             base:10,  eras:['all']},
-  {name:'Psychoanalysis',         base:1,   eras:['modern','1920s']},
-  {name:'Read Lips',              base:1,   eras:['all']},
-  {name:'Reassure',               base:'REASSURE', eras:['victorian']},
-  {name:'Religion',               base:10,  eras:['victorian','1920s']},
-  {name:'Ride',                   base:'RIDE_BASE', eras:['all']},
-  {name:'Science',                base:1,   eras:['all'], specialty:true},
-  {name:'Sleight of Hand',        base:10,  eras:['all']},
-  {name:'Spot Hidden',            base:25,  eras:['all']},
-  {name:'Stealth',                base:20,  eras:['all']},
-  {name:'Survival',               base:10,  eras:['all'], specialty:true},
-  {name:'Swim',                   base:'SWIM_BASE', eras:['all']},
-  {name:'Throw',                  base:20,  eras:['all']},
-  {name:'Track',                  base:10,  eras:['all']}
+  {name:'Accounting',              base:'ACCOUNTING',  eras:['all'],                 desc:'Auditing, financial records, and spotting fraud in ledgers.'},
+  {name:'Alienism',               base:1,   eras:['victorian'],                      desc:'Victorian-era study of mental illness and aberrant psychology.'},
+  {name:'Animal Handling',        base:5,   eras:['all'],                            desc:'Calming, controlling, and training animals under duress.'},
+  {name:'Anthropology',           base:1,   eras:['all'],                            desc:'Cultural study of human societies, rituals, and belief systems.'},
+  {name:'Appraise',               base:5,   eras:['all'],                            desc:'Estimating the value or authenticity of antiques, art, and goods.'},
+  {name:'Archaeology',            base:1,   eras:['all'],                            desc:'Excavating, identifying, and interpreting ancient sites and artefacts.'},
+  {name:'Art/Craft',              base:5,   eras:['all'], specialty:true,            desc:'Creating or performing in a chosen artistic medium (specify specialty).'},
+  {name:'Artillery (Rocket)',     base:1,   eras:['victorian','1920s'],              desc:'Operating rocket artillery, Congreve rockets, and field ordnance.'},
+  {name:'Charm',                  base:15,  eras:['all'],                            desc:'Winning people over through warmth, wit, and personal magnetism.'},
+  {name:'Climb',                  base:20,  eras:['all'],                            desc:'Scaling walls, cliffs, and drainpipes without breaking your neck.'},
+  {name:'Computer Use',           base:5,   eras:['modern'],                         desc:'Operating, programming, and hacking modern computer systems.'},
+  {name:'Credit Rating',          base:0,   eras:['all'], special:'credit',          desc:'Your social standing and perceived wealth in the community.'},
+  {name:'Cthulhu Mythos',         base:0,   eras:['all'], special:'mythos',          desc:'Forbidden knowledge of cosmic horrors. Cannot be purchased with points.'},
+  {name:'Demolitions',            base:1,   eras:['all'],                            desc:'Setting, timing, and disarming explosive charges safely.'},
+  {name:'Disguise',               base:5,   eras:['all'],                            desc:'Altering your appearance to impersonate another person or avoid notice.'},
+  {name:'Diving',                 base:1,   eras:['all'],                            desc:'Navigating underwater environments, including deep-sea apparatus.'},
+  {name:'Dodge',                  base:'DODGE', eras:['all'],                        desc:'Instinctively throwing yourself clear of attacks and hazards.'},
+  {name:'Drive Auto',             base:20,  eras:['modern','1920s'],                 desc:'Handling automobiles at speed, including evasive manoeuvres.'},
+  {name:'Drive Carriage',         base:20,  eras:['victorian'],                      desc:'Managing horse-drawn vehicles, including hansom cabs and coaches.'},
+  {name:'Electrical Repair',      base:'ELEC_REPAIR', eras:['all'],                  desc:'Diagnosing and repairing electrical systems, wiring, and devices.'},
+  {name:'Electronics',            base:1,   eras:['modern'],                         desc:'Building and servicing modern electronic circuits and components.'},
+  {name:'Fast Talk',              base:5,   eras:['all'],                            desc:'Overwhelming someone with glib patter before they can think clearly.'},
+  {name:'Fighting (Axe)',         base:15,  eras:['victorian'],                      desc:'Combat with axes, hatchets, and chopping implements.'},
+  {name:'Fighting (Brawl)',       base:25,  eras:['all'],                            desc:'Unarmed combat and improvised weapons — fists, bottles, chairs.'},
+  {name:'Fighting (Flail)',       base:10,  eras:['victorian'],                      desc:'Combat with flails, morning stars, and similar chain weapons.'},
+  {name:'Fighting (Garrote)',     base:15,  eras:['victorian'],                      desc:'Strangling with wire, cord, or rope — silent and lethal.'},
+  {name:'Fighting (Sword)',       base:20,  eras:['victorian','1920s'],              desc:'Fencing, sabre, and edged blade combat.'},
+  {name:'Fighting (Whip)',        base:5,   eras:['victorian'],                      desc:'Controlling distance and disarming opponents with a whip.'},
+  {name:'Firearms (Bow)',         base:15,  eras:['victorian'],                      desc:'Shooting bows and crossbows with accuracy.'},
+  {name:'Firearms (Handgun)',     base:20,  eras:['all'],                            desc:'Pistols and revolvers — the investigator\'s constant companion.'},
+  {name:'Firearms (Rifle/Shotgun)',base:25, eras:['all'],                            desc:'Long-barrelled firearms, useful at range and in hunting lodges.'},
+  {name:'Firearms (SMG)',         base:15,  eras:['modern'],                         desc:'Submachine guns and automatic pistols — modern close-quarters firepower.'},
+  {name:'First Aid',              base:30,  eras:['all'],                            desc:'Stabilising wounds, treating shock, and buying time until a doctor arrives.'},
+  {name:'History',                base:5,   eras:['all'],                            desc:'Recalling facts about past events, persons, and places of relevance.'},
+  {name:'Hypnosis',               base:1,   eras:['modern','1920s'],                 desc:'Inducing a hypnotic trance to extract information or plant suggestion.'},
+  {name:'Intimidate',             base:15,  eras:['all'],                            desc:'Coercing compliance through physical menace or sheer force of will.'},
+  {name:'Jump',                   base:20,  eras:['all'],                            desc:'Leaping across gaps, vaulting obstacles, and sticking the landing.'},
+  {name:'Language (Other)',       base:1,   eras:['all'], specialty:true,            desc:'Reading, writing, and speaking a foreign language (specify).'},
+  {name:'Language (Own)',         base:'EDU5', eras:['all'],                         desc:'Eloquence and precision in your native tongue, based on EDU×5.'},
+  {name:'Law',                    base:5,   eras:['all'],                            desc:'Knowledge of statutes, legal procedure, and courtroom precedent.'},
+  {name:'Library Use',            base:20,  eras:['all'],                            desc:'Locating obscure information in archives, stacks, and collections.'},
+  {name:'Listen',                 base:'LISTEN', eras:['all'],                       desc:'Detecting sounds — footsteps behind walls, whispers through doors.'},
+  {name:'Locksmith',              base:1,   eras:['all'],                            desc:'Picking locks, defeating padlocks, and bypassing mechanical security.'},
+  {name:'Lore',                   base:1,   eras:['victorian'], specialty:true,      desc:'Mastery of a body of esoteric or specialised Victorian knowledge (specify).'},
+  {name:'Mechanical Repair',      base:'MECH_REPAIR', eras:['all'],                  desc:'Fixing engines, clockwork, and any machine with moving parts.'},
+  {name:'Medicine',               base:1,   eras:['all'],                            desc:'Diagnosing illness, performing surgery, and prescribing treatment.'},
+  {name:'Mesmerism',              base:1,   eras:['victorian'],                      desc:'Victorian hypnotic technique — staring, passes of the hand, suggestion.'},
+  {name:'Natural World',          base:10,  eras:['all'],                            desc:'Identifying plants, animals, weather patterns, and the lay of the land.'},
+  {name:'Navigate',               base:10,  eras:['all'],                            desc:'Plotting a course by map, stars, or dead reckoning.'},
+  {name:'Occult',                 base:5,   eras:['all'],                            desc:'Knowledge of rituals, symbols, cults, and the lore of the uncanny.'},
+  {name:'Operate Heavy Machinery',base:1,   eras:['all'],                            desc:'Running cranes, locomotives, industrial presses, and heavy equipment.'},
+  {name:'Persuade',               base:10,  eras:['all'],                            desc:'Convincing others through reasoned argument, evidence, and appeal.'},
+  {name:'Photography',            base:5,   eras:['modern','1920s'],                 desc:'Taking and developing photographs — evidence the court will accept.'},
+  {name:'Pilot',                  base:1,   eras:['all'], specialty:true,            desc:'Flying or sailing a chosen type of vessel (aircraft, boat, etc.).'},
+  {name:'Psychology',             base:10,  eras:['all'],                            desc:'Reading emotional states, detecting deception, and understanding motives.'},
+  {name:'Psychoanalysis',         base:1,   eras:['modern','1920s'],                 desc:'Freudian talk therapy — restoring Sanity points between sessions.'},
+  {name:'Read Lips',              base:1,   eras:['all'],                            desc:'Deciphering speech at a distance by watching the mouth.'},
+  {name:'Reassure',               base:'REASSURE', eras:['victorian'],               desc:'Victorian bedside manner — calming the hysterical and frightened.'},
+  {name:'Religion',               base:10,  eras:['victorian','1920s'],              desc:'Theological knowledge of faiths, scripture, and clerical hierarchy.'},
+  {name:'Ride',                   base:'RIDE_BASE', eras:['all'],                    desc:'Controlling a mount at speed, through difficult terrain, in a fight.'},
+  {name:'Science',                base:1,   eras:['all'], specialty:true,            desc:'Formal scientific knowledge in a chosen discipline (specify).'},
+  {name:'Sleight of Hand',        base:10,  eras:['all'],                            desc:'Palming objects, picking pockets, and performing close-up misdirection.'},
+  {name:'Spot Hidden',            base:25,  eras:['all'],                            desc:'Noticing concealed doors, dropped clues, and lurking figures.'},
+  {name:'Stealth',                base:20,  eras:['all'],                            desc:'Moving without sound and staying out of sight.'},
+  {name:'Survival',               base:10,  eras:['all'], specialty:true,            desc:'Enduring the wilderness — shelter, foraging, and not getting eaten.'},
+  {name:'Swim',                   base:'SWIM_BASE', eras:['all'],                    desc:'Staying afloat and making headway in water, even under duress.'},
+  {name:'Throw',                  base:20,  eras:['all'],                            desc:'Hurling objects accurately — grenades, knives, improvised missiles.'},
+  {name:'Track',                  base:10,  eras:['all'],                            desc:'Following spoor, footprints, and disturbances through any terrain.'}
 ];
 
 // Occupation pts formulas may use (A|B)×n — calcOccPts() takes the max of the piped stats
@@ -958,6 +1410,42 @@ const PULP_TALENTS = [
   { name:'Resourceful',         cat:'Miscellaneous', desc:'May spend 10 Luck (rather than a Luck roll) to find a needed piece of equipment in their current location.' },
 ];
 
+// Era-aware gear checklist
+const GEAR_LIST = [
+  // Universal
+  { name:'First Aid Kit',               eras:['all'] },
+  { name:'Bandages &amp; Antiseptic',   eras:['all'] },
+  { name:'Rope (50 ft / 15m)',          eras:['all'] },
+  { name:'Electric Torch / Flashlight', eras:['all'] },
+  { name:'Matches &amp; Lighter',       eras:['all'] },
+  { name:'Pen &amp; Notebook',          eras:['all'] },
+  { name:'Map of the Area',             eras:['all'] },
+  { name:'Lockpick Set',                eras:['all'] },
+  { name:'Pocket Knife',                eras:['all'] },
+  { name:'Binoculars',                  eras:['all'] },
+  { name:'Magnifying Glass',            eras:['all'] },
+  // 1920s + Modern
+  { name:'Camera &amp; Film',           eras:['modern','1920s'] },
+  { name:'Automobile (Hired)',          eras:['1920s'] },
+  { name:'Bottle of Spirits',           eras:['1920s'] },
+  { name:'Pocket Watch',                eras:['1920s','victorian'] },
+  { name:'Letter of Introduction',      eras:['1920s','victorian'] },
+  { name:'Cigarette Case &amp; Lighter',eras:['1920s'] },
+  // Victorian
+  { name:'Oil Lantern',                 eras:['victorian'] },
+  { name:'Doctor\'s Bag',              eras:['victorian'] },
+  { name:'Smelling Salts',              eras:['victorian'] },
+  { name:'Telegram Forms',              eras:['victorian'] },
+  { name:'Horse &amp; Carriage (Hired)',eras:['victorian'] },
+  // Modern
+  { name:'Mobile Phone / Smartphone',   eras:['modern'] },
+  { name:'Laptop / Tablet',             eras:['modern'] },
+  { name:'Digital Camera',              eras:['modern'] },
+  { name:'GPS Device',                  eras:['modern'] },
+  { name:'Credit Cards &amp; ID',       eras:['modern'] },
+  { name:'USB Drive',                   eras:['modern'] },
+];
+
 // Build/Damage Bonus table (STR+SIZ)
 function getBuildAndDB(str, siz) {
   const total = (str||0) + (siz||0);
@@ -993,10 +1481,22 @@ let selectedTalents  = [];
 let creditRating     = 0;
 let occChosenSkills  = []; // skills chosen from occupation's chooseFrom list
 let charWeapons    = []; // [{name,skillPct,damage,range,attacks,ammo,mal}]
+let cocGear        = {}; // item name → true if checked
 let equipment      = '';
 let portraitData   = null;
 let isEditMode     = false;
 let pendingSharedChar = null;
+let guidedMode       = false;
+// Play Mode state
+let playHpOverride   = null;
+let playSanOverride  = null;
+let playMpOverride   = null;
+let playLuckOverride = null;
+let playTickedSkills  = {};
+let playFieldNotes   = '';
+let playSessionNotes = '';
+let playFieldOrg     = '';
+let playSessionOrg   = '';
 
 // ══════════════════════════════════════════════════════
 // NAVIGATION
@@ -1030,6 +1530,143 @@ function applyEraTheme(era) {
     document.querySelector('.coc-subtitle').textContent = h.sub;
     document.querySelector('.coc-class').textContent    = h.cls;
   }
+  removeJazzDecor(); removeVictorianDecor(); removeModernDecor();
+  if      (era === '1920s')    applyJazzDecor();
+  else if (era === 'victorian') applyVictorianDecor();
+  else if (era === 'modern')    applyModernDecor();
+}
+
+function applyVictorianDecor() {
+  removeVictorianDecor();
+  const brass = '#c69a4a';
+  // Double-rule border
+  const frame = document.createElement('div');
+  frame.id = 'vic-frame';
+  frame.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:999;';
+  frame.innerHTML =
+    `<div style="position:absolute;inset:18px;border:1px solid rgba(198,154,74,0.55)"></div>` +
+    `<div style="position:absolute;inset:24px;border:0.5px solid rgba(198,154,74,0.28)"></div>`;
+  document.body.appendChild(frame);
+  // Corner cartouches
+  const wrapper = document.querySelector('.app-wrapper');
+  if (!wrapper) return;
+  wrapper.style.position = 'relative';
+  const cSVG = `<svg width="48" height="48" viewBox="0 0 64 64" style="display:block"><g fill="none" stroke="${brass}" stroke-width="1" stroke-linecap="round"><path d="M 4 4 L 4 28"/><path d="M 4 4 L 28 4"/><path d="M 8 8 L 8 22" opacity="0.55"/><path d="M 8 8 L 22 8" opacity="0.55"/><path d="M 4 36 Q 12 36 14 28 Q 14 22 20 22 Q 28 22 28 14 Q 28 8 36 4" opacity="0.85"/><circle cx="14" cy="14" r="2.2" fill="${brass}" stroke="none"/><circle cx="22" cy="22" r="1.2" fill="${brass}" stroke="none" opacity="0.7"/><path d="M 12 12 L 16 12 M 14 10 L 14 14" opacity="0.6"/></g></svg>`;
+  [{t:'0',l:'0',r:0},{t:'0',ri:'0',r:90},{b:'0',l:'0',r:270},{b:'0',ri:'0',r:180}].forEach(({t,l,ri,b,r}) => {
+    const el = document.createElement('div');
+    el.className = 'vic-corner';
+    el.style.cssText = `position:absolute;pointer-events:none;z-index:2;transform:rotate(${r}deg);`;
+    if (t  !== undefined) el.style.top    = t;
+    if (l  !== undefined) el.style.left   = l;
+    if (ri !== undefined) el.style.right  = ri;
+    if (b  !== undefined) el.style.bottom = b;
+    el.innerHTML = cSVG;
+    wrapper.appendChild(el);
+  });
+}
+
+function removeVictorianDecor() {
+  const f = document.getElementById('vic-frame'); if (f) f.remove();
+  document.querySelectorAll('.vic-corner').forEach(el => el.remove());
+  const wrapper = document.querySelector('.app-wrapper');
+  if (wrapper) wrapper.style.position = '';
+}
+
+function applyModernDecor() {
+  removeModernDecor();
+  const cyan = '#7ed4d4';
+  const wrapper = document.querySelector('.app-wrapper');
+  if (!wrapper) return;
+  wrapper.style.position = 'relative';
+  // Square HUD corner brackets
+  const bSVG = `<svg width="28" height="28" viewBox="0 0 28 28" style="display:block"><path d="M 0 0 L 0 14 M 0 0 L 14 0" stroke="${cyan}" stroke-width="1.5" fill="none"/></svg>`;
+  [{t:'0',l:'0',r:0},{t:'0',ri:'0',r:90},{b:'0',l:'0',r:270},{b:'0',ri:'0',r:180}].forEach(({t,l,ri,b,r}) => {
+    const el = document.createElement('div');
+    el.className = 'mod-bracket';
+    el.style.cssText = `position:absolute;pointer-events:none;z-index:2;transform:rotate(${r}deg);`;
+    if (t  !== undefined) el.style.top    = t;
+    if (l  !== undefined) el.style.left   = l;
+    if (ri !== undefined) el.style.right  = ri;
+    if (b  !== undefined) el.style.bottom = b;
+    el.innerHTML = bSVG;
+    wrapper.appendChild(el);
+  });
+}
+
+function removeModernDecor() {
+  document.querySelectorAll('.mod-bracket').forEach(el => el.remove());
+  const wrapper = document.querySelector('.app-wrapper');
+  if (wrapper) wrapper.style.position = '';
+}
+
+function applyJazzDecor() {
+  removeJazzDecor();
+  const gold = '#d4a84a';
+
+  // Sunburst rays from top-center
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.id = 'jazz-sunburst';
+  svg.setAttribute('viewBox', '0 0 960 210');
+  svg.setAttribute('preserveAspectRatio', 'xMidYMin slice');
+  svg.style.cssText = 'position:absolute;top:0;left:50%;transform:translateX(-50%);width:100%;pointer-events:none;z-index:0;overflow:visible;';
+  for (let i = 0; i < 19; i++) {
+    const angle = -90 + (i - 9) * 9;
+    const long  = i % 2 === 0;
+    const r     = long ? 195 : 145;
+    const rad   = angle * Math.PI / 180;
+    const line  = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', '480'); line.setAttribute('y1', '0');
+    line.setAttribute('x2', (480 + Math.cos(rad) * r).toFixed(1));
+    line.setAttribute('y2', (Math.sin(rad) * r).toFixed(1));
+    line.setAttribute('stroke', gold);
+    line.setAttribute('stroke-width', long ? '1.4' : '0.7');
+    line.setAttribute('opacity', long ? '0.5' : '0.25');
+    svg.appendChild(line);
+  }
+  [[40,'1','0.55'],[52,'0.8','0.3']].forEach(([r,sw,op]) => {
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('cx','480'); c.setAttribute('cy','0'); c.setAttribute('r', r);
+    c.setAttribute('fill','none'); c.setAttribute('stroke',gold);
+    c.setAttribute('stroke-width',sw); c.setAttribute('opacity',op);
+    svg.appendChild(c);
+  });
+  const wrapper = document.querySelector('.app-wrapper');
+  if (wrapper) {
+    wrapper.style.position = 'relative';
+    wrapper.insertBefore(svg, wrapper.firstChild);
+  }
+
+  // Deco stepped frame (fixed, full-viewport)
+  const frame = document.createElement('div');
+  frame.id = 'jazz-frame';
+  frame.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:999;';
+  frame.innerHTML =
+    `<div style="position:absolute;inset:14px;border:2px solid rgba(212,168,74,0.65)"></div>` +
+    `<div style="position:absolute;inset:20px;border:0.5px solid rgba(212,168,74,0.38)"></div>` +
+    `<div style="position:absolute;inset:25px;border:1px solid rgba(212,168,74,0.22)"></div>`;
+  document.body.appendChild(frame);
+
+  // Corner ornaments on app-wrapper
+  if (!wrapper) return;
+  const cSVG = `<svg width="54" height="54" viewBox="0 0 80 80" style="display:block"><g fill="none" stroke="${gold}" stroke-width="1.4" stroke-linecap="square"><path d="M 6 6 L 6 50 M 6 6 L 50 6"/><path d="M 12 12 L 12 44 M 12 12 L 44 12" opacity="0.55"/><path d="M 18 32 L 18 24 L 26 24 L 26 18 L 34 18" stroke-width="1.6"/><path d="M 8 60 L 14 54 M 8 66 L 20 54 M 8 72 L 26 54" opacity="0.7"/><circle cx="40" cy="40" r="2.4" fill="${gold}" stroke="none"/><circle cx="40" cy="40" r="5" opacity="0.4"/></g></svg>`;
+  [{t:'0',l:'0',r:0},{t:'0',ri:'0',r:90},{b:'0',l:'0',r:270},{b:'0',ri:'0',r:180}].forEach(({t,l,ri,b,r}) => {
+    const el = document.createElement('div');
+    el.className = 'jazz-corner';
+    el.style.cssText = `position:absolute;pointer-events:none;z-index:2;transform:rotate(${r}deg);`;
+    if (t  !== undefined) el.style.top    = t;
+    if (l  !== undefined) el.style.left   = l;
+    if (ri !== undefined) el.style.right  = ri;
+    if (b  !== undefined) el.style.bottom = b;
+    el.innerHTML = cSVG;
+    wrapper.appendChild(el);
+  });
+}
+
+function removeJazzDecor() {
+  ['jazz-sunburst','jazz-frame'].forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
+  document.querySelectorAll('.jazz-corner').forEach(el => el.remove());
+  const wrapper = document.querySelector('.app-wrapper');
+  if (wrapper) wrapper.style.position = '';
 }
 
 function selectEra(era) {
@@ -1220,13 +1857,20 @@ function renderOccupations(filterEra) {
 
   const list = filterEra==='all' ? OCCUPATIONS : OCCUPATIONS.filter(o=>o.eras.includes('all')||o.eras.includes(filterEra));
 
-  document.getElementById('occ-grid').innerHTML = list.map(o => `
-    <div class="occ-card ${selectedOcc?.name===o.name?'selected':''}" onclick='selectOcc(${JSON.stringify(o.name)})'>
+  document.getElementById('occ-grid').innerHTML = list.map(o => {
+    const skillPreview = [...o.skills,...(o.chooseN>0?['+ choose '+o.chooseN]:[])].join(', ');
+    const tipMeta = `Skill pts: ${o.pts.replace(/\|/g,' or ')} | CR: ${o.cr[0]}–${o.cr[1]}%`;
+    return `<div class="occ-card ${selectedOcc?.name===o.name?'selected':''}"
+      onclick='selectOcc(${JSON.stringify(o.name)})'
+      data-tip="${o.name.replace(/"/g,'&quot;')}"
+      data-tip-name="${o.name.replace(/"/g,'&quot;')}"
+      data-tip-body="${(o.desc||'').replace(/"/g,'&quot;')}"
+      data-tip-meta="${tipMeta.replace(/"/g,'&quot;')}">
       <div class="occ-name">${o.name}</div>
       <div class="occ-pts">Skill pts: ${o.pts.replace(/\|/g,' or ')} &nbsp;|&nbsp; CR: ${o.cr[0]}–${o.cr[1]}%</div>
-      <div class="occ-skills-preview">${[...o.skills,...(o.chooseN>0?['+ choose '+o.chooseN]:[])].join(', ')}</div>
-    </div>`
-  ).join('');
+      <div class="occ-skills-preview">${skillPreview}</div>
+    </div>`;
+  }).join('');
 
   if(selectedOcc) showOccDetail(selectedOcc);
 
@@ -1254,9 +1898,14 @@ function showOccDetail(occ) {
     const chips = occ.chooseFrom.map(s => {
       const isSel = validChosen.includes(s);
       const isDisabled = !isSel && remaining === 0;
+      const sd = ALL_SKILLS.find(x=>x.name===s);
       return `<button class="occ-skill-choice ${isSel?'chosen':''}"
         onclick="toggleOccSkillChoice('${s.replace(/'/g,"\\'")}')"
-        ${isDisabled?'disabled':''}>${s}${isSel?' ✓':''}</button>`;
+        ${isDisabled?'disabled':''}
+        data-tip="${s.replace(/"/g,'&quot;')}"
+        data-tip-name="${s.replace(/"/g,'&quot;')}"
+        data-tip-body="${(sd?.desc||'').replace(/"/g,'&quot;')}"
+        >${s}${isSel?' ✓':''}</button>`;
     }).join('');
     choiceHtml = `
       <div style="margin-top:10px">
@@ -1325,12 +1974,19 @@ function renderPulpStep() {
 function renderArchetypes() {
   const grid = document.getElementById('archetype-grid');
   if(!grid) return;
-  grid.innerHTML = PULP_ARCHETYPES.map(a => `
-    <div class="occ-card ${selectedArchetype?.name===a.name?'selected':''}" onclick='selectArchetype(${JSON.stringify(a.name)})'>
+  grid.innerHTML = PULP_ARCHETYPES.map(a => {
+    const tipMeta = `Core: ${a.coreStats.join(' / ')} · ${a.forced?'Hardened + 1 talent':'Choose 2 talents'}`;
+    return `<div class="occ-card ${selectedArchetype?.name===a.name?'selected':''}"
+      onclick='selectArchetype(${JSON.stringify(a.name)})'
+      data-tip="${a.name.replace(/"/g,'&quot;')}"
+      data-tip-name="${a.name.replace(/"/g,'&quot;')}"
+      data-tip-body="${(a.desc||'').replace(/"/g,'&quot;')}${a.special?' '+a.special.replace(/"/g,'&quot;'):''}"
+      data-tip-meta="${tipMeta.replace(/"/g,'&quot;')}">
       <div class="occ-name">${a.name}</div>
       <div class="occ-pts">Core: ${a.coreStats.join(' or ')} &nbsp;|&nbsp; ${a.forced?'Hardened + 1 talent':'Choose 2 talents'}</div>
       <div class="occ-skills-preview">${a.desc}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   if(selectedArchetype) showArchetypeDetail(selectedArchetype);
 }
 
@@ -1359,7 +2015,10 @@ function showArchetypeDetail(arch) {
       return `<button class="talent-chip ${isForced?'forced':isSel?'chosen':''}"
         onclick="toggleTalent('${t.name.replace(/'/g,"\\'")}')"
         ${isDisabled?'disabled':''}
-        title="${t.desc.replace(/"/g,'&quot;')}"
+        data-tip="${t.name.replace(/"/g,'&quot;')}"
+        data-tip-name="${t.name.replace(/"/g,'&quot;')}"
+        data-tip-body="${t.desc.replace(/"/g,'&quot;')}"
+        data-tip-meta="${t.cat.replace(/"/g,'&quot;')} talent"
         >${t.name}${isSel?' ✓':''}</button>`;
     }).join('');
     return `<div style="margin-bottom:8px">
@@ -1469,8 +2128,14 @@ function renderSkills() {
         <input class="skill-add-input" type="number" min="0" max="99" value="${aAdd||''}" placeholder="Arch"
           title="Archetype bonus points" ${!isArch?'disabled style="opacity:0.25"':'style="border-color:var(--amber);color:var(--amber)"'}
           oninput="setSkillPts('arch','${s.name}',parseInt(this.value)||0)">` : '';
+    const tipMeta = `Base: ${base}%${s.specialty?' · specialty':''}${isOcc?' · occupation skill':''}${isArch?' · archetype skill':''}`;
     return `<div class="skill-row ${isOcc?'occ-skill':''}${isArch?' arch-skill':''}">
-      <span class="skill-name">${s.name}${s.specialty?' <em style="font-size:10px;color:var(--text3)">(specialty)</em>':''}</span>
+      <span class="skill-name"
+        data-tip="${s.name.replace(/"/g,'&quot;')}"
+        data-tip-name="${s.name.replace(/"/g,'&quot;')}"
+        data-tip-body="${(s.desc||'').replace(/"/g,'&quot;')}"
+        data-tip-meta="${tipMeta.replace(/"/g,'&quot;')}"
+        >${s.name}${s.specialty?' <em style="font-size:10px;color:var(--text3)">(specialty)</em>':''}</span>
       <span class="skill-base-val">${base}%</span>
       <span class="skill-half">${hard}%</span>
       <span class="skill-fifth">${fifth}%</span>
@@ -1678,7 +2343,10 @@ function renderSheet() {
 
     <div class="sheet-section">
       <div class="sheet-section-hdr">Equipment &amp; Possessions</div>
-      <div style="min-height:80px;padding:10px 14px;font-size:12px;color:#333;font-family:'Share Tech Mono',monospace;white-space:pre-wrap">${equipment || '[Record gear, clues, and possessions here]'}</div>
+      ${Object.keys(cocGear).length ? `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px 14px;padding:8px 14px 0">${
+        Object.keys(cocGear).map(g=>`<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#444;padding:2px 0">▸ ${g}</span>`).join('')
+      }</div>` : ''}
+      <div style="min-height:60px;padding:8px 14px;font-size:12px;color:#333;font-family:'Share Tech Mono',monospace;white-space:pre-wrap;${Object.keys(cocGear).length?'border-top:1px solid #ddd;margin-top:6px;':''}">${equipment || (Object.keys(cocGear).length ? '' : '[Record gear, clues, and possessions here]')}</div>
     </div>
 
     <div class="sheet-footer">
@@ -1814,9 +2482,22 @@ function renderEquipPanel() {
     </div>
 
     <div style="margin-bottom:1.5rem">
-      <div class="equip-section-hdr">Equipment &amp; Possessions</div>
+      <div class="equip-section-hdr">Standard Equipment</div>
+      <div class="gear-grid">${
+        GEAR_LIST
+          .filter(g => g.eras.includes('all') || g.eras.includes(era))
+          .map(g => `<label class="gear-item">
+            <input type="checkbox" ${cocGear[g.name]?'checked':''} onchange="toggleGear(${JSON.stringify(g.name)})">
+            ${g.name}
+          </label>`)
+          .join('')
+      }</div>
+    </div>
+
+    <div style="margin-bottom:1.5rem">
+      <div class="equip-section-hdr">Additional Notes &amp; Possessions</div>
       <textarea class="form-input" id="p-equipment" rows="4"
-        placeholder="Cash, documents, tools, clothing, personal items…"
+        placeholder="Cash, documents, clues, unusual items, personal effects…"
         oninput="equipment=this.value">${esc(equipment)}</textarea>
     </div>
 
@@ -1843,6 +2524,11 @@ function addCustomWeapon() {
 function removeWeapon(i) {
   charWeapons.splice(i, 1);
   renderEquipPanel();
+}
+
+function toggleGear(name) {
+  if (cocGear[name]) delete cocGear[name];
+  else cocGear[name] = true;
 }
 
 function toggleWeaponCatalog() {
@@ -1965,6 +2651,7 @@ function buildCharData() {
     selectedArchetype: selectedArchetype?.name || null,
     selectedTalents:   [...selectedTalents],
     charWeapons:   charWeapons.map(w=>({...w})),
+    cocGear:       {...cocGear},
     equipment,
     portraitData
   };
@@ -1983,6 +2670,7 @@ function applyCharData(c) {
   selectedArchetype = c.selectedArchetype ? PULP_ARCHETYPES.find(a=>a.name===c.selectedArchetype)||null : null;
   selectedTalents   = [...(c.selectedTalents||[])];
   charWeapons       = (c.charWeapons||[]).map(w=>({...w}));
+  cocGear           = {...(c.cocGear||{})};
   // Sync pulp toggle button and tab
   const btn = document.getElementById('pulp-toggle-btn');
   if(btn) { btn.textContent = usePulp ? 'ENABLED' : 'DISABLED'; btn.classList.toggle('on', usePulp); }
@@ -2135,7 +2823,7 @@ function newInvestigator() {
   if(!confirm('Start a new investigator? Unsaved changes will be lost.')) return;
   stats = { STR:0, CON:0, SIZ:0, DEX:0, APP:0, INT:0, POW:0, EDU:0 };
   luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {}; archSkillAdded = {};
-  creditRating = 0; occChosenSkills = []; usePulp = false; selectedArchetype = null; selectedTalents = []; charWeapons = []; equipment = '';
+  creditRating = 0; occChosenSkills = []; usePulp = false; selectedArchetype = null; selectedTalents = []; charWeapons = []; cocGear = {}; equipment = '';
   const pBtn = document.getElementById('pulp-toggle-btn');
   if(pBtn) { pBtn.textContent='DISABLED'; pBtn.classList.remove('on'); }
   const tabBtn3 = document.getElementById('step-btn-3');
@@ -2153,6 +2841,360 @@ function newInvestigator() {
 }
 
 // ══════════════════════════════════════════════════════
+// NEW PLAYER GUIDE
+// ══════════════════════════════════════════════════════
+function toggleGuide() {
+  guidedMode = !guidedMode;
+  const btn = document.getElementById('guide-btn');
+  if (btn) btn.classList.toggle('active', guidedMode);
+  document.querySelectorAll('.help-panel').forEach(p => p.classList.toggle('visible', guidedMode));
+}
+
+function toggleHelpCollapse(el) {
+  el.closest('.help-panel').classList.toggle('collapsed');
+}
+
+// ══════════════════════════════════════════════════════
+// PLAY MODE
+// ══════════════════════════════════════════════════════
+function togglePlayPanel() {
+  const overlay = document.getElementById('play-overlay');
+  const btn     = document.getElementById('play-btn');
+  const isOpen  = overlay.classList.toggle('open');
+  if (btn) btn.classList.toggle('active', isOpen);
+  if (isOpen) renderPlayPanel();
+}
+
+function _playMaxHp()  { return stats.CON && stats.SIZ ? Math.floor((stats.CON + stats.SIZ) / (usePulp ? 5 : 10)) : null; }
+function _playMaxSan() { return stats.POW ? stats.POW * 5 : null; }
+function _playMaxMp()  { return stats.POW ? Math.floor(stats.POW / 5) : null; }
+function _playMaxLuck(){ return luck || null; }
+
+function renderPlayPanel() {
+  const maxHp   = _playMaxHp();
+  const maxSan  = _playMaxSan();
+  const maxMp   = _playMaxMp();
+  const maxLuck = _playMaxLuck();
+  const curHp   = playHpOverride   !== null ? playHpOverride   : maxHp;
+  const curSan  = playSanOverride  !== null ? playSanOverride  : maxSan;
+  const curMp   = playMpOverride   !== null ? playMpOverride   : maxMp;
+  const curLuck = playLuckOverride !== null ? playLuckOverride : maxLuck;
+
+  // Title: investigator name if available
+  const name = document.getElementById('p-name')?.value?.trim();
+  const title = document.getElementById('play-panel-title');
+  if (title) title.textContent = name ? 'PLAY — ' + name.toUpperCase() : 'PLAY MODE';
+
+  function setVal(id, val, maxVal) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = val !== null ? val : '—';
+    el.classList.toggle('danger', val !== null && maxVal !== null && val <= Math.floor(maxVal * 0.2));
+  }
+  function setMax(id, val, label) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val !== null ? 'max ' + val + (label ? '  ' + label : '') : '—';
+  }
+
+  setVal('play-hp',   curHp,   maxHp);   setMax('play-hp-max',   maxHp,   usePulp ? '(Pulp)' : '');
+  setVal('play-san',  curSan,  maxSan);  setMax('play-san-max',  maxSan,  'POW×5');
+  setVal('play-mp',   curMp,   maxMp);   setMax('play-mp-max',   maxMp,   'POW÷5');
+  setVal('play-luck', curLuck, maxLuck); setMax('play-luck-max', maxLuck, 'starting');
+
+  // Skills above base
+  const eraSkills = getEraSkills().filter(s => !s.special);
+  const occSkills = selectedOcc ? [...selectedOcc.skills, ...occChosenSkills.filter(s => selectedOcc.chooseFrom.includes(s))] : [];
+
+  const above = eraSkills.filter(s => {
+    const total = getSkillTotal(s.name);
+    return total > getSkillBase(s);
+  });
+  const atBase = eraSkills.filter(s => {
+    const base = getSkillBase(s);
+    return base > 0 && getSkillTotal(s.name) === base;
+  });
+
+  function makeChip(s) {
+    const isOcc   = occSkills.includes(s.name);
+    const ticked  = !!playTickedSkills[s.name];
+    const total   = getSkillTotal(s.name);
+    return `<span class="play-skill-chip ${isOcc ? 'occ-skill' : ''} ${ticked ? 'checked' : ''}"
+      onclick="playToggleTick('${s.name.replace(/'/g, "\\'")}')"
+      data-tip="${s.name.replace(/"/g,'&quot;')}"
+      data-tip-name="${s.name.replace(/"/g,'&quot;')}"
+      data-tip-body="${(s.desc||'').replace(/"/g,'&quot;')}"
+      ><span class="play-check-box">${ticked ? '✓' : ''}</span>${s.name} ${total}%</span>`;
+  }
+
+  const skillsEl = document.getElementById('play-skills-list');
+  if (skillsEl) {
+    skillsEl.innerHTML = above.length
+      ? above.map(makeChip).join('')
+      : '<span style="font-family:var(--mono);font-size:10px;color:var(--text3)">No skills above base yet — assign points in Step 6.</span>';
+  }
+  const baseEl = document.getElementById('play-base-skills-list');
+  if (baseEl) {
+    baseEl.innerHTML = atBase.map(s => {
+      const ticked = !!playTickedSkills[s.name];
+      const base   = getSkillBase(s);
+      return `<span class="play-skill-chip ${ticked ? 'checked' : ''}" style="${ticked ? '' : 'color:var(--text3)'}"
+        onclick="playToggleTick('${s.name.replace(/'/g, "\\'")}')"
+        ><span class="play-check-box">${ticked ? '✓' : ''}</span>${s.name} ${base}%</span>`;
+    }).join('');
+  }
+
+  // Weapons
+  const weaponsEl = document.getElementById('play-weapons-list');
+  if (weaponsEl) {
+    if (!charWeapons.length) {
+      weaponsEl.innerHTML = '<span style="font-family:var(--mono);font-size:10px;color:var(--text3)">No weapons equipped — add them in Step 7.</span>';
+    } else {
+      weaponsEl.innerHTML = `
+        <table class="play-weapon-table">
+          <thead><tr><th>Weapon</th><th>Skill%</th><th>Damage</th><th>Range</th><th>Att/Rd</th><th>Ammo</th></tr></thead>
+          <tbody>${charWeapons.map(w => `<tr>
+            <td class="wn">${w.name||'—'}</td>
+            <td class="ws">${w.skillPct||'—'}</td>
+            <td>${w.damage||'—'}</td>
+            <td>${w.range||'—'}</td>
+            <td>${w.attacks||'—'}</td>
+            <td>${w.ammo||'—'}</td>
+          </tr>`).join('')}</tbody>
+        </table>`;
+    }
+  }
+
+  // Notes
+  const fn = document.getElementById('play-field-notes');
+  const sn = document.getElementById('play-session-notes');
+  if (fn && fn.value !== playFieldNotes) fn.value = playFieldNotes;
+  if (sn && sn.value !== playSessionNotes) sn.value = playSessionNotes;
+  renderPlayOrganized('field');
+  renderPlayOrganized('session');
+
+  // API key indicator
+  const key = localStorage.getItem('coc_gemini_key') || '';
+  const ind = document.getElementById('play-api-indicator');
+  if (ind) ind.textContent = key ? '●' : '○';
+  const keyInput   = document.getElementById('play-api-key');
+  const clearBtn   = document.getElementById('play-api-clear-btn');
+  const testBtn    = document.getElementById('play-api-test-btn');
+  if (keyInput && !keyInput.value && key) keyInput.value = key;
+  if (clearBtn) clearBtn.style.display = key ? '' : 'none';
+  if (testBtn)  testBtn.style.display  = key ? '' : 'none';
+}
+
+function playAdjust(type, delta) {
+  if (type === 'hp') {
+    const max = _playMaxHp();
+    const cur = playHpOverride !== null ? playHpOverride : max;
+    playHpOverride = max !== null ? Math.min(max, Math.max(0, (cur||0) + delta)) : null;
+  } else if (type === 'san') {
+    const max = _playMaxSan();
+    const cur = playSanOverride !== null ? playSanOverride : max;
+    playSanOverride = Math.min(99, Math.max(0, (cur||0) + delta));
+  } else if (type === 'mp') {
+    const max = _playMaxMp();
+    const cur = playMpOverride !== null ? playMpOverride : max;
+    playMpOverride = max !== null ? Math.min(max, Math.max(0, (cur||0) + delta)) : null;
+  } else if (type === 'luck') {
+    const max = _playMaxLuck();
+    const cur = playLuckOverride !== null ? playLuckOverride : max;
+    playLuckOverride = Math.min(99, Math.max(0, (cur||0) + delta));
+  }
+  renderPlayPanel();
+}
+
+function playToggleTick(skillName) {
+  playTickedSkills[skillName] = !playTickedSkills[skillName];
+  if (!playTickedSkills[skillName]) delete playTickedSkills[skillName];
+  renderPlayPanel();
+}
+
+let _baseSkillsOpen = false;
+function playToggleBaseSkills() {
+  _baseSkillsOpen = !_baseSkillsOpen;
+  const el  = document.getElementById('play-base-skills-list');
+  const btn = document.getElementById('play-base-skills-btn');
+  if (el)  el.style.display = _baseSkillsOpen ? 'flex' : 'none';
+  if (btn) btn.textContent  = _baseSkillsOpen ? '▾ BASE SKILLS' : '▸ BASE SKILLS';
+}
+
+function savePlayNotes() {
+  const fn = document.getElementById('play-field-notes');
+  const sn = document.getElementById('play-session-notes');
+  if (fn) playFieldNotes   = fn.value;
+  if (sn) playSessionNotes = sn.value;
+}
+
+function renderPlayOrganized(type) {
+  const content = type === 'field' ? playFieldOrg : playSessionOrg;
+  const el = document.getElementById('play-' + type + '-organized');
+  if (!el) return;
+  el.textContent = content;
+  el.classList.toggle('has-content', !!content);
+}
+
+async function organizePlayNotes(type) {
+  const key = localStorage.getItem('coc_gemini_key') || '';
+  const statusEl = document.getElementById('org-' + type + '-status');
+  if (!key) {
+    const body = document.getElementById('play-api-body');
+    if (body) body.classList.add('open');
+    const lbl = document.getElementById('play-api-toggle-lbl');
+    if (lbl) lbl.textContent = '▾ CONFIGURE';
+    if (statusEl) statusEl.textContent = 'Add your Gemini API key above first.';
+    return;
+  }
+  const notes = type === 'field'
+    ? (document.getElementById('play-field-notes')?.value || '')
+    : (document.getElementById('play-session-notes')?.value || '');
+  if (!notes.trim()) { if (statusEl) statusEl.textContent = 'No notes to organize.'; return; }
+
+  const btn = document.getElementById('org-' + type + '-btn');
+  if (btn) btn.disabled = true;
+  if (statusEl) statusEl.textContent = 'Organizing…';
+
+  const investigatorName = document.getElementById('p-name')?.value?.trim() || 'the investigator';
+  const era = { '1920s': '1920s Jazz Age', 'victorian': 'Victorian 1890s', 'modern': 'Modern Day' }[selectedEra] || selectedEra;
+  const prompt = type === 'field'
+    ? `You are organizing field notes for a Call of Cthulhu tabletop RPG campaign set in the ${era}. The investigator is ${investigatorName}. Organize the following raw notes into clear sections by category: NPCs, Clues, Locations, Events, and Other. Keep all information — do not summarize or remove anything. Use plain text with section headers in ALL CAPS.\n\nNOTES:\n${notes}`
+    : `You are organizing a session log for a Call of Cthulhu tabletop RPG campaign set in the ${era}. The investigator is ${investigatorName}. Organize the following notes by session. Look for session markers, dates, or natural breaks in the narrative. For each session write a brief summary followed by key events as bullet points. Use plain text with session headers in ALL CAPS.\n\nNOTES:\n${notes}`;
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
+      { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) }
+    );
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const result = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (type === 'field') playFieldOrg   = result;
+    else                  playSessionOrg = result;
+    renderPlayOrganized(type);
+    if (statusEl) statusEl.textContent = '';
+  } catch(err) {
+    if (statusEl) statusEl.textContent = 'Error: ' + err.message;
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function toggleApiKey() {
+  const body = document.getElementById('play-api-body');
+  const lbl  = document.getElementById('play-api-toggle-lbl');
+  if (!body) return;
+  const open = body.classList.toggle('open');
+  if (lbl) lbl.textContent = open ? '▾ CONFIGURE' : '▸ CONFIGURE';
+}
+
+function playToggleApiVis() {
+  const input = document.getElementById('play-api-key');
+  const btn   = document.getElementById('play-api-show-btn');
+  if (!input) return;
+  const hidden = input.type === 'password';
+  input.type = hidden ? 'text' : 'password';
+  if (btn) btn.textContent = hidden ? 'HIDE' : 'SHOW';
+}
+
+function playSaveApiKey() {
+  const val = document.getElementById('play-api-key')?.value?.trim() || '';
+  if (!val) return;
+  localStorage.setItem('coc_gemini_key', val);
+  const ind   = document.getElementById('play-api-indicator');
+  const clear = document.getElementById('play-api-clear-btn');
+  const test  = document.getElementById('play-api-test-btn');
+  if (ind)   ind.textContent  = '●';
+  if (clear) clear.style.display = '';
+  if (test)  test.style.display  = '';
+}
+
+async function playTestApiKey() {
+  const key = localStorage.getItem('coc_gemini_key') || '';
+  const btn = document.getElementById('play-api-test-btn');
+  if (!key || !btn) return;
+  const orig = btn.textContent; btn.textContent = '…'; btn.disabled = true;
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`,
+      { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ contents:[{ parts:[{ text:'Reply with the single word: OK' }] }] }) }
+    );
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    btn.textContent = '✓ OK';
+  } catch(e) {
+    btn.textContent = '✗ FAIL';
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  }
+}
+
+function playClearApiKey() {
+  localStorage.removeItem('coc_gemini_key');
+  const input = document.getElementById('play-api-key');
+  const ind   = document.getElementById('play-api-indicator');
+  const clear = document.getElementById('play-api-clear-btn');
+  const test  = document.getElementById('play-api-test-btn');
+  if (input) input.value = '';
+  if (ind)   ind.textContent  = '○';
+  if (clear) clear.style.display = 'none';
+  if (test)  test.style.display  = 'none';
+}
+
+// ══════════════════════════════════════════════════════
+// TOOLTIP
+// ══════════════════════════════════════════════════════
+const tt = { el: null, mx: 0, my: 0 };
+
+function _ttPosition(x, y) {
+  const el = tt.el;
+  if (!el) return;
+  const pad = 14, vw = window.innerWidth, vh = window.innerHeight;
+  const w = el.offsetWidth, h = el.offsetHeight;
+  let lx = x + pad, ly = y + pad;
+  if (lx + w > vw - 8) lx = x - w - pad;
+  if (ly + h > vh - 8) ly = y - h - pad;
+  el.style.left = lx + 'px';
+  el.style.top  = ly + 'px';
+}
+
+function showTip(nameText, bodyText, metaText) {
+  if (!tt.el) tt.el = document.getElementById('tt');
+  tt.el.innerHTML =
+    `<div class="tt-name">${nameText}</div>` +
+    `<div class="tt-body">${bodyText}</div>` +
+    (metaText ? `<div class="tt-meta">${metaText}</div>` : '');
+  tt.el.classList.add('visible');
+  _ttPosition(tt.mx, tt.my);
+}
+
+function hideTip() {
+  if (!tt.el) tt.el = document.getElementById('tt');
+  tt.el.classList.remove('visible');
+}
+
+document.addEventListener('mousemove', e => {
+  tt.mx = e.clientX; tt.my = e.clientY;
+  if (tt.el?.classList.contains('visible')) _ttPosition(e.clientX, e.clientY);
+});
+
+// Event delegation — handles data-tip-* on any dynamically rendered element
+document.addEventListener('mouseover', e => {
+  const el = e.target.closest('[data-tip]');
+  if (!el) { hideTip(); return; }
+  const name = el.dataset.tipName || el.dataset.tip;
+  const body = el.dataset.tipBody || '';
+  const meta = el.dataset.tipMeta || '';
+  showTip(name, body, meta);
+});
+
+document.addEventListener('mouseout', e => {
+  const el = e.target.closest('[data-tip]');
+  if (el && !el.contains(e.relatedTarget)) hideTip();
+});
+
+// ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
@@ -2161,5 +3203,6 @@ window.addEventListener('DOMContentLoaded', () => {
   checkSharedURL();
 });
 </script>
+<div id="tt" role="tooltip"></div>
 </body>
 </html>
