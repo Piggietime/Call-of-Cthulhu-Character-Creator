@@ -544,15 +544,15 @@
 
   /* Sheet Skills */
   .sheet-skills-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; }
-  .sheet-skill-item { display: grid; grid-template-columns: 12px 1fr auto auto auto; gap: 3px; align-items: center; padding: 3px 6px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; font-size: 11px; }
+  .sheet-skill-item { display: grid; grid-template-columns: 12px 1fr auto auto auto; gap: 3px; align-items: center; padding: 3px 6px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; font-size: 11px; min-width: 0; }
   .sheet-skill-item:nth-child(3n) { border-right: none; }
   .sheet-skill-item:nth-last-child(-n+3) { border-bottom: none; }
   .sheet-skill-check { width: 10px; height: 10px; border: 1px solid #888; border-radius: 1px; flex-shrink: 0; }
-  .sheet-skill-name { color: #333; font-size: 10px; }
-  .sheet-skill-name.occ-s { color: #2a5a5a; }
-  .sheet-skill-val { font-family: 'Share Tech Mono',monospace; font-size: 10px; color: #333; font-weight: bold; }
-  .sheet-skill-half { font-family: 'Share Tech Mono',monospace; font-size: 9px; color: #888; }
-  .sheet-skill-fifth { font-family: 'Share Tech Mono',monospace; font-size: 9px; color: #aaa; }
+  .sheet-skill-name { color: #333; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sheet-skill-name.occ-s { color: #8a6200; font-weight: 600; }
+  .sheet-skill-val { font-family: 'Oswald',sans-serif; font-size: 11px; color: #333; font-weight: 500; }
+  .sheet-skill-half { font-family: 'Oswald',sans-serif; font-size: 9px; color: #888; }
+  .sheet-skill-fifth { font-family: 'Oswald',sans-serif; font-size: 9px; color: #aaa; }
 
   /* Sheet Weapons */
   .sheet-weapon-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -791,6 +791,7 @@
       <div class="form-group">
         <label class="form-label">Occupation</label>
         <input class="form-input" id="p-occ-title" type="text" placeholder="e.g. Private Investigator" readonly>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px;letter-spacing:0.5px">Selected on the next step →</div>
       </div>
       <div class="form-group">
         <label class="form-label">Residence</label>
@@ -838,6 +839,38 @@
     <div class="form-group full" style="margin-bottom:12px">
       <label class="form-label">Description / Distinguishing Features</label>
       <textarea class="form-input" id="p-desc" rows="2" placeholder="Physical description or notable features…"></textarea>
+    </div>
+    <div class="section-title" style="font-size:14px;margin-bottom:4px;margin-top:1.5rem">Backstory &amp; Psychology</div>
+    <div class="section-sub" style="margin-bottom:12px">Optional — appears on your character sheet.</div>
+    <div class="form-grid" style="margin-bottom:12px">
+      <div class="form-group">
+        <label class="form-label">Ideology / Beliefs</label>
+        <textarea class="form-input" id="p-ideology" rows="2" placeholder="What does your investigator believe in?"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Significant People</label>
+        <textarea class="form-input" id="p-sig-people" rows="2" placeholder="Who matters most to them?"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Meaningful Locations</label>
+        <textarea class="form-input" id="p-sig-locations" rows="2" placeholder="Places of importance…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Treasured Possessions</label>
+        <textarea class="form-input" id="p-treasured-poss" rows="2" placeholder="What would they risk their life for?"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Traits</label>
+        <textarea class="form-input" id="p-traits" rows="2" placeholder="Quirks, mannerisms, habits…"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Injuries / Scars</label>
+        <textarea class="form-input" id="p-injuries" rows="2" placeholder="Physical marks from past events…"></textarea>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Phobias &amp; Manias</label>
+        <textarea class="form-input" id="p-phobias" rows="2" placeholder="Irrational fears or obsessions…"></textarea>
+      </div>
     </div>
     <div style="margin-bottom:16px">
       <div class="form-label" style="margin-bottom:6px">Investigator Portrait <span style="color:var(--text3);font-size:10px;letter-spacing:1px">(optional)</span></div>
@@ -1277,7 +1310,7 @@ const OCCUPATIONS = [
   {name:'Police Detective', eras:['modern','1920s'], pts:'EDU×2+STR×2',      cr:[20,50], skills:['Art/Craft','Disguise','Fast Talk','Firearms (Handgun)','Intimidate','Law','Listen','Psychology','Spot Hidden'], chooseN:0, chooseFrom:[],                             desc:'Plain-clothes detective or investigator.'},
   {name:'Private Investigator',eras:['modern','1920s'],pts:'EDU×2+DEX×2',   cr:[9,30],  skills:['Art/Craft','Disguise','Electrical Repair','Fast Talk','Law','Library Use','Psychology','Spot Hidden'], chooseN:0, chooseFrom:[],                                     desc:'Freelance investigator for hire.'},
   {name:'Scientist',        eras:['modern','1920s'], pts:'EDU×4',             cr:[9,40],  skills:['Electrical Repair','First Aid','Library Use','Mechanical Repair','Natural World','Science','Spot Hidden'], chooseN:2, chooseFrom:['Language (Other)','Accounting','Medicine','Navigate'],  desc:'Research scientist in any discipline.'},
-  {name:'Soldier',          eras:['modern','1920s'], pts:'EDU×2+DEX×2',      cr:[9,30],  skills:['Climb','Fighting (Brawl)','Firearms (Rifle/Shotgun)','First Aid','Navigate','Stealth','Survival'], chooseN:1, chooseFrom:['Drive Auto','Operate Heavy Machinery','Mechanical Repair','Ride'],  desc:'Enlisted soldier, active or veteran.'},
+  {name:'Soldier',          eras:['modern','1920s'], pts:'EDU×2+(DEX|STR)×2',  cr:[9,30],  skills:['Climb','Dodge','Firearms (Rifle/Shotgun)','First Aid','Navigate','Stealth','Survival'], chooseN:1, chooseFrom:['Drive Auto','Operate Heavy Machinery','Mechanical Repair','Ride'],  desc:'Enlisted soldier, active or veteran.'},
   {name:'Spy',              eras:['modern','1920s'], pts:'EDU×2+APP×2',      cr:[20,60], skills:['Charm','Disguise','Fast Talk','Firearms (Handgun)','Language (Other)','Listen','Psychology','Stealth'], chooseN:0, chooseFrom:[],                                    desc:'Intelligence operative or agent.'},
 
   // ── Victorian occupations ──────────────────────────────────────────────────
@@ -1827,7 +1860,7 @@ function calcPIPts() {
   return (stats.INT || 0) * 2;
 }
 
-function usedOccPts()  { return Object.values(occSkillAdded).reduce((a,b)=>a+b,0); }
+function usedOccPts()  { return Object.values(occSkillAdded).reduce((a,b)=>a+b,0) + Math.max(0, creditRating - (selectedOcc?.cr[0]||0)); }
 function usedPIPts()   { return Object.values(piSkillAdded).reduce((a,b)=>a+b,0); }
 function calcArchPts() { return (usePulp && selectedArchetype) ? 100 : 0; }
 function usedArchPts() { return Object.values(archSkillAdded).reduce((a,b)=>a+b,0); }
@@ -1855,7 +1888,7 @@ function renderOccupations(filterEra) {
     `<button class="occ-filter-btn ${filterEra===e?'active':''}" onclick="renderOccupations('${e}')">${e==='all'?'All Eras':e==='modern'?'Modern':e==='1920s'?'1920s':'Victorian'}</button>`
   ).join('');
 
-  const list = filterEra==='all' ? OCCUPATIONS : OCCUPATIONS.filter(o=>o.eras.includes('all')||o.eras.includes(filterEra));
+  const list = (filterEra==='all' ? OCCUPATIONS : OCCUPATIONS.filter(o=>o.eras.includes('all')||o.eras.includes(filterEra))).slice().sort((a,b)=>a.name.localeCompare(b.name));
 
   document.getElementById('occ-grid').innerHTML = list.map(o => {
     const skillPreview = [...o.skills,...(o.chooseN>0?['+ choose '+o.chooseN]:[])].join(', ');
@@ -2186,8 +2219,15 @@ function renderSheet() {
   const hair       = document.getElementById('p-hair')?.value || '—';
   const eyes       = document.getElementById('p-eyes')?.value || '—';
   const skin       = document.getElementById('p-skin')?.value || '—';
-  const desc       = document.getElementById('p-desc')?.value || '—';
-  const eraLabel   = ERAS.find(e=>e.id===selectedEra)?.name || '—';
+  const desc         = document.getElementById('p-desc')?.value || '—';
+  const eraLabel     = ERAS.find(e=>e.id===selectedEra)?.name || '—';
+  const ideology     = document.getElementById('p-ideology')?.value || '';
+  const sigPeople    = document.getElementById('p-sig-people')?.value || '';
+  const sigLocations = document.getElementById('p-sig-locations')?.value || '';
+  const treasuredPoss= document.getElementById('p-treasured-poss')?.value || '';
+  const traits       = document.getElementById('p-traits')?.value || '';
+  const injuries     = document.getElementById('p-injuries')?.value || '';
+  const phobias      = document.getElementById('p-phobias')?.value || '';
 
   const hp    = stats.CON&&stats.SIZ ? Math.floor((stats.CON+stats.SIZ)/10) : '—';
   const san   = stats.POW ? stats.POW*5 : '—';
@@ -2208,15 +2248,19 @@ function renderSheet() {
   }).join('');
 
   const eraSkills = getEraSkills().filter(s=>!s.special);
-  const occSkills = selectedOcc?[...selectedOcc.skills]:[];
-  const skillsHtml = [...eraSkills].sort((a,b)=>a.name.localeCompare(b.name)).map(s => {
+  const occSkills = selectedOcc?[...selectedOcc.skills, ...occChosenSkills.filter(s=>selectedOcc.chooseFrom.includes(s))]:[];
+  const sortedSkills = [...eraSkills].sort((a,b)=>a.name.localeCompare(b.name));
+  const cols = 3, rows = Math.ceil(sortedSkills.length/cols);
+  const colMajorSkills = [];
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){const i=c*rows+r;if(i<sortedSkills.length)colMajorSkills.push(sortedSkills[i]);}
+  const skillsHtml = colMajorSkills.map(s => {
     const isOcc  = occSkills.includes(s.name);
     const total  = getSkillTotal(s.name);
     const hard   = Math.floor(total/2);
     const fifth  = Math.floor(total/5);
     return `<div class="sheet-skill-item">
       <span class="sheet-skill-check"></span>
-      <span class="sheet-skill-name ${isOcc?'occ-s':''}">${s.name}</span>
+      <span class="sheet-skill-name ${isOcc?'occ-s':''}" title="${s.name}">${s.name}</span>
       <span class="sheet-skill-val">${total}%</span>
       <span class="sheet-skill-half">${hard}</span>
       <span class="sheet-skill-fifth">${fifth}</span>
@@ -2266,28 +2310,9 @@ function renderSheet() {
       </div>
     </div>
 
-    ${usePulp && selectedArchetype ? `
     <div class="sheet-section">
-      <div class="sheet-section-hdr">Pulp Cthulhu — Archetype &amp; Talents</div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;padding:8px 14px;font-size:12px;color:#333">
-        <div><strong style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#555;letter-spacing:1px">ARCHETYPE</strong><br>${selectedArchetype.name}</div>
-        <div style="flex:1"><strong style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#555;letter-spacing:1px">BONUS CHARACTERISTIC</strong><br>+10 to ${selectedArchetype.bonusStat}</div>
-        <div style="flex:2"><strong style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#555;letter-spacing:1px">TALENTS</strong><br>
-          ${selectedTalents.length ? selectedTalents.map(t=>{
-            const td=PULP_TALENTS.find(x=>x.name===t);
-            return `<span style="margin-right:12px"><strong>${t}</strong>${td?' — '+td.desc:''}</span>`;
-          }).join('<br>') : '—'}
-        </div>
-      </div>
-    </div>` : ''}
-
-    <div class="sheet-section">
-      <div class="sheet-section-hdr">02 — Characteristics</div>
+      <div class="sheet-section-hdr">02 — Characteristics &amp; Derived Attributes</div>
       <div class="sheet-char-grid">${charHtml}</div>
-    </div>
-
-    <div class="sheet-section">
-      <div class="sheet-section-hdr">03 — Derived Attributes</div>
       <div class="sheet-derived-grid">
         <div class="sheet-derived-cell"><div class="sheet-derived-k">HIT POINTS</div><div class="sheet-derived-v">${hp}</div><div class="sheet-current-v">Current: <span class="sheet-current-box"></span></div></div>
         <div class="sheet-derived-cell sheet-luck-cell"><div class="sheet-derived-k">LUCK</div><div class="sheet-derived-v">${luck||'—'}</div><div class="sheet-current-v">Current: <span class="sheet-current-box"></span></div></div>
@@ -2301,32 +2326,12 @@ function renderSheet() {
     </div>
 
     <div class="sheet-section sheet-skills-section">
-      <div class="sheet-section-hdr">Skills &nbsp;|&nbsp; Teal = Occupation Skill &nbsp;|&nbsp; Each shows: Total% / Hard(½) / Extreme(⅕)</div>
+      <div class="sheet-section-hdr">03 — Skills &nbsp;|&nbsp; Gold = Occupation Skill &nbsp;|&nbsp; Each shows: Total% / Hard(½) / Extreme(⅕)</div>
       <div class="sheet-skills-grid">${skillsHtml}</div>
     </div>
 
-    <div class="sheet-section sheet-psych-section">
-      <div class="sheet-section-hdr">Backstory &amp; Psychology</div>
-      <div class="sheet-row">
-        <div class="sheet-cell" style="min-height:60px"><div class="sheet-cell-label">Personal Description</div><div class="sheet-cell-val"></div></div>
-        <div class="sheet-cell" style="min-height:60px"><div class="sheet-cell-label">Ideology / Beliefs</div><div class="sheet-cell-val"></div></div>
-      </div>
-      <div class="sheet-row">
-        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Significant People</div><div class="sheet-cell-val"></div></div>
-        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Meaningful Locations</div><div class="sheet-cell-val"></div></div>
-      </div>
-      <div class="sheet-row">
-        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Treasured Possessions</div><div class="sheet-cell-val"></div></div>
-        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Traits</div><div class="sheet-cell-val"></div></div>
-      </div>
-      <div class="sheet-row">
-        <div class="sheet-cell" style="min-height:40px"><div class="sheet-cell-label">Injuries / Scars / Wounds</div><div class="sheet-cell-val"></div></div>
-        <div class="sheet-cell" style="min-height:40px"><div class="sheet-cell-label">Phobias &amp; Manias</div><div class="sheet-cell-val"></div></div>
-      </div>
-    </div>
-
     <div class="sheet-section">
-      <div class="sheet-section-hdr">Weapons &amp; Combat</div>
+      <div class="sheet-section-hdr">04 — Weapons &amp; Combat</div>
       <table class="sheet-weapon-table">
         <thead><tr><th>Weapon</th><th>Skill%</th><th>Damage</th><th>Range</th><th>Attacks/Round</th><th>Ammo</th><th>Malfunction</th></tr></thead>
         <tbody>
@@ -2334,15 +2339,50 @@ function renderSheet() {
             const filled = charWeapons.map(w =>
               `<tr><td>${w.name||'—'}</td><td>${w.skillPct||'—'}</td><td>${w.damage||'—'}</td><td>${w.range||'—'}</td><td>${w.attacks||'—'}</td><td>${w.ammo||'—'}</td><td>${w.mal||'—'}</td></tr>`
             );
-            const blanks = Array(Math.max(0, 5 - filled.length)).fill('<tr class="sheet-weapon-empty"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+            const blanks = Array(Math.max(0, 4 - filled.length)).fill('<tr class="sheet-weapon-empty"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
             return [...filled, ...blanks].join('');
           })()}
         </tbody>
       </table>
     </div>
 
+    ${usePulp && selectedArchetype ? `
     <div class="sheet-section">
-      <div class="sheet-section-hdr">Equipment &amp; Possessions</div>
+      <div class="sheet-section-hdr">Pulp Cthulhu — Archetype &amp; Talents</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;padding:8px 14px;font-size:12px;color:#333">
+        <div><strong style="font-family:'Oswald',sans-serif;font-size:10px;color:#555;letter-spacing:1px">ARCHETYPE</strong><br>${selectedArchetype.name}</div>
+        <div style="flex:1"><strong style="font-family:'Oswald',sans-serif;font-size:10px;color:#555;letter-spacing:1px">BONUS CHARACTERISTIC</strong><br>+10 to ${selectedArchetype.bonusStat}</div>
+        <div style="flex:2"><strong style="font-family:'Oswald',sans-serif;font-size:10px;color:#555;letter-spacing:1px">TALENTS</strong><br>
+          ${selectedTalents.length ? selectedTalents.map(t=>{
+            const td=PULP_TALENTS.find(x=>x.name===t);
+            return `<span style="margin-right:12px"><strong>${t}</strong>${td?' — '+td.desc:''}</span>`;
+          }).join('<br>') : '—'}
+        </div>
+      </div>
+    </div>` : ''}
+
+    <div class="sheet-section sheet-psych-section">
+      <div class="sheet-section-hdr">05 — Backstory &amp; Psychology</div>
+      <div class="sheet-row">
+        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Personal Description</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${desc !== '—' ? desc : ''}</div></div>
+        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Ideology / Beliefs</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${ideology}</div></div>
+      </div>
+      <div class="sheet-row">
+        <div class="sheet-cell" style="min-height:45px"><div class="sheet-cell-label">Significant People</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${sigPeople}</div></div>
+        <div class="sheet-cell" style="min-height:45px"><div class="sheet-cell-label">Meaningful Locations</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${sigLocations}</div></div>
+      </div>
+      <div class="sheet-row">
+        <div class="sheet-cell" style="min-height:45px"><div class="sheet-cell-label">Treasured Possessions</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${treasuredPoss}</div></div>
+        <div class="sheet-cell" style="min-height:45px"><div class="sheet-cell-label">Traits</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${traits}</div></div>
+      </div>
+      <div class="sheet-row">
+        <div class="sheet-cell" style="min-height:40px"><div class="sheet-cell-label">Injuries / Scars / Wounds</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${injuries}</div></div>
+        <div class="sheet-cell" style="min-height:40px"><div class="sheet-cell-label">Phobias &amp; Manias</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${phobias}</div></div>
+      </div>
+    </div>
+
+    <div class="sheet-section">
+      <div class="sheet-section-hdr">06 — Equipment &amp; Possessions</div>
       ${Object.keys(cocGear).length ? `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px 14px;padding:8px 14px 0">${
         Object.keys(cocGear).map(g=>`<span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#444;padding:2px 0">▸ ${g}</span>`).join('')
       }</div>` : ''}
@@ -2366,7 +2406,7 @@ const WEAPONS = [
   { cat:'Brawl & Close Combat', name:'Kick',               skill:'Fighting (Brawl)', damage:'1D6+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
   { cat:'Brawl & Close Combat', name:'Grapple',            skill:'Fighting (Brawl)', damage:'Special',     range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
   { cat:'Brawl & Close Combat', name:'Knife',              skill:'Fighting (Brawl)', damage:'1D4+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
-  { cat:'Brawl & Close Combat', name:'Large Knife',        skill:'Fighting (Brawl)', damage:'1D6+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
+  { cat:'Brawl & Close Combat', name:'Large Knife',        skill:'Fighting (Brawl)', damage:'1D8+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
   { cat:'Brawl & Close Combat', name:'Club / Cane',        skill:'Fighting (Brawl)', damage:'1D6+DB',      range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
   { cat:'Brawl & Close Combat', name:'Axe',                skill:'Fighting (Brawl)', damage:'1D6+1+DB',    range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
   { cat:'Brawl & Close Combat', name:'Bayonet',            skill:'Fighting (Brawl)', damage:'1D6+2+DB',    range:'Touch',        attacks:'1', ammo:'—',  mal:'—',   eras:['all'] },
@@ -2640,7 +2680,14 @@ function buildCharData() {
       hair:       document.getElementById('p-hair')?.value||'',
       eyes:       document.getElementById('p-eyes')?.value||'',
       skin:       document.getElementById('p-skin')?.value||'',
-      desc:       document.getElementById('p-desc')?.value||''
+      desc:         document.getElementById('p-desc')?.value||'',
+      ideology:     document.getElementById('p-ideology')?.value||'',
+      sigPeople:    document.getElementById('p-sig-people')?.value||'',
+      sigLocations: document.getElementById('p-sig-locations')?.value||'',
+      treasuredPoss:document.getElementById('p-treasured-poss')?.value||'',
+      traits:       document.getElementById('p-traits')?.value||'',
+      injuries:     document.getElementById('p-injuries')?.value||'',
+      phobias:      document.getElementById('p-phobias')?.value||''
     },
     stats, luck, creditRating,
     selectedOcc: selectedOcc?.name || null,
@@ -2686,6 +2733,9 @@ function applyCharData(c) {
     set('p-birthplace',p.birthplace); set('p-age',p.age); set('p-sex',p.sex);
     set('p-height',p.height); set('p-weight',p.weight); set('p-hair',p.hair);
     set('p-eyes',p.eyes); set('p-skin',p.skin); set('p-desc',p.desc);
+    set('p-ideology',p.ideology); set('p-sig-people',p.sigPeople);
+    set('p-sig-locations',p.sigLocations); set('p-treasured-poss',p.treasuredPoss);
+    set('p-traits',p.traits); set('p-injuries',p.injuries); set('p-phobias',p.phobias);
   }
   // Sync era card
   document.querySelectorAll('.era-card').forEach(c => c.classList.remove('selected'));
@@ -2830,7 +2880,7 @@ function newInvestigator() {
   if(tabBtn3) tabBtn3.classList.add('pulp-tab-off');
   portraitData = null; isEditMode = false; selectedEra = '1920s';
   renderPortraitPreview();
-  ['p-name','p-occ-title','p-residence','p-birthplace','p-age','p-height','p-weight','p-hair','p-eyes','p-skin','p-desc'].forEach(id => {
+  ['p-name','p-occ-title','p-residence','p-birthplace','p-age','p-height','p-weight','p-hair','p-eyes','p-skin','p-desc','p-ideology','p-sig-people','p-sig-locations','p-treasured-poss','p-traits','p-injuries','p-phobias'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value='';
   });
   document.getElementById('p-sex').value = 'F';
