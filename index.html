@@ -2141,7 +2141,7 @@ function renderSkills() {
       <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Range: ${selectedOcc?selectedOcc.cr[0]+'–'+selectedOcc.cr[1]:'—'}%</span>
       <input type="number" min="0" max="99" value="${creditRating||''}" placeholder="${selectedOcc?selectedOcc.cr[0]:'0'}"
         style="width:60px;background:var(--bg2);border:1px solid var(--border2);color:var(--teal-bright);font-family:var(--mono);font-size:12px;text-align:center;padding:2px 4px"
-        oninput="creditRating=parseInt(this.value)||0">
+        oninput="setCreditRating(this.value)">
     </div>
     <div class="mythos-row">
       <span>Cthulhu Mythos</span><span style="text-align:center">0%</span><span style="text-align:center">—</span><span style="text-align:center">—</span><span style="text-align:center;color:var(--text3);font-size:10px">Gained in play</span>
@@ -2183,6 +2183,16 @@ function renderSkills() {
   }).join('');
 
   document.getElementById('skills-list').innerHTML = rows;
+}
+
+function setCreditRating(val) {
+  creditRating = parseInt(val) || 0;
+  const remOcc = calcOccPts() - usedOccPts();
+  const pools = document.getElementById('skill-pools');
+  if(pools) {
+    const occEl = pools.querySelector('.occ-pool');
+    if(occEl) { occEl.textContent = remOcc; occEl.className = `pool-val occ-pool${remOcc<0?' exhausted':''}`; }
+  }
 }
 
 function setSkillPts(pool, skill, val) {
