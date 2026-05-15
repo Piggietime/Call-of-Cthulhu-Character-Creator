@@ -420,6 +420,12 @@
   .talent-chip.forced { border-color:var(--amber); color:var(--amber); background:rgba(200,160,64,0.18); cursor:not-allowed; }
   .talent-chip[disabled] { opacity:0.35; cursor:not-allowed; }
   .step-btn.pulp-tab-off { opacity:0.35; }
+  .step-btn.magic-tab-off { opacity:0.35; }
+  .spell-cost-tag { font-family:var(--mono); font-size:9px; color:var(--text3); margin-top:3px; }
+  .spell-learned-badge { font-family:var(--mono); font-size:9px; color:var(--amber); letter-spacing:1px; margin-top:4px; }
+  .spell-cat-tag { display:inline-block; font-family:var(--mono); font-size:9px; padding:1px 5px; border:1px solid var(--border2); color:var(--text3); margin:1px 2px; }
+  .occ-card.learned { border-color:var(--amber); }
+  .occ-card.learned.selected { border-color:var(--teal-bright); }
   .pulp-disabled-msg { text-align:center; padding:3rem 1rem; color:var(--text3); font-family:var(--mono); font-size:11px; letter-spacing:1px; }
   .pulp-disabled-msg .pulp-hint { color:var(--amber); display:block; margin-bottom:0.5rem; font-size:13px; }
   .pulp-disabled-msg .pulp-hint-sub { display:block; margin-bottom:1.5rem; }
@@ -738,7 +744,8 @@
     <button class="step-btn" id="step-btn-4" onclick="goStep(4)"><span class="step-num">05</span>Characteristics</button>
     <button class="step-btn" id="step-btn-5" onclick="goStep(5)"><span class="step-num">06</span>Skills</button>
     <button class="step-btn" id="step-btn-6" onclick="goStep(6)"><span class="step-num">07</span>Equipment</button>
-    <button class="step-btn" id="step-btn-7" onclick="goStep(7)"><span class="step-num">08</span>Sheet</button>
+    <button class="step-btn magic-tab-off" id="step-btn-7" onclick="goStep(7)"><span class="step-num">08</span>Magic</button>
+    <button class="step-btn" id="step-btn-8" onclick="goStep(8)"><span class="step-num">09</span>Sheet</button>
   </div>
 
   <!-- PANEL 0: Era -->
@@ -1063,6 +1070,38 @@
     <div class="section-title">Weapons &amp; Equipment</div>
     <div class="section-sub">Select era-appropriate weapons from the catalog or add custom entries.</div>
     <div id="equip-panel-content"></div>
+  </div>
+
+  <!-- PANEL 7: Magic & Spells -->
+  <div class="panel" id="panel-magic">
+    <div class="help-panel" id="help-magic">
+      <div class="help-panel-hdr" onclick="toggleHelpCollapse(this)">
+        <span class="help-panel-title">Step 8 — Magic (Optional)</span>
+        <span class="help-panel-toggle"></span>
+      </div>
+      <div class="help-panel-body">
+        <p><strong>Magic in Call of Cthulhu is dangerous and sanity-shredding.</strong> Spells require Magic Points (MP = POW÷5) and cost Sanity. Some permanently sacrifice POW. Casting is never casual — each spell is a brush with forces that were never meant for human minds.</p>
+        <p>Only enable this tab if your Keeper explicitly allows player access to spells. Most standard scenarios do not. If you find a spell in a tome during play, your Keeper will tell you.</p>
+        <div class="help-rule"><span class="help-rule-lbl">COST</span><span class="help-rule-val">MP costs are paid immediately on casting. SAN loss is taken whether the spell succeeds or fails. POW costs are permanent losses to your characteristic.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">DREAMLANDS</span><span class="help-rule-val">Some spells are Dreamlands-only and cannot be cast in the waking world. They appear for completeness but are rarely relevant in standard scenarios.</span></div>
+        <div class="help-rule"><span class="help-rule-lbl">DEEPER MAGIC</span><span class="help-rule-val">Marked variants are more obscure or powerful versions, typically found only in rare or restricted tomes.</span></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+      <div class="section-title" style="margin:0">Magic &amp; Spells</div>
+      <button class="pulp-toggle-btn" id="magic-toggle-btn" onclick="toggleMagic()">DISABLED</button>
+    </div>
+    <div class="section-sub">Keeper-approved spells only. Enable if your Keeper permits access to the Mythos tomes.</div>
+    <div id="magic-disabled-msg" style="padding:28px 0;text-align:center;color:var(--text3);font-family:var(--mono);font-size:11px;letter-spacing:1px">MAGIC NOT ENABLED — toggle above if your Keeper allows it</div>
+    <div id="magic-content" style="display:none">
+      <div class="occ-filter" id="spell-cat-filter"></div>
+      <div id="spell-detail-box" class="occ-detail"></div>
+      <div class="occ-grid" id="spell-grid" style="max-height:500px;overflow-y:auto"></div>
+    </div>
+    <div class="nav-btns">
+      <button class="nav-btn" onclick="goStep(6)">← EQUIPMENT</button>
+      <button class="nav-btn primary" onclick="goStep(8); renderSheet()">VIEW SHEET →</button>
+    </div>
   </div>
 
   <!-- PANEL 6: Sheet -->
@@ -1555,6 +1594,10 @@ let playSanOverride  = null;
 let playMpOverride   = null;
 let playLuckOverride = null;
 let playTickedSkills  = {};
+let useMagic          = false;
+let learnedSpells     = [];
+let selectedSpellName = null;
+let SPELLS            = [];
 let playFieldNotes   = '';
 let playSessionNotes = '';
 let playFieldOrg     = '';
@@ -1571,7 +1614,8 @@ function goStep(n) {
   if(n===4) renderStatsGrid();
   if(n===5) renderSkills();
   if(n===6) renderEquipPanel();
-  if(n===7) renderSheet();
+  if(n===7) loadSpells();
+  if(n===8) renderSheet();
   window.scrollTo(0,0);
 }
 
@@ -2305,6 +2349,150 @@ function initSpecLists() {
 }
 
 // ══════════════════════════════════════════════════════
+// MAGIC & SPELLS
+// ══════════════════════════════════════════════════════
+let _spellsLoaded = false;
+let _spellCatFilter = 'all';
+
+async function loadSpells() {
+  if (_spellsLoaded) return;
+  try {
+    const res = await fetch('coc7e_spells.json');
+    const data = await res.json();
+    SPELLS = data.spells || [];
+    _spellsLoaded = true;
+  } catch { console.warn('Could not load spells data.'); }
+  if (useMagic) renderSpellGrid();
+}
+
+function toggleMagic() {
+  useMagic = !useMagic;
+  const btn = document.getElementById('magic-toggle-btn');
+  if (btn) { btn.textContent = useMagic ? 'ENABLED' : 'DISABLED'; btn.classList.toggle('on', useMagic); }
+  const tab = document.getElementById('step-btn-7');
+  if (tab) tab.classList.toggle('magic-tab-off', !useMagic);
+  const dis = document.getElementById('magic-disabled-msg');
+  const con = document.getElementById('magic-content');
+  if (dis) dis.style.display = useMagic ? 'none' : '';
+  if (con) con.style.display = useMagic ? '' : 'none';
+  if (useMagic) { if (!_spellsLoaded) loadSpells(); else renderSpellGrid(); }
+}
+
+function renderSpellGrid(cat) {
+  if (cat !== undefined) _spellCatFilter = cat;
+  if (!SPELLS.length) return;
+
+  const allCats = [...new Set(SPELLS.flatMap(s => s.categories))].sort();
+  const filterDiv = document.getElementById('spell-cat-filter');
+  if (filterDiv) {
+    filterDiv.innerHTML = ['all', ...allCats].map(c =>
+      `<button class="occ-filter-btn ${_spellCatFilter===c?'active':''}"
+        onclick="renderSpellGrid(${JSON.stringify(c)})">${c==='all'?'All Categories':c}</button>`
+    ).join('');
+  }
+
+  const filtered = _spellCatFilter === 'all'
+    ? SPELLS
+    : SPELLS.filter(s => s.categories.includes(_spellCatFilter));
+
+  const grid = document.getElementById('spell-grid');
+  if (!grid) return;
+  grid.innerHTML = filtered.map(spell => {
+    const learned  = learnedSpells.includes(spell.name);
+    const selected = selectedSpellName === spell.name;
+    const mpText   = spell.cost_mp === null ? '—' : spell.cost_mp_variable ? 'var.' : String(spell.cost_mp);
+    const sanText  = spell.cost_san === null ? '—' : String(spell.cost_san);
+    const cats     = spell.categories.join(', ');
+    return `<div class="occ-card${selected?' selected':''}${learned?' learned':''}"
+      onclick='selectSpell(${JSON.stringify(spell.name)})'>
+      <div class="occ-name" style="font-size:13px">${spell.name}</div>
+      <div class="spell-cost-tag">MP ${mpText} · SAN ${sanText} · ${spell.casting_time||'—'}</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">${cats}</div>
+      ${learned ? '<div class="spell-learned-badge">✓ LEARNED</div>' : ''}
+    </div>`;
+  }).join('');
+
+  if (selectedSpellName) {
+    const spell = SPELLS.find(s => s.name === selectedSpellName);
+    if (spell) showSpellDetail(spell);
+  }
+}
+
+function selectSpell(name) {
+  selectedSpellName = selectedSpellName === name ? null : name;
+  const box = document.getElementById('spell-detail-box');
+  if (!selectedSpellName) {
+    if (box) { box.className = 'occ-detail'; box.innerHTML = ''; }
+    renderSpellGrid();
+    return;
+  }
+  document.querySelectorAll('#spell-grid .occ-card').forEach(c =>
+    c.classList.toggle('selected', c.querySelector('.occ-name')?.textContent.trim() === name));
+  const spell = SPELLS.find(s => s.name === name);
+  if (spell) showSpellDetail(spell);
+}
+
+function showSpellDetail(spell) {
+  const box = document.getElementById('spell-detail-box');
+  if (!box) return;
+  const learned = learnedSpells.includes(spell.name);
+
+  const mpText = spell.cost_mp === null ? '—'
+    : spell.cost_mp_variable
+      ? `variable${spell.cost_mp_formula ? ' — ' + spell.cost_mp_formula : ''}`
+      : String(spell.cost_mp);
+  const sanText  = spell.cost_san  === null ? '—' : String(spell.cost_san);
+  const powText  = spell.cost_pow  === null ? '—'
+    : spell.cost_pow_variable
+      ? `variable${spell.cost_pow_formula ? ' — ' + spell.cost_pow_formula : ''}`
+      : String(spell.cost_pow);
+
+  const altHtml = spell.alt_names && spell.alt_names.length
+    ? `<div style="font-size:11px;color:var(--text3);font-family:var(--mono);margin-bottom:6px">Also known as: ${spell.alt_names.join(', ')}</div>`
+    : '';
+  const tags  = spell.categories.map(c=>`<span class="spell-cat-tag">${c}</span>`).join('');
+  const flags = [];
+  if (spell.dreamlands_only) flags.push('<span style="color:var(--amber);font-family:var(--mono);font-size:10px;letter-spacing:1px">⚠ DREAMLANDS ONLY</span>');
+  if (spell.deeper_magic)    flags.push('<span style="color:var(--text3);font-family:var(--mono);font-size:10px;letter-spacing:1px">◆ DEEPER MAGIC VARIANT</span>');
+  const reqHtml = spell.requirements && spell.requirements.length
+    ? `<div style="margin-top:10px"><div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1px;margin-bottom:4px">REQUIREMENTS</div>
+       <ul style="margin:0 0 0 16px;padding:0;font-size:12px">${spell.requirements.map(r=>`<li>${r}</li>`).join('')}</ul></div>`
+    : '';
+
+  box.className = 'occ-detail visible';
+  box.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+      <div>
+        <div style="font-family:var(--head);font-size:16px;color:var(--teal-bright);margin-bottom:4px">${spell.name}</div>
+        ${altHtml}
+        <div style="margin-bottom:6px">${tags}</div>
+        ${flags.length ? `<div style="margin-bottom:4px">${flags.join(' &nbsp;')}</div>` : ''}
+      </div>
+      <button class="nav-btn${learned?' primary':''}" style="white-space:nowrap"
+        onclick="toggleLearnSpell(${JSON.stringify(spell.name)})">
+        ${learned ? '✓ LEARNED' : 'LEARN SPELL'}
+      </button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px 10px;background:var(--bg2);border:1px solid var(--border);font-family:var(--mono);font-size:11px;margin-bottom:10px">
+      <div><div style="color:var(--text3);font-size:9px;letter-spacing:1px">MAGIC POINTS</div><div>${mpText}</div></div>
+      <div><div style="color:var(--text3);font-size:9px;letter-spacing:1px">SANITY COST</div><div>${sanText}</div></div>
+      <div><div style="color:var(--text3);font-size:9px;letter-spacing:1px">POW COST</div><div>${powText}</div></div>
+      <div><div style="color:var(--text3);font-size:9px;letter-spacing:1px">CASTING TIME</div><div>${spell.casting_time||'—'}</div></div>
+    </div>
+    <div style="font-size:13px;line-height:1.5;margin-bottom:4px">${spell.effect}</div>
+    ${reqHtml}`;
+}
+
+function toggleLearnSpell(name) {
+  const idx = learnedSpells.indexOf(name);
+  if (idx >= 0) learnedSpells.splice(idx, 1);
+  else learnedSpells.push(name);
+  const spell = SPELLS.find(s => s.name === name);
+  if (spell) showSpellDetail(spell);
+  renderSpellGrid();
+}
+
+// ══════════════════════════════════════════════════════
 // SHEET HELPERS
 // ══════════════════════════════════════════════════════
 function readPersonalFields() {
@@ -2474,6 +2662,23 @@ function renderSheet() {
             return `<span style="margin-right:12px"><strong>${t}</strong>${td?' — '+td.desc:''}</span>`;
           }).join('<br>') : '—'}
         </div>
+      </div>
+    </div>` : ''}
+
+    ${useMagic && learnedSpells.length ? `
+    <div class="sheet-section">
+      <div class="sheet-section-hdr">Magic — Known Spells</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;padding:8px 14px;font-size:11px;color:#333">
+        ${learnedSpells.map(name => {
+          const sp = SPELLS.find(s => s.name === name);
+          const mpText = !sp ? '—' : sp.cost_mp === null ? '—' : sp.cost_mp_variable ? 'var.' : String(sp.cost_mp);
+          const sanText = !sp ? '—' : sp.cost_san === null ? '—' : String(sp.cost_san);
+          const castTime = sp?.casting_time || '—';
+          return `<div style="border-bottom:1px solid #eee;padding:3px 0">
+            <strong>${name}</strong>
+            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#888;margin-left:6px">MP ${mpText} · SAN ${sanText} · ${castTime}</span>
+          </div>`;
+        }).join('')}
       </div>
     </div>` : ''}
 
@@ -2648,7 +2853,7 @@ function renderEquipPanel() {
 
     <div class="nav-btns">
       <button class="nav-btn" onclick="goStep(5)">← SKILLS</button>
-      <button class="nav-btn primary" onclick="goStep(7); renderSheet()">VIEW SHEET →</button>
+      <button class="nav-btn primary" onclick="goStep(7)">NEXT: MAGIC →</button>
     </div>`;
 }
 
@@ -2779,7 +2984,9 @@ function buildCharData() {
     charWeapons:   charWeapons.map(w=>({...w})),
     cocGear:       {...cocGear},
     equipment,
-    portraitData
+    portraitData,
+    useMagic,
+    learnedSpells: [...learnedSpells],
   };
 }
 
@@ -2805,6 +3012,17 @@ function applyCharData(c) {
   if(tabBtn) tabBtn.classList.toggle('pulp-tab-off', !usePulp);
   equipment     = c.equipment || '';
   portraitData  = c.portraitData || null;
+  useMagic      = c.useMagic || false;
+  learnedSpells = [...(c.learnedSpells||[])];
+  selectedSpellName = null;
+  const mBtn = document.getElementById('magic-toggle-btn');
+  if (mBtn) { mBtn.textContent = useMagic ? 'ENABLED' : 'DISABLED'; mBtn.classList.toggle('on', useMagic); }
+  const mTab = document.getElementById('step-btn-7');
+  if (mTab) mTab.classList.toggle('magic-tab-off', !useMagic);
+  const mDis = document.getElementById('magic-disabled-msg');
+  const mCon = document.getElementById('magic-content');
+  if (mDis) mDis.style.display = useMagic ? 'none' : '';
+  if (mCon) mCon.style.display = useMagic ? '' : 'none';
   renderPortraitPreview();
   if(c.personal) {
     const p = c.personal;
@@ -2867,7 +3085,7 @@ function loadInvestigator(name) {
   applyCharData(c);
   isEditMode = true;
   closeLoadModal();
-  goStep(7);
+  goStep(8);
 }
 
 function deleteInvestigator(name) {
@@ -2902,7 +3120,7 @@ function importFromJSON(input) {
       isEditMode = true;
       input.value = '';
       closeLoadModal();
-      goStep(7);
+      goStep(8);
     } catch { alert('Could not read file — make sure it is a valid investigator JSON.'); }
   };
   reader.readAsText(file);
@@ -2938,7 +3156,7 @@ function importSharedChar() {
   applyCharData(pendingSharedChar);
   isEditMode = true;
   dismissImportBanner();
-  goStep(7);
+  goStep(8);
 }
 
 function dismissImportBanner() {
@@ -2959,6 +3177,15 @@ function newInvestigator() {
   const tabBtn3 = document.getElementById('step-btn-3');
   if(tabBtn3) tabBtn3.classList.add('pulp-tab-off');
   portraitData = null; isEditMode = false; selectedEra = '1920s';
+  useMagic = false; learnedSpells = []; selectedSpellName = null;
+  const mBtn2 = document.getElementById('magic-toggle-btn');
+  if (mBtn2) { mBtn2.textContent = 'DISABLED'; mBtn2.classList.remove('on'); }
+  const mTab2 = document.getElementById('step-btn-7');
+  if (mTab2) mTab2.classList.add('magic-tab-off');
+  const mDis2 = document.getElementById('magic-disabled-msg');
+  const mCon2 = document.getElementById('magic-content');
+  if (mDis2) mDis2.style.display = '';
+  if (mCon2) mCon2.style.display = 'none';
   renderPortraitPreview();
   ['p-name','p-occ-title','p-residence','p-birthplace','p-age','p-height','p-weight','p-hair','p-eyes','p-skin','p-desc','p-ideology','p-sig-people','p-sig-locations','p-treasured-poss','p-traits','p-injuries','p-phobias'].forEach(id => {
     const el = document.getElementById(id); if(el) el.value='';
@@ -3420,6 +3647,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('era-1920s').classList.add('selected');
   applyEraTheme('1920s');
   checkSharedURL();
+  loadSpells();
 });
 </script>
 <div id="tt" role="tooltip"></div>
