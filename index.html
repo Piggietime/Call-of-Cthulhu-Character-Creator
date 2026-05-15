@@ -2469,7 +2469,7 @@ function showSpellDetail(spell) {
         ${flags.length ? `<div style="margin-bottom:4px">${flags.join(' &nbsp;')}</div>` : ''}
       </div>
       <button class="nav-btn${learned?' primary':''}" style="white-space:nowrap"
-        onclick="toggleLearnSpell(${JSON.stringify(spell.name)})">
+        onclick='toggleLearnSpell(${JSON.stringify(spell.name)})'>
         ${learned ? '✓ LEARNED' : 'LEARN SPELL'}
       </button>
     </div>
