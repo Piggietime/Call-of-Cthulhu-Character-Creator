@@ -461,7 +461,8 @@
   .mythos-row { background: rgba(176,48,48,0.08); border-bottom: 1px solid var(--border); padding: 3px 8px; display: grid; grid-template-columns: 1fr 55px 55px 55px 80px; gap: 4px; align-items: center; font-size: 12px; color: var(--red); }
 
   /* ── Sheet ── */
-  .sheet-wrapper { background: white; font-family: var(--body); color: #222; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+  .sheet-wrapper { background: transparent; display: flex; flex-direction: column; gap: 24px; }
+  .sheet-page { background: white; font-family: var(--body); color: #222; border: 1px solid #bbb; border-radius: 2px; overflow: hidden; }
   .sheet-top-bar { background: #2a5a5a; color: #a0d8d8; padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 2px; }
   .sheet-section { border-bottom: 1px solid #ccc; }
   .sheet-section-hdr { background: #eaeae5; color: #444; padding: 5px 14px; font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; border-bottom: 1px solid #ccc; }
@@ -597,6 +598,7 @@
 
   /* ── Print ── */
   @page { margin: 0.5in; size: letter; }
+  @page { margin: 0.4in; size: letter portrait; }
   @media print {
     body { background: white !important; color: #111 !important; }
     body::before { display: none !important; }
@@ -605,23 +607,25 @@
     #panel6 { display: block !important; }
     .app-wrapper { padding: 0 !important; max-width: 100% !important; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    .sheet-wrapper { border: none !important; background: white !important; }
+    /* Two-page structure: page1 ends after weapons, page2 starts with backstory */
+    .sheet-wrapper { background: white !important; gap: 0 !important; }
+    .sheet-page { border: none !important; overflow: visible !important; border-radius: 0 !important; }
+    .sheet-page.page1 { page-break-after: always !important; }
     .sheet-top-bar { background: #2a5a5a !important; }
     .sheet-section { border-bottom: 1px solid #ccc !important; }
     .sheet-section-hdr { background: #eaeae5 !important; color: #444 !important; border-bottom: 1px solid #ccc !important; }
     .sheet-row { border-bottom: 1px solid #ccc !important; }
     .sheet-row:last-child { border-bottom: none !important; }
-    .sheet-cell { border-right: 1px solid #ccc !important; }
+    .sheet-cell { border-right: 1px solid #ccc !important; padding: 4px 8px !important; }
     .sheet-cell:last-child { border-right: none !important; }
     .sheet-char-grid { border-bottom: 1px solid #ccc !important; }
-    .sheet-char-cell { border-right: 1px solid #ccc !important; padding: 5px 4px !important; }
+    .sheet-char-cell { border-right: 1px solid #ccc !important; padding: 4px 2px !important; }
     .sheet-char-v { font-size: 16px !important; color: #2a5a5a !important; }
-    .sheet-derived-grid { gap: 4px !important; padding: 5px 14px !important; }
-    .sheet-derived-cell { padding: 5px !important; background: #f0ede8 !important; border: 1px solid #ccc !important; }
+    .sheet-derived-grid { gap: 4px !important; padding: 4px 10px !important; }
+    .sheet-derived-cell { padding: 4px !important; background: #f0ede8 !important; border: 1px solid #ccc !important; }
     .sheet-derived-k { font-size: 8px !important; }
-    .sheet-derived-v { font-size: 15px !important; }
+    .sheet-derived-v { font-size: 14px !important; }
     .sheet-luck-cell { border: 2px solid #c8a840 !important; background: #f5f0e8 !important; }
-    .sheet-skills-section { page-break-before: always !important; }
     .sheet-skill-item { border-right: 1px solid #ccc !important; border-bottom: 1px solid #ccc !important; padding: 2px 5px !important; font-size: 9px !important; }
     .sheet-skill-item:nth-child(3n) { border-right: none !important; }
     .sheet-skill-item:last-child { border-right: none !important; border-bottom: none !important; }
@@ -631,7 +635,6 @@
     .sheet-skill-val { font-size: 9px !important; }
     .sheet-skill-half { font-size: 8px !important; }
     .sheet-skill-fifth { font-size: 8px !important; }
-    .sheet-psych-section { page-break-before: always !important; border-top: 1px solid #999 !important; }
     .sheet-weapon-table th { background: #eaeae5 !important; }
     .sheet-footer { background: #eaeae5 !important; }
     .sheet-portrait-box { border-left: 1px solid #ccc !important; }
@@ -2305,6 +2308,7 @@ function renderSheet() {
 
   document.getElementById('sheet-output').innerHTML = `
   <div class="sheet-wrapper">
+  <div class="sheet-page page1">
     <div class="sheet-top-bar">
       <span>CALL OF CTHULHU — INVESTIGATOR SHEET</span>
       <small>${eraLabel.toUpperCase()} ERA — 7TH EDITION</small>
@@ -2357,11 +2361,18 @@ function renderSheet() {
             const filled = charWeapons.map(w =>
               `<tr><td>${w.name||'—'}</td><td>${w.skillPct||'—'}</td><td>${w.damage||'—'}</td><td>${w.range||'—'}</td><td>${w.attacks||'—'}</td><td>${w.ammo||'—'}</td><td>${w.mal||'—'}</td></tr>`
             );
-            const blanks = Array(Math.max(0, 4 - filled.length)).fill('<tr class="sheet-weapon-empty"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+            const blanks = Array(Math.max(0, 3 - filled.length)).fill('<tr class="sheet-weapon-empty"><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
             return [...filled, ...blanks].join('');
           })()}
         </tbody>
       </table>
+    </div>
+
+  </div><!-- end page1 -->
+  <div class="sheet-page page2">
+    <div class="sheet-top-bar">
+      <span>${name !== '—' ? name.toUpperCase() + ' — ' : ''}INVESTIGATOR SHEET</span>
+      <small>${eraLabel.toUpperCase()} ERA — PAGE 2</small>
     </div>
 
     ${usePulp && selectedArchetype ? `
@@ -2379,7 +2390,7 @@ function renderSheet() {
       </div>
     </div>` : ''}
 
-    <div class="sheet-section sheet-psych-section">
+    <div class="sheet-section">
       <div class="sheet-section-hdr">05 — Backstory &amp; Psychology</div>
       ${sheetRow(sheetCell('Personal Description',p.desc,{minH:50,prose:true}), sheetCell('Ideology / Beliefs',ideology,{minH:50,prose:true}))}
       ${sheetRow(sheetCell('Significant People',sigPeople,{minH:45,prose:true}), sheetCell('Meaningful Locations',sigLocations,{minH:45,prose:true}))}
@@ -2399,7 +2410,8 @@ function renderSheet() {
       <span>CALL OF CTHULHU 7TH EDITION — INVESTIGATOR SHEET</span>
       <span>${eraLabel.toUpperCase()} ERA</span>
     </div>
-  </div>`;
+  </div><!-- end page2 -->
+  </div><!-- end sheet-wrapper -->`;
 }
 
 // ══════════════════════════════════════════════════════
