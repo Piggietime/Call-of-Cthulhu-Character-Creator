@@ -2387,7 +2387,7 @@ function renderSpellGrid(cat) {
   if (filterDiv) {
     filterDiv.innerHTML = ['all', ...allCats].map(c =>
       `<button class="occ-filter-btn ${_spellCatFilter===c?'active':''}"
-        onclick="renderSpellGrid(${JSON.stringify(c)})">${c==='all'?'All Categories':c}</button>`
+        onclick='renderSpellGrid(${JSON.stringify(c)})'>${c==='all'?'All Categories':c}</button>`
     ).join('');
   }
 
