@@ -457,6 +457,9 @@
   .skill-add-input { width: 70px; background: var(--bg2); border: 1px solid var(--border2); color: var(--teal-bright); font-family: var(--mono); font-size: 12px; text-align: center; padding: 2px 4px; }
   .skill-add-input:focus { outline: none; border-color: var(--teal-bright); }
   .skill-add-input.pi-input { color: var(--text); border-color: var(--border); }
+  .skill-spec-input { display:block; font-family:var(--mono); font-size:9px; color:var(--text3); background:transparent; border:none; border-bottom:1px dashed var(--border2); padding:1px 2px; width:100%; max-width:130px; outline:none; }
+  .skill-spec-input:focus { border-bottom-color:var(--teal-bright); color:var(--text); }
+  .skill-spec-input::placeholder { color:var(--text3); opacity:0.6; }
   .credit-rating-row { background: rgba(80,168,168,0.08); border-bottom: 1px solid var(--border); padding: 6px 8px; display: flex; align-items: center; gap: 12px; font-size: 12px; }
   .mythos-row { background: rgba(176,48,48,0.08); border-bottom: 1px solid var(--border); padding: 3px 8px; display: grid; grid-template-columns: 1fr 55px 55px 55px 80px; gap: 4px; align-items: center; font-size: 12px; color: var(--red); }
 
@@ -1513,6 +1516,7 @@ let selectedOcc    = null;
 let occSkillAdded  = {};  // skill name → points from occupation pool
 let piSkillAdded   = {};  // skill name → points from personal interest pool
 let archSkillAdded = {};  // skill name → points from archetype bonus pool (Pulp only)
+let skillSpecializations = {}; // 'occ::SkillName' | 'pi::SkillName' → specialization string
 let usePulp          = false;
 let selectedArchetype = null;
 let selectedTalents  = [];
@@ -1919,6 +1923,7 @@ function selectOcc(name) {
   occChosenSkills = [];
   occSkillAdded   = {};
   piSkillAdded    = {};
+  Object.keys(skillSpecializations).forEach(k => { if(k.startsWith('occ::')) delete skillSpecializations[k]; });
   document.getElementById('p-occ-title').value = name;
   document.querySelectorAll('.occ-card').forEach(c => c.classList.toggle('selected', c.querySelector('.occ-name')?.textContent===name));
   showOccDetail(selectedOcc);
@@ -2166,6 +2171,14 @@ function renderSkills() {
         <input class="skill-add-input" type="number" min="0" max="99" value="${aAdd||''}" placeholder="Arch"
           title="Archetype bonus points" ${!isArch?'disabled style="opacity:0.25"':'style="border-color:var(--amber);color:var(--amber)"'}
           oninput="setSkillPts('arch','${s.name}',parseInt(this.value)||0)">` : '';
+    const specPool  = isOcc ? 'occ' : 'pi';
+    const specVal   = (skillSpecializations[specPool+'::'+s.name] || '').replace(/"/g,'&quot;');
+    const listId    = SPEC_DATALIST[s.name] || '';
+    const specInput = s.specialty
+      ? `<input type="text" class="skill-spec-input"${listId?` list="${listId}"`:''}
+           placeholder="(speciality)" value="${specVal}"
+           oninput="setSkillSpec('${specPool}','${s.name.replace(/'/g,"\\'")}',this.value.trim())">`
+      : '';
     const tipMeta = `Base: ${base}%${s.specialty?' · specialty':''}${isOcc?' · occupation skill':''}${isArch?' · archetype skill':''}`;
     return `<div class="skill-row ${isOcc?'occ-skill':''}${isArch?' arch-skill':''}">
       <span class="skill-name"
@@ -2173,7 +2186,7 @@ function renderSkills() {
         data-tip-name="${s.name.replace(/"/g,'&quot;')}"
         data-tip-body="${(s.desc||'').replace(/"/g,'&quot;')}"
         data-tip-meta="${tipMeta.replace(/"/g,'&quot;')}"
-        >${s.name}${s.specialty?' <em style="font-size:10px;color:var(--text3)">(specialty)</em>':''}</span>
+        >${s.name}${specInput}</span>
       <span class="skill-base-val">${base}%</span>
       <span class="skill-half">${hard}%</span>
       <span class="skill-fifth">${fifth}%</span>
@@ -2217,6 +2230,46 @@ function setSkillPts(pool, skill, val) {
     const archEl = pools.querySelector('.arch-pool');
     if(archEl) { archEl.textContent = remArch; archEl.className = `pool-val arch-pool${remArch<0?' exhausted':''}` + ';color:var(--amber)'; }
   }
+}
+
+function setSkillSpec(pool, name, val) {
+  const key = pool + '::' + name;
+  if (val) skillSpecializations[key] = val;
+  else delete skillSpecializations[key];
+}
+
+function getSpecDisplay(name) {
+  const occ = skillSpecializations['occ::' + name];
+  if (occ) return name + ' (' + occ + ')';
+  const pi = skillSpecializations['pi::' + name];
+  if (pi) return name + ' (' + pi + ')';
+  return name;
+}
+
+const SPEC_DATALIST = {
+  'Art/Craft':       'spec-artcraft',
+  'Science':         'spec-science',
+  'Language (Other)':'spec-language',
+  'Survival':        'spec-survival',
+  'Pilot':           'spec-pilot',
+};
+
+function initSpecLists() {
+  const opts = {
+    'spec-artcraft':  ['Acting','Bookbinding','Calligraphy','Drawing','Forgery','Music','Painting','Photography','Sculpture','Writing'],
+    'spec-science':   ['Astronomy','Biology','Botany','Chemistry','Cryptography','Engineering','Forensics','Geology','Mathematics','Meteorology','Pharmacy','Physics','Zoology'],
+    'spec-language':  ['Arabic','Chinese','French','German','Greek','Hebrew','Italian','Japanese','Latin','Russian','Sanskrit','Spanish','Swahili'],
+    'spec-survival':  ['Arctic','Desert','Forest','Jungle','Mountain','Sea'],
+    'spec-pilot':     ['Aircraft','Airship','Boat','Submarine'],
+  };
+  const frag = document.createDocumentFragment();
+  Object.entries(opts).forEach(([id, values]) => {
+    const dl = document.createElement('datalist');
+    dl.id = id;
+    values.forEach(v => { const op = document.createElement('option'); op.value = v; dl.appendChild(op); });
+    frag.appendChild(dl);
+  });
+  document.body.appendChild(frag);
 }
 
 // ══════════════════════════════════════════════════════
@@ -2294,9 +2347,10 @@ function renderSheet() {
     const total  = getSkillTotal(s.name);
     const hard   = Math.floor(total/2);
     const fifth  = Math.floor(total/5);
+    const displayName = s.specialty ? getSpecDisplay(s.name) : s.name;
     return `<div class="sheet-skill-item">
       <span class="sheet-skill-check"></span>
-      <span class="sheet-skill-name ${isOcc?'occ-s':''}" title="${s.name}">${s.name}</span>
+      <span class="sheet-skill-name ${isOcc?'occ-s':''}" title="${displayName}">${displayName}</span>
       <span class="sheet-skill-val">${total}%</span>
       <span class="sheet-skill-half">${hard}</span>
       <span class="sheet-skill-fifth">${fifth}</span>
@@ -2685,6 +2739,7 @@ function buildCharData() {
     selectedOcc: selectedOcc?.name || null,
     occSkillAdded:   {...occSkillAdded},
     piSkillAdded:    {...piSkillAdded},
+    skillSpecializations: {...skillSpecializations},
     occChosenSkills:   [...occChosenSkills],
     usePulp,
     selectedArchetype: selectedArchetype?.name || null,
@@ -2704,6 +2759,7 @@ function applyCharData(c) {
   selectedOcc   = c.selectedOcc ? OCCUPATIONS.find(o=>o.name===c.selectedOcc)||null : null;
   occSkillAdded = {...(c.occSkillAdded||{})};
   piSkillAdded    = {...(c.piSkillAdded||{})};
+  skillSpecializations = {...(c.skillSpecializations||{})};
   occChosenSkills   = [...(c.occChosenSkills||[])];
   usePulp           = c.usePulp || false;
   selectedArchetype = c.selectedArchetype ? PULP_ARCHETYPES.find(a=>a.name===c.selectedArchetype)||null : null;
@@ -2864,7 +2920,7 @@ function dismissImportBanner() {
 function newInvestigator() {
   if(!confirm('Start a new investigator? Unsaved changes will be lost.')) return;
   stats = { STR:0, CON:0, SIZ:0, DEX:0, APP:0, INT:0, POW:0, EDU:0 };
-  luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {}; archSkillAdded = {};
+  luck = 0; selectedOcc = null; occSkillAdded = {}; piSkillAdded = {}; archSkillAdded = {}; skillSpecializations = {};
   creditRating = 0; occChosenSkills = []; usePulp = false; selectedArchetype = null; selectedTalents = []; charWeapons = []; cocGear = {}; equipment = '';
   const pBtn = document.getElementById('pulp-toggle-btn');
   if(pBtn) { pBtn.textContent='DISABLED'; pBtn.classList.remove('on'); }
@@ -2964,12 +3020,13 @@ function renderPlayPanel() {
     const isOcc   = occSkills.includes(s.name);
     const ticked  = !!playTickedSkills[s.name];
     const total   = getSkillTotal(s.name);
+    const label   = s.specialty ? getSpecDisplay(s.name) : s.name;
     return `<span class="play-skill-chip ${isOcc ? 'occ-skill' : ''} ${ticked ? 'checked' : ''}"
       onclick="playToggleTick('${s.name.replace(/'/g, "\\'")}')"
       data-tip="${s.name.replace(/"/g,'&quot;')}"
-      data-tip-name="${s.name.replace(/"/g,'&quot;')}"
+      data-tip-name="${label.replace(/"/g,'&quot;')}"
       data-tip-body="${(s.desc||'').replace(/"/g,'&quot;')}"
-      ><span class="play-check-box">${ticked ? '✓' : ''}</span>${s.name} ${total}%</span>`;
+      ><span class="play-check-box">${ticked ? '✓' : ''}</span>${label} ${total}%</span>`;
   }
 
   const skillsEl = document.getElementById('play-skills-list');
@@ -3244,6 +3301,7 @@ document.addEventListener('mouseout', e => {
 // INIT
 // ══════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
+  initSpecLists();
   document.getElementById('era-1920s').classList.add('selected');
   applyEraTheme('1920s');
   checkSharedURL();
