@@ -2668,15 +2668,24 @@ function renderSheet() {
     ${useMagic && learnedSpells.length ? `
     <div class="sheet-section">
       <div class="sheet-section-hdr">Magic — Known Spells</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;padding:8px 14px;font-size:11px;color:#333">
+      <div style="padding:8px 14px;font-size:11px;color:#333">
         ${learnedSpells.map(name => {
           const sp = SPELLS.find(s => s.name === name);
-          const mpText = !sp ? '—' : sp.cost_mp === null ? '—' : sp.cost_mp_variable ? 'var.' : String(sp.cost_mp);
-          const sanText = !sp ? '—' : sp.cost_san === null ? '—' : String(sp.cost_san);
+          const mpText   = !sp ? '—' : sp.cost_mp  === null ? '—' : sp.cost_mp_variable  ? 'var.' : String(sp.cost_mp);
+          const sanText  = !sp ? '—' : sp.cost_san === null ? '—' : String(sp.cost_san);
+          const powText  = !sp ? '—' : sp.cost_pow === null ? '—' : sp.cost_pow_variable ? 'var.' : String(sp.cost_pow);
           const castTime = sp?.casting_time || '—';
-          return `<div style="border-bottom:1px solid #eee;padding:3px 0">
-            <strong>${name}</strong>
-            <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#888;margin-left:6px">MP ${mpText} · SAN ${sanText} · ${castTime}</span>
+          const cats     = sp?.categories?.join(', ') || '';
+          const effect   = sp?.effect || '';
+          const reqs     = sp?.requirements?.length ? sp.requirements.join(' · ') : '';
+          return `<div style="border-bottom:1px solid #ddd;padding:6px 0;margin-bottom:2px">
+            <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:3px">
+              <strong style="font-size:12px">${name}</strong>
+              <span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#888">MP ${mpText} · SAN ${sanText} · POW ${powText} · ${castTime}</span>
+              ${cats ? `<span style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#aaa">${cats}</span>` : ''}
+            </div>
+            ${effect ? `<div style="color:#444;font-size:11px;line-height:1.4;margin-bottom:2px">${effect}</div>` : ''}
+            ${reqs ? `<div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#888"><em>Requires:</em> ${reqs}</div>` : ''}
           </div>`;
         }).join('')}
       </div>
