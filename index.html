@@ -444,6 +444,7 @@
   .pool-val { font-family: var(--head); font-size: 28px; color: var(--teal-bright); }
   .pool-val.occ-pool { color: var(--amber); }
   .pool-val.exhausted { color: var(--red); }
+  .mono-note { font-family: var(--mono); font-size: 10px; color: var(--text3); }
   .skills-header { display: grid; grid-template-columns: 1fr 55px 55px 55px 80px; gap: 4px; padding: 4px 8px; background: var(--bg3); font-family: var(--mono); font-size: 9px; color: var(--text3); letter-spacing: 1px; border-bottom: 1px solid var(--border); }
   .skill-row { display: grid; grid-template-columns: 1fr 55px 55px 55px 80px; gap: 4px; padding: 3px 8px; border-bottom: 1px solid var(--border); align-items: center; font-size: 12px; }
   .skill-row:hover { background: var(--bg3); }
@@ -791,7 +792,7 @@
       <div class="form-group">
         <label class="form-label">Occupation</label>
         <input class="form-input" id="p-occ-title" type="text" placeholder="e.g. Private Investigator" readonly>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px;letter-spacing:0.5px">Selected on the next step →</div>
+        <div class="mono-note" style="margin-top:4px;letter-spacing:0.5px">Selected on the next step →</div>
       </div>
       <div class="form-group">
         <label class="form-label">Residence</label>
@@ -883,7 +884,7 @@
              style="text-decoration:none;border-color:var(--teal-bright);color:var(--teal-bright);display:inline-block"
              title="Generate a portrait on Ideogram (free AI image generator) — download the result, then upload it here.">✦ GENERATE WITH AI ↗</a>
           <button id="portrait-clear-btn" class="portrait-clear-btn" onclick="clearPortrait()" style="display:none">✕ Remove</button>
-          <p style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:1px;line-height:1.6;margin:0">Appears on<br>character sheet.<br>Not included<br>in shared URLs.</p>
+          <p class="mono-note" style="letter-spacing:1px;line-height:1.6;margin:0">Appears on<br>character sheet.<br>Not included<br>in shared URLs.</p>
         </div>
       </div>
       <input type="file" id="portrait-input" accept="image/*" style="display:none" onchange="loadPortrait(this)">
@@ -973,7 +974,7 @@
       <button class="array-btn" onclick="rollAll()">🎲 Roll All</button>
       <button class="array-btn" onclick="quickAssign()">⚡ Quick Assign</button>
       <button class="array-btn" onclick="clearStats()">✕ Clear</button>
-      <span style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-left:8px;align-self:center">STR/CON/DEX/APP/POW = 3D6×5 &nbsp;|&nbsp; SIZ/INT/EDU = (2D6+6)×5</span>
+      <span class="mono-note" style="margin-left:8px;align-self:center">STR/CON/DEX/APP/POW = 3D6×5 &nbsp;|&nbsp; SIZ/INT/EDU = (2D6+6)×5</span>
     </div>
     <div class="stats-grid" id="stats-grid"></div>
     <!-- Luck -->
@@ -1064,7 +1065,7 @@
     </div>
     <div class="modal-body" id="load-modal-list"></div>
     <div class="modal-import-row">
-      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Import JSON:</span>
+      <span class="mono-note">Import JSON:</span>
       <label class="export-btn" style="cursor:pointer">Choose File<input type="file" accept=".json" style="display:none" onchange="importFromJSON(this)"></label>
     </div>
   </div>
@@ -1161,7 +1162,7 @@
     <div class="play-notes-grid">
       <div class="play-notes-col">
         <div class="play-notes-label">Field Notes</div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">NPCs, clues, locations, events. AI will sort into categories.</div>
+        <div class="mono-note">NPCs, clues, locations, events. AI will sort into categories.</div>
         <textarea class="play-notes-textarea" id="play-field-notes"
           placeholder="Spoke to Professor Armitage — he was agitated about something in the Restricted Collection. Smell of fish near the harbour. Strange symbol in the margin of the Necronomicon page…"
           oninput="savePlayNotes()"></textarea>
@@ -1173,7 +1174,7 @@
       </div>
       <div class="play-notes-col">
         <div class="play-notes-label">Session Log</div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">Notes per session. Mark sessions with "Session 1", "Session 2", or a date.</div>
+        <div class="mono-note">Notes per session. Mark sessions with "Session 1", "Session 2", or a date.</div>
         <textarea class="play-notes-textarea" id="play-session-notes"
           placeholder="Session 1 — arrived in Arkham. Library closed. Session 2 — found the letter. Something is wrong with Whateley farm…"
           oninput="savePlayNotes()"></textarea>
@@ -1958,7 +1959,7 @@ function showOccDetail(occ) {
     <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${occ.desc}</div>
     <div style="font-family:var(--mono);font-size:11px;color:var(--amber);margin-bottom:6px">Skill Points: ${occ.pts} = <strong>${pts}</strong> pts &nbsp;|&nbsp; Credit Rating: ${occ.cr[0]}–${occ.cr[1]}%</div>
     <div style="font-size:12px;color:var(--text2)">
-      <strong style="font-family:var(--mono);font-size:10px;color:var(--text3)">OCCUPATION SKILLS:</strong><br>
+      <strong class="mono-note">OCCUPATION SKILLS:</strong><br>
       ${allSkills.join(', ')}
     </div>
     ${choiceHtml}`;
@@ -2081,7 +2082,7 @@ function showArchetypeDetail(arch) {
       <span style="color:var(--text3)">BONUS SKILLS (100 pts to distribute):</span> ${arch.skills.join(', ')}
     </div>
     ${arch.recommended?`<div style="font-family:var(--mono);font-size:10px;color:var(--teal-bright);margin-bottom:6px">&#9733; Recommended: ${arch.recommended}</div>`:''}
-    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px">SELECT TALENTS (hover for description):</div>
+    <div class="mono-note" style="margin-bottom:6px">SELECT TALENTS (hover for description):</div>
     ${catChips}
     ${talentDescs?`<div style="font-size:11px;color:var(--text2);margin-top:6px;border-top:1px solid var(--border);padding-top:8px">${talentDescs}</div>`:''}`;
 }
@@ -2138,7 +2139,7 @@ function renderSkills() {
   let rows = `
     <div class="credit-rating-row">
       <span style="font-family:var(--mono);font-size:10px;color:var(--teal-bright);min-width:140px">Credit Rating</span>
-      <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Range: ${selectedOcc?selectedOcc.cr[0]+'–'+selectedOcc.cr[1]:'—'}%</span>
+      <span class="mono-note">Range: ${selectedOcc?selectedOcc.cr[0]+'–'+selectedOcc.cr[1]:'—'}%</span>
       <input type="number" min="0" max="99" value="${creditRating||''}" placeholder="${selectedOcc?selectedOcc.cr[0]:'0'}"
         style="width:60px;background:var(--bg2);border:1px solid var(--border2);color:var(--teal-bright);font-family:var(--mono);font-size:12px;text-align:center;padding:2px 4px"
         oninput="setCreditRating(this.value)">
@@ -2215,29 +2216,50 @@ function setSkillPts(pool, skill, val) {
 }
 
 // ══════════════════════════════════════════════════════
+// SHEET HELPERS
+// ══════════════════════════════════════════════════════
+function readPersonalFields() {
+  const v = id => document.getElementById(id)?.value || '';
+  return {
+    name:          v('p-name'),
+    occTitle:      v('p-occ-title') || (selectedOcc?.name || ''),
+    residence:     v('p-residence'),     birthplace:    v('p-birthplace'),
+    age:           v('p-age'),           sex:           v('p-sex'),
+    height:        v('p-height'),        weight:        v('p-weight'),
+    hair:          v('p-hair'),          eyes:          v('p-eyes'),
+    skin:          v('p-skin'),          desc:          v('p-desc'),
+    ideology:      v('p-ideology'),      sigPeople:     v('p-sig-people'),
+    sigLocations:  v('p-sig-locations'), treasuredPoss: v('p-treasured-poss'),
+    traits:        v('p-traits'),        injuries:      v('p-injuries'),
+    phobias:       v('p-phobias')
+  };
+}
+
+function sheetCell(label, val, {span=false, minH=0, prose=false, body=false}={}) {
+  const cellStyle = span ? 'grid-column:1/-1' : minH ? `min-height:${minH}px` : '';
+  const valStyle  = prose ? 'font-weight:400;font-size:12px;white-space:pre-wrap'
+                  : body  ? 'font-weight:400;font-size:12px' : '';
+  return `<div class="sheet-cell"${cellStyle?` style="${cellStyle}"`:''}>`
+       + `<div class="sheet-cell-label">${label}</div>`
+       + `<div class="sheet-cell-val"${valStyle?` style="${valStyle}"`:''}>${val}</div>`
+       + `</div>`;
+}
+
+function sheetRow(...cells) {
+  return `<div class="sheet-row">${cells.join('')}</div>`;
+}
+
+// ══════════════════════════════════════════════════════
 // RENDER: SHEET
 // ══════════════════════════════════════════════════════
 function renderSheet() {
-  const name       = document.getElementById('p-name')?.value || '—';
-  const occTitle   = document.getElementById('p-occ-title')?.value || (selectedOcc?.name||'—');
-  const residence  = document.getElementById('p-residence')?.value || '—';
-  const birthplace = document.getElementById('p-birthplace')?.value || '—';
-  const age        = document.getElementById('p-age')?.value || '—';
-  const sex        = document.getElementById('p-sex')?.value || '—';
-  const height     = document.getElementById('p-height')?.value || '—';
-  const weight     = document.getElementById('p-weight')?.value || '—';
-  const hair       = document.getElementById('p-hair')?.value || '—';
-  const eyes       = document.getElementById('p-eyes')?.value || '—';
-  const skin       = document.getElementById('p-skin')?.value || '—';
-  const desc         = document.getElementById('p-desc')?.value || '—';
-  const eraLabel     = ERAS.find(e=>e.id===selectedEra)?.name || '—';
-  const ideology     = document.getElementById('p-ideology')?.value || '';
-  const sigPeople    = document.getElementById('p-sig-people')?.value || '';
-  const sigLocations = document.getElementById('p-sig-locations')?.value || '';
-  const treasuredPoss= document.getElementById('p-treasured-poss')?.value || '';
-  const traits       = document.getElementById('p-traits')?.value || '';
-  const injuries     = document.getElementById('p-injuries')?.value || '';
-  const phobias      = document.getElementById('p-phobias')?.value || '';
+  const p = readPersonalFields();
+  const eraLabel = ERAS.find(e=>e.id===selectedEra)?.name || '—';
+  const name = p.name||'—', occTitle = p.occTitle||'—', residence = p.residence||'—',
+        birthplace = p.birthplace||'—', age = p.age||'—', sex = p.sex||'—',
+        height = p.height||'—', weight = p.weight||'—', hair = p.hair||'—',
+        eyes = p.eyes||'—', skin = p.skin||'—', desc = p.desc||'—';
+  const { ideology, sigPeople, sigLocations, treasuredPoss, traits, injuries, phobias } = p;
 
   const hp    = stats.CON&&stats.SIZ ? Math.floor((stats.CON+stats.SIZ)/10) : '—';
   const san   = stats.POW ? stats.POW*5 : '—';
@@ -2292,24 +2314,10 @@ function renderSheet() {
       <div class="sheet-section-hdr">01 — Investigator Data</div>
       <div class="sheet-personal-layout">
         <div class="sheet-personal-fields">
-          <div class="sheet-row">
-            <div class="sheet-cell"><div class="sheet-cell-label">Name</div><div class="sheet-cell-val">${name}</div></div>
-            <div class="sheet-cell"><div class="sheet-cell-label">Occupation</div><div class="sheet-cell-val">${occTitle}</div></div>
-            <div class="sheet-cell"><div class="sheet-cell-label">Era</div><div class="sheet-cell-val">${eraLabel}</div></div>
-          </div>
-          <div class="sheet-row">
-            <div class="sheet-cell"><div class="sheet-cell-label">Residence</div><div class="sheet-cell-val">${residence}</div></div>
-            <div class="sheet-cell"><div class="sheet-cell-label">Birthplace</div><div class="sheet-cell-val">${birthplace}</div></div>
-            <div class="sheet-cell"><div class="sheet-cell-label">Age / D.O.B.</div><div class="sheet-cell-val">${age}</div></div>
-          </div>
-          <div class="sheet-row">
-            <div class="sheet-cell"><div class="sheet-cell-label">Sex</div><div class="sheet-cell-val">${sex}</div></div>
-            <div class="sheet-cell"><div class="sheet-cell-label">Height / Weight</div><div class="sheet-cell-val">${height} / ${weight}</div></div>
-            <div class="sheet-cell"><div class="sheet-cell-label">Hair / Eyes / Skin</div><div class="sheet-cell-val">${hair} / ${eyes} / ${skin}</div></div>
-          </div>
-          <div class="sheet-row">
-            <div class="sheet-cell" style="grid-column:1/-1"><div class="sheet-cell-label">Description</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px">${desc}</div></div>
-          </div>
+          ${sheetRow(sheetCell('Name',name), sheetCell('Occupation',occTitle), sheetCell('Era',eraLabel))}
+          ${sheetRow(sheetCell('Residence',residence), sheetCell('Birthplace',birthplace), sheetCell('Age / D.O.B.',age))}
+          ${sheetRow(sheetCell('Sex',sex), sheetCell('Height / Weight',`${height} / ${weight}`), sheetCell('Hair / Eyes / Skin',`${hair} / ${eyes} / ${skin}`))}
+          ${sheetRow(sheetCell('Description',desc,{span:true,body:true}))}
         </div>
         <div class="sheet-portrait-box">
           ${portraitHtml}
@@ -2373,22 +2381,10 @@ function renderSheet() {
 
     <div class="sheet-section sheet-psych-section">
       <div class="sheet-section-hdr">05 — Backstory &amp; Psychology</div>
-      <div class="sheet-row">
-        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Personal Description</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${desc !== '—' ? desc : ''}</div></div>
-        <div class="sheet-cell" style="min-height:50px"><div class="sheet-cell-label">Ideology / Beliefs</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${ideology}</div></div>
-      </div>
-      <div class="sheet-row">
-        <div class="sheet-cell" style="min-height:45px"><div class="sheet-cell-label">Significant People</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${sigPeople}</div></div>
-        <div class="sheet-cell" style="min-height:45px"><div class="sheet-cell-label">Meaningful Locations</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${sigLocations}</div></div>
-      </div>
-      <div class="sheet-row">
-        <div class="sheet-cell" style="min-height:45px"><div class="sheet-cell-label">Treasured Possessions</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${treasuredPoss}</div></div>
-        <div class="sheet-cell" style="min-height:45px"><div class="sheet-cell-label">Traits</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${traits}</div></div>
-      </div>
-      <div class="sheet-row">
-        <div class="sheet-cell" style="min-height:40px"><div class="sheet-cell-label">Injuries / Scars / Wounds</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${injuries}</div></div>
-        <div class="sheet-cell" style="min-height:40px"><div class="sheet-cell-label">Phobias &amp; Manias</div><div class="sheet-cell-val" style="font-weight:400;font-size:12px;white-space:pre-wrap">${phobias}</div></div>
-      </div>
+      ${sheetRow(sheetCell('Personal Description',p.desc,{minH:50,prose:true}), sheetCell('Ideology / Beliefs',ideology,{minH:50,prose:true}))}
+      ${sheetRow(sheetCell('Significant People',sigPeople,{minH:45,prose:true}), sheetCell('Meaningful Locations',sigLocations,{minH:45,prose:true}))}
+      ${sheetRow(sheetCell('Treasured Possessions',treasuredPoss,{minH:45,prose:true}), sheetCell('Traits',traits,{minH:45,prose:true}))}
+      ${sheetRow(sheetCell('Injuries / Scars / Wounds',injuries,{minH:40,prose:true}), sheetCell('Phobias &amp; Manias',phobias,{minH:40,prose:true}))}
     </div>
 
     <div class="sheet-section">
@@ -2630,14 +2626,7 @@ function uploadPortrait(input) {
 
 // ── AI Portrait Prompt Builder ──────────────
 function copyAIPrompt(btn) {
-  const age    = document.getElementById('p-age')?.value || '';
-  const sex    = document.getElementById('p-sex')?.value || '';
-  const height = document.getElementById('p-height')?.value || '';
-  const weight = document.getElementById('p-weight')?.value || '';
-  const hair   = document.getElementById('p-hair')?.value || '';
-  const eyes   = document.getElementById('p-eyes')?.value || '';
-  const skin   = document.getElementById('p-skin')?.value || '';
-  const desc   = document.getElementById('p-desc')?.value || '';
+  const {age, sex, height, weight, hair, eyes, skin, desc} = readPersonalFields();
 
   const eraBackdrops = {
     modern:    'contemporary urban setting, present day, realistic cinematic lighting',
@@ -2678,27 +2667,7 @@ function copyAIPrompt(btn) {
 function buildCharData() {
   return {
     era: selectedEra,
-    personal: {
-      name:       document.getElementById('p-name')?.value||'',
-      occTitle:   document.getElementById('p-occ-title')?.value||'',
-      residence:  document.getElementById('p-residence')?.value||'',
-      birthplace: document.getElementById('p-birthplace')?.value||'',
-      age:        document.getElementById('p-age')?.value||'',
-      sex:        document.getElementById('p-sex')?.value||'',
-      height:     document.getElementById('p-height')?.value||'',
-      weight:     document.getElementById('p-weight')?.value||'',
-      hair:       document.getElementById('p-hair')?.value||'',
-      eyes:       document.getElementById('p-eyes')?.value||'',
-      skin:       document.getElementById('p-skin')?.value||'',
-      desc:         document.getElementById('p-desc')?.value||'',
-      ideology:     document.getElementById('p-ideology')?.value||'',
-      sigPeople:    document.getElementById('p-sig-people')?.value||'',
-      sigLocations: document.getElementById('p-sig-locations')?.value||'',
-      treasuredPoss:document.getElementById('p-treasured-poss')?.value||'',
-      traits:       document.getElementById('p-traits')?.value||'',
-      injuries:     document.getElementById('p-injuries')?.value||'',
-      phobias:      document.getElementById('p-phobias')?.value||''
-    },
+    personal: readPersonalFields(),
     stats, luck, creditRating,
     selectedOcc: selectedOcc?.name || null,
     occSkillAdded:   {...occSkillAdded},
@@ -2925,16 +2894,20 @@ function togglePlayPanel() {
   if (isOpen) renderPlayPanel();
 }
 
-function _playMaxHp()  { return stats.CON && stats.SIZ ? Math.floor((stats.CON + stats.SIZ) / (usePulp ? 5 : 10)) : null; }
-function _playMaxSan() { return stats.POW ? stats.POW * 5 : null; }
-function _playMaxMp()  { return stats.POW ? Math.floor(stats.POW / 5) : null; }
-function _playMaxLuck(){ return luck || null; }
+function _playMax(type) {
+  switch(type) {
+    case 'hp':   return stats.CON && stats.SIZ ? Math.floor((stats.CON + stats.SIZ) / (usePulp ? 5 : 10)) : null;
+    case 'san':  return stats.POW ? stats.POW * 5 : null;
+    case 'mp':   return stats.POW ? Math.floor(stats.POW / 5) : null;
+    case 'luck': return luck || null;
+  }
+}
 
 function renderPlayPanel() {
-  const maxHp   = _playMaxHp();
-  const maxSan  = _playMaxSan();
-  const maxMp   = _playMaxMp();
-  const maxLuck = _playMaxLuck();
+  const maxHp   = _playMax('hp');
+  const maxSan  = _playMax('san');
+  const maxMp   = _playMax('mp');
+  const maxLuck = _playMax('luck');
   const curHp   = playHpOverride   !== null ? playHpOverride   : maxHp;
   const curSan  = playSanOverride  !== null ? playSanOverride  : maxSan;
   const curMp   = playMpOverride   !== null ? playMpOverride   : maxMp;
@@ -2990,7 +2963,7 @@ function renderPlayPanel() {
   if (skillsEl) {
     skillsEl.innerHTML = above.length
       ? above.map(makeChip).join('')
-      : '<span style="font-family:var(--mono);font-size:10px;color:var(--text3)">No skills above base yet — assign points in Step 6.</span>';
+      : '<span class="mono-note">No skills above base yet — assign points in Step 6.</span>';
   }
   const baseEl = document.getElementById('play-base-skills-list');
   if (baseEl) {
@@ -3007,7 +2980,7 @@ function renderPlayPanel() {
   const weaponsEl = document.getElementById('play-weapons-list');
   if (weaponsEl) {
     if (!charWeapons.length) {
-      weaponsEl.innerHTML = '<span style="font-family:var(--mono);font-size:10px;color:var(--text3)">No weapons equipped — add them in Step 7.</span>';
+      weaponsEl.innerHTML = '<span class="mono-note">No weapons equipped — add them in Step 7.</span>';
     } else {
       weaponsEl.innerHTML = `
         <table class="play-weapon-table">
@@ -3046,19 +3019,19 @@ function renderPlayPanel() {
 
 function playAdjust(type, delta) {
   if (type === 'hp') {
-    const max = _playMaxHp();
+    const max = _playMax('hp');
     const cur = playHpOverride !== null ? playHpOverride : max;
     playHpOverride = max !== null ? Math.min(max, Math.max(0, (cur||0) + delta)) : null;
   } else if (type === 'san') {
-    const max = _playMaxSan();
+    const max = _playMax('san');
     const cur = playSanOverride !== null ? playSanOverride : max;
     playSanOverride = Math.min(99, Math.max(0, (cur||0) + delta));
   } else if (type === 'mp') {
-    const max = _playMaxMp();
+    const max = _playMax('mp');
     const cur = playMpOverride !== null ? playMpOverride : max;
     playMpOverride = max !== null ? Math.min(max, Math.max(0, (cur||0) + delta)) : null;
   } else if (type === 'luck') {
-    const max = _playMaxLuck();
+    const max = _playMax('luck');
     const cur = playLuckOverride !== null ? playLuckOverride : max;
     playLuckOverride = Math.min(99, Math.max(0, (cur||0) + delta));
   }
