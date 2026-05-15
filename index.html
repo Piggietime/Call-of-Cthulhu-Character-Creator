@@ -602,7 +602,8 @@
   @media print {
     body { background: white !important; color: #111 !important; }
     body::before { display: none !important; }
-    .coc-header, .step-nav, .nav-btns, .print-btn, .save-btn, .share-btn, .export-btn, .import-banner, .array-btns, .modal-overlay { display: none !important; }
+    .coc-header, .step-nav, .nav-btns, .print-btn, .save-btn, .share-btn, .export-btn, .import-banner, .array-btns, .modal-overlay,
+    #jazz-frame, #jazz-sunburst, .jazz-corner, #vic-frame, .vic-corner, .mod-bracket { display: none !important; }
     .panel { display: none !important; }
     #panel6 { display: block !important; }
     .app-wrapper { padding: 0 !important; max-width: 100% !important; }
@@ -1047,13 +1048,14 @@
 
   <!-- PANEL 6: Sheet -->
   <div class="panel" id="panel6">
-    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
-      <button class="print-btn" onclick="renderSheet();window.print()">⎙ Print / PDF</button>
+    <div style="display:flex;gap:8px;margin-bottom:4px;flex-wrap:wrap">
+      <button class="print-btn" onclick="renderSheet();window.print()" title="Tip: in the print dialog, uncheck 'Headers and footers' to remove the browser date/title line">⎙ Print / PDF</button>
       <button class="save-btn" onclick="saveInvestigator(this)">⬇ Save</button>
       <button class="share-btn" onclick="shareInvestigator()">⬗ Share URL</button>
       <button class="export-btn" onclick="exportToJSON()">↓ JSON</button>
       <label class="export-btn" style="cursor:pointer">↑ Import JSON<input type="file" accept=".json" style="display:none" onchange="importFromJSON(this)"></label>
     </div>
+    <div class="mono-note" style="margin-bottom:12px">Tip: uncheck <strong>Headers and footers</strong> in the print dialog to remove the browser date/title line.</div>
     <div id="sheet-output"></div>
   </div>
 
